@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36616.10 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "recepttar.client", "recepttar.client\recepttar.client.esproj", "{C449E944-F92E-029B-EA9B-268B84D89B41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recepttar.Server", "Recepttar.Server\Recepttar.Server.csproj", "{64DA5FCF-028C-459E-9BF7-38B1C0340261}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C449E944-F92E-029B-EA9B-268B84D89B41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C449E944-F92E-029B-EA9B-268B84D89B41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C449E944-F92E-029B-EA9B-268B84D89B41}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C449E944-F92E-029B-EA9B-268B84D89B41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C449E944-F92E-029B-EA9B-268B84D89B41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C449E944-F92E-029B-EA9B-268B84D89B41}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{64DA5FCF-028C-459E-9BF7-38B1C0340261}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64DA5FCF-028C-459E-9BF7-38B1C0340261}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64DA5FCF-028C-459E-9BF7-38B1C0340261}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64DA5FCF-028C-459E-9BF7-38B1C0340261}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {294CDCCE-9F82-4AB8-BE10-5C9D03ADAF66}
+	EndGlobalSection
+EndGlobal
