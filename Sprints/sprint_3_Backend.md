@@ -238,30 +238,40 @@ Users should be able to:
 
 ## Testing
 
-Manual and functional tests:
+Create unit tests for each endpoint using NUnit.
+Tests to Include:
 
-Recipes
+1. Recipes
+    - Should fetch all recipes (200)
+    - Should fetch a single recipe by ID (200)
+    - Should fail if recipe not found (404)
+    - Should create a new recipe when authorized and valid (201)
+    - Should fail with missing or invalid data (400)
+    - Should update and delete recipes (200)
+    - Should fail update/delete when unauthorized (401) or not found (404)
 
-- Fetch all recipes and a single recipe.
-- Create, edit, delete recipes (check auth/validation).
-- Search recipes using multiple filter combinations.
+2. Search
+    - Should return matching recipes for valid filters (200)
+    - Should fail with missing or invalid search parameters (400)
 
-Reviews:
+3. Reviews:
+    - Should fetch all reviews for a recipe (200)
+    - Should add a review with valid data (201)
+    - Should fail if unauthorized (401), invalid data (400), or recipe not found (404)
+    - Should update and delete reviews (200/204)
+    - Should fail when not review owner (403) or review not found (404)
 
-- Fetch reviews for a recipe.
-- Add, update, delete reviews (check ownership and auth).
-- Validate stars range (1–5) and required comment.
+4. Polls:
+    - Should successfully vote on a valid option (200)
+    - Should fail with invalid option (400) or missing poll (404)
+    - Should fetch the active poll (200)
+    - Should fail if no active poll exists (404)
 
-Polls:
-
-- Vote on active poll options.
-- Check error when voting for invalid option or non-existing poll.
-- Fetch current active poll.
-
-Favorites:
-
-- Add/remove recipes from favorites.
-- Check listing of favorite recipes.
+5. Favorites:
+    - Should list user’s favorite recipes (200)
+    - Should add recipe to favorites (201)
+    - Should remove recipe from favorites (204)
+    - Should fail when recipe not found (404)
 
 ## Deliverables
 
@@ -269,7 +279,7 @@ Favorites:
 - Review system with ownership validation.
 - Poll voting and active poll retrieval.
 - User favorites functionality.
-- Proper error handling for all endpoints.
+- NUnit tests pass for both valid and invalid inputs.
 
 ## Estimated Duration
 
