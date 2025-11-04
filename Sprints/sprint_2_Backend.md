@@ -120,7 +120,7 @@ Tests to Include:
 
 - Working session-based authentication.
 - All endpoints are covered by NUnit tests.
-- Tests pass for both valid and invalid inputs.
+- All NUnit tests should pass.
 
 ## Estimated Duration
 

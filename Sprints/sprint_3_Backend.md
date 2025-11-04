@@ -279,7 +279,7 @@ Tests to Include:
 - Review system with ownership validation.
 - Poll voting and active poll retrieval.
 - User favorites functionality.
-- NUnit tests pass for both valid and invalid inputs.
+- All NUnit tests should pass.
 
 ## Estimated Duration
 
