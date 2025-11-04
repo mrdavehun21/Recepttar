@@ -93,19 +93,34 @@ Users should be able to:
 
 ## Testing
 
-Manual and basic functional tests:
+Create unit tests for each endpoint using NUnit.
+Tests to Include:
 
-- Register a new user.
-- Log in.
-- Try duplicate emails.
-- View own and other user's profile info.
-- Edit bio, username and update profile picture.
-- Log out.
+1. `/user/register`
+    - Should successfully create a new user (201)
+    - Should fail with missing fields or duplicate email (400)
+
+2. `/user/login`
+    - Should log in with valid credentials (200)
+    - Should fail with missing fields (400) or invalid credentials (401)
+
+3. `/user/logout`
+    - Should log out successfully with a valid session (200)
+    - Should fail without a valid session (401)
+
+4. `/user/profile`
+    - Should get and update own profile with a valid session (200)
+    - Should fail if unauthorized (401) or user not found (404)
+
+5. `/user/profile/{userId}`
+    - Should get another user’s profile (200)
+    - Should fail if the user does not exist (404)
 
 ## Deliverables
 
 - Working session-based authentication.
-- Tested user profile editing and validation.
+- All endpoints are covered by NUnit tests.
+- All NUnit tests should pass.
 
 ## Estimated Duration
 
