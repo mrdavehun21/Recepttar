@@ -10,17 +10,7 @@ namespace Recepttar.Server.Models
         public string Email { get; set; }
         public string PasswordHash { get; set; }
         public string Bio { get; set; }
-        public string ProfilePicture { get; set; }
+        public byte[] ProfilePicture { get; set; }
         public bool Role { get; set; }
-        
-        public User()
-        {
-            Name = "";
-            Email = "";
-            PasswordHash = "";
-            Bio = "";
-            ProfilePicture = "";
-            Role = false;
-        }
     }
 }
