@@ -26,60 +26,60 @@ Create models and fields
 
 - `Models\User.cs`
 
-    | Field            | Type              | Description                  |
-    |------------------|-------------------|------------------------------|
-    | `Id`             | integer (PK)      | Unique identifier            |
-    | `Name`           | string            | Display name of the user     |
-    | `Email`          | string            | Used for login (unique)      |
-    | `PasswordHash`   | string            | Hashed password              |
-    | `Bio`            | string            | Short user description       |
-    | `ProfilePicture` | string (URL)      | A chooseable img             |
-    | `Role`           | string            | “user” or “admin”            |
+    | Field            | C# Type      | Database Type (MySQL) |  Description               |
+    |------------------|--------------|-----------------------|----------------------------|
+    | `Id`             | int (PK)     | INT AUTO_INCREMENT PK | Unique identifier          |
+    | `Name`           | string       | VARCHAR(255)          | Display name of the user   |
+    | `Email`          | string       | VARCHAR(255) UNIQUE   | Used for login (unique)    |
+    | `PasswordHash`   | string       | VARCHAR(128)          | Hashed password            |
+    | `Bio`            | string       | TEXT                  | Short user description     |
+    | `ProfilePicture` | byte[]       | MEDIUMBLOB            | A chooseable profile img   |
+    | `Role`           | bool         | BOOLEAN               | true = admin, false = user |
 
 - `Models\Recipe.cs`
 
-    | Field           | Type     | Description                         |
-    |-----------------|----------|-------------------------------------|
-    | `Id`            | integer (PK)| Unique identifier                |
-    | `Title`         | string   | Recipe name                         |
-    | `Description`   | string   | Overview and short instructions     |
-    | `Difficulty`    | string   | “easy”, “medium”, “hard”            |
-    | `TimeMinutes`   | integer  | Preparation time in minutes         |
-    | `Servings`      | integer  | Number of servings                  |
-    | `PriceCategory` | string   | “cheap” or “expensive”              |
-    | `Vegan`         | bool     | True = vegan-friendly               |
-    | `Type`          | string   | “appetizer”, “main dish”, “dessert” |
-    | `AuthorId`      | integer (FK) | References `User.Id`            |
+    | Field           | Type                  | Database Type (MySQL) | Description                         |
+    |-----------------|-----------------------|-----------------------|-------------------------------------|
+    | `Id`            | int (PK)              | INT AUTO_INCREMENT PK | Unique identifier                   |
+    | `Title`         | string                | VARCHAR(255)          | Recipe name                         |
+    | `Description`   | string                | TEXT                  | Overview and short instructions     |
+    | `Difficulty`    | enum                  | ENUM                  | “Easy”, “Medium”, “Hard”            |
+    | `TimeMinutes`   | int                   | INT                   | Preparation time in minutes         |
+    | `Servings`      | int                   | INT                   | Number of servings                  |
+    | `IsExpensive`   | bool                  | BOOLEAN               | true = expensive, false = cheap     |
+    | `IsVegan`       | bool                  | BOOLEAN               | true = vegan, false = not vegan     |
+    | `Type`          | enum                  | ENUM                  | “Appetizer”, “MainDish”, “Dessert”  |
+    | `DishPicture`   | byte[]                | MEDUIMBLOB            | A chooseable dish img               |
+    | `AuthorId`      | int (FK -> `User.Id`) | INT                   | References `User.Id`                |
 
 - `Models/Poll.cs`
 
-    | Field      | Type         | Description       |
-    |------------|--------------|-------------------|
-    | `Id`       | integer (PK) | Unique identifier |
-    | `Question` | string       | Poll question     |
-    | `IsActive` | bool         | true if active    |
+    | Field      | Type         | Database Type (MySQL) | Description                       |
+    |------------|--------------|-----------------------|-----------------------------------|
+    | `Id`       | integer (PK) | INT AUTO_INCREMENT PK | Unique identifier                 |
+    | `Question` | string       | VARCHAR(255)          | Poll question                     |
+    | `IsActive` | bool         | BOOLEAN               | true = active, false = not active |
 
 - `Models/PollOption.cs`
 
-    | Field       | Type         | Description                     |
-    |-------------|--------------|---------------------------------|
-    | `Id`        | integer (PK) | Unique identifier               |
-    | `PollId`    | integer (FK) | References the poll             |
-    | `Text`      | string       | Option text                     |
-    | `VoteCount` | integer      | Number of votes for this option |
+    | Field        | Type                       | Database Type (MySQL) | Description                     |
+    |--------------|----------------------------|-----------------------|---------------------------------|
+    | `Id`         | integer (PK)               | INT AUTO_INCREMENT PK | Unique identifier               |
+    | `PollId`     | integer (FK -> `Poll.Id`)  | -                     | References the poll             |
+    | `OptionText` | string                     | VARCHAR(255)          | Option text                     |
+    | `VoteCount`  | integer                    | INT                   | Number of votes for this option |
 
 - `Models/Review.cs`
 
-    | Field       | Type                         | Description                                |
-    |-------------|------------------------------|--------------------------------------------|
-    | `Id`        | integer (PK, auto-increment) | Unique identifier for each review          |
-    | `RecipeId`  | integer (FK -> `Recipes.Id`)   | Reference to the recipe being reviewed     |
-    | `UserId`    | integer (FK -> `Users.Id`)     | Reference to the user who wrote the review |
-    | `Name`      | string (FK -> `Users.Name`)    | Optional display name of the user          |
-    | `Stars`     | integer                      | Rating from 1 to 5                         |
-    | `Comment`   | string                       | The review text                            |
-    | `CreatedAt` | DateTime                     | When the review was created                |
-    | `UpdatedAt` | DateTime Null                | When the review was last updated           |
+    | Field       | Type                         | Database Type (MySQL) | Description                                |
+    |-------------|------------------------------|-----------------------|--------------------------------------------|
+    | `Id`        | integer (PK)                 | INT AUTO_INCREMENT PK | Unique identifier for each review          |
+    | `RecipeId`  | integer (FK -> `Recipes.Id`) | -                     | Reference to the recipe being reviewed     |
+    | `UserId`    | integer (FK -> `Users.Id`)   | -                     | Reference to the user who wrote the review |
+    | `Stars`     | integer                      | INT                   | Rating from 1 to 5                         |
+    | `Comment`   | string                       | VARCHAR(1024)         | The review text                            |
+    | `CreatedAt` | DateTime                     | TIMESTAMP Current     | When the review was created                |
+    | `UpdatedAt` | DateTime Null                | TIMESTAMP Null        | When the review was last updated           |
 
 - Define the one-to-many relationships between the classes.
 
@@ -89,7 +89,7 @@ Create models and fields
 - Commit the base project structure.
 - Add `.gitignore` file:
 
-    ```text
+    ```gitignore
         bin/
         obj/
         .vs/
@@ -101,12 +101,12 @@ Create models and fields
 
 - Run the project locally and confirm the test endpoint returns a response.
 - Verify the database schema exists in MYSQL.
-- Confirm relationships work correctly between User, Recipe and Poll.
+- Confirm relationships work correctly between User, Recipe, Poll, PollOption and Review tables.
 
 ## Deliverables
 
 - Working ASP .NET Core Web API project connected to MySQL.
-- Initial database created with **User**, **Recipe** and **Poll** tables.
+- Initial database created with **User**, **Recipe**, **Poll**, **PollOption** and **Review** tables.
 
 ## Estimated Duration
 
