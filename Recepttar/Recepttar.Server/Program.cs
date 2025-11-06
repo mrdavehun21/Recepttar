@@ -26,6 +26,18 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
     ));
 
+// --- Session setup ---
+builder.Services.AddDataProtection();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.None;           // needed for cross-origin
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // needed for HTTPS
+});
+
 var app = builder.Build();
 
 app.UseDefaultFiles();
@@ -39,6 +51,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Must be included for session to work
+app.UseSession();
 
 app.UseAuthorization();
 

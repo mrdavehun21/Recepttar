@@ -21,13 +21,12 @@ namespace Recepttar.Server.Controllers
         [HttpPost("register")]
         public IActionResult RegisterUser([FromForm] DTO.RegisterUser newUser)
         {
-            // if something goes wrong (Status code 400)
-
             // Don't forget that the data from dto might be null!!!
             if(newUser.Email == null || newUser.Email.Length == 0 ||
                 newUser.Password == null || newUser.Password.Length == 0 ||
                 newUser.Name == null || newUser.Name.Length == 0)
             {
+                // if something goes wrong (Status code 400)
                 return BadRequest(new { error = "Bad request" });
             }
 
@@ -67,12 +66,24 @@ namespace Recepttar.Server.Controllers
         public IActionResult LoginUser([FromForm] DTO.LogInUser user)
         {
             // Don't forget that the data from dto might be null!!!
+            if(user.Email == null || user.Email.Length == 0 || 
+                user.Password == null || user.Password.Length == 0)
+            {
+                // Missing username/password (Status code 400)
+                return BadRequest(new { error = "Email and password are required" });
+            }
 
-            // Missing username/password (Status code 400)
-            return BadRequest(new { error = "Email and password are required" });
+            // Check if user exists and if their password is matching
+            var FindUser = _context.User.FirstOrDefault(d => d.Email == user.Email);
+            if(FindUser == null || 
+                FindUser.PasswordHash != PasswordHash.PasswordHasher(user.Password))
+            {
+                // Invalid credentials (Status code 401)
+                return Unauthorized(new { error = "Invalid email or password" });
+            }
 
-            // Invalid credentials (Status code 401)
-            return Unauthorized(new { error = "Invalid email or password" });
+            // Create a sessionID
+            HttpContext.Session.SetInt32("UserID", FindUser.Id);
 
             // Successful loggin (Status code 200)
             return Ok(new { message = "Successfully logged in", token = "TODO" });
