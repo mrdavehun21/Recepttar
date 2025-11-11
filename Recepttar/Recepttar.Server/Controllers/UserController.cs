@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Recepttar.Server.Constants;
 using Recepttar.Server.HelperMethods;
 using Recepttar.Server.Models;
@@ -94,7 +95,7 @@ namespace Recepttar.Server.Controllers
         public IActionResult Logout()
         {
             // If already logged out (Status code 401)
-            if (IsUserUnauthorized.IsAuthorized(HttpContext))
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
             {
                 return Unauthorized(new { error = "Unauthorized" });
             }
@@ -113,39 +114,71 @@ namespace Recepttar.Server.Controllers
         public IActionResult GetProfile()
         {
             // Prevent user from requesting profile data if not logged in
-            if (IsUserUnauthorized.IsAuthorized(HttpContext))
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
             {
                 return Unauthorized(new { error = "Unauthorized" });
             }
 
+            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
+
             var UserData = new DTO.RequestProfileData()
             {
-                Name = "",
-                Bio = "",
-                ProfilePicture = ""
+                Name = FindUser.Name,
+                Bio = FindUser.Bio,
             };
             // Successful request (Status code 200)
             return Ok(UserData);
         }
 
         [HttpPut("profile")]
-        public IActionResult UpdateProfile([FromForm] User user)
+        public IActionResult UpdateProfile([FromForm] DTO.UpdateProfileData user)
         {
             // Unauthorized access (Status 401)
-            if (IsUserUnauthorized.IsAuthorized(HttpContext))
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
             {
                 return Unauthorized(new { error = "Unauthorized" });
             }
 
             // User not found (Status 404)
-            return NotFound(new { error = "User not found" });
+            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
+
+            if(FindUser == null)
+            {
+                return NotFound(new { error = "User not found" });
+            }
+
+            if (!string.IsNullOrEmpty(user.Name))
+            {
+                FindUser.Name = user.Name;
+            }
+            if(!string.IsNullOrEmpty(user.Email))
+            {
+                FindUser.Email = user.Email;
+            }
+            if(!string.IsNullOrEmpty(user.PasswordHash))
+            {
+                FindUser.PasswordHash = PasswordHash.PasswordHasher(user.PasswordHash);
+            }
+            if(!string.IsNullOrEmpty(user.Bio))
+            {
+                FindUser.Bio = user.Bio;
+            }
+            if (user.ProfilePicture != null)
+            {
+                FindUser.ProfilePicture = user.ProfilePicture;
+            }
+
+            _context.SaveChanges();
 
             // Successfully updated profile (200)
             var UserData = new DTO.RequestProfileData
             {
-                Name = "",
-                Bio = "",
-                ProfilePicture = ""
+                Name = FindUser.Name,
+                Bio = FindUser.Bio,
             };
             return Ok(UserData);
         }
@@ -173,7 +206,7 @@ namespace Recepttar.Server.Controllers
             return NotFound(new { error = "User not found" });
 
             // If preventing user from accessing image (Status code 401)
-            if (IsUserUnauthorized.IsAuthorized(HttpContext))
+            if (IsUserAuthorized.IsAuthorized(HttpContext))
             {
                 return Unauthorized(new { error = "Unauthorized" });
             }
