@@ -33,9 +33,10 @@ Users should be able to:
             "difficulty": "string",
             "timeMinutes": "integer",
             "servings": "integer",
-            "priceCategory": "string",
-            "vegan": "boolean",
-            "type": "string"
+            "isExpensive": "boolean",
+            "isVegan": "boolean",
+            "type": "string",
+            "DishPicture": "string URL"
         }
     ]
     ```
@@ -46,7 +47,7 @@ Users should be able to:
     |--------|-------------|-------------|---------------|
     | POST   | 201 | Successfully created a new recipe | JSON: `{ "message": "Recipe created" }` |
     | POST   | 400 | Bad request (missing or invalid fields) | JSON: `{ "error": "Invalid request body" }` |
-    | POST   | 401  | Unauthorized | JSON: `{ "error": "Unauthorized" }` |
+    | POST   | 401 | Unauthorized | JSON: `{ "error": "Unauthorized" }` |
 
     **Request Body**
 
@@ -57,9 +58,10 @@ Users should be able to:
         "difficulty": "string",
         "timeMinutes": "integer",
         "servings": "integer",
-        "priceCategory": "string",
-        "vegan": "boolean",
-        "type": "string"
+        "isExpensive": "boolean",
+        "isVegan": "boolean",
+        "type": "string",
+        "DishPicture": "string URL"
     }
     ```
 
@@ -81,7 +83,7 @@ Users should be able to:
 
 ### Search
 
-1. `recipes/search`
+1. `/recipes/search`
 
     | Method | Status Code | Description | Response Body |
     |--------|-------------|-------------|---------------|
@@ -90,17 +92,17 @@ Users should be able to:
 
     **Query Parameters (required)**
 
-    | Parameter       | Type    | Description                 |
-    |-----------------|---------|-----------------------------|
-    | `difficulty`    | string  | Filter by recipe difficulty |
-    | `type`          | string  | Filter by recipe type |
-    | `vegan`         | boolean | Filter by vegan status |
-    | `priceCategory` | string  | Filter by price category |
-    | `search`        | string  | Search by title or description text |
+    | Parameter     | Type    | Description                         |
+    |---------------|---------|-------------------------------------|
+    | `difficulty`  | string  | Filter by recipe difficulty         |
+    | `type`        | string  | Filter by recipe type               |
+    | `vegan`       | boolean | Filter by vegan status              |
+    | `isExpensive` | boolean | Filter by price category            |
+    | `search`      | string  | Search by title or description text |
 
     **Example Request**
 
-    `GET /recipes/search?type=dessert&difficulty=easy&vegan=true&priceCategory=medium&search=chocolate`
+    `GET /recipes/search?type=dessert&difficulty=easy&vegan=true&isExpensive=true&search=chocolate`
 
 ### Reviews
 
@@ -110,7 +112,7 @@ Users should be able to:
     |--------|-------------|-------------|---------------|----------------|
     | GET    | 200 | Successfully gets all reviews for a recipe | Array of review objects | `recipeId` (recipe ID) |
     | GET    | 404 | Recipe not found | JSON: `{ "error": "Recipe not found" }` | `recipeId` (recipe ID) |
-    | POST   | 201 | Successfully added review | Created review object | `recipeId` (recipe ID) |
+    | POST   | 201 | Successfully added review | JSON: `{ "message": "Review added successfully" }` | `recipeId` (recipe ID) |
     | POST   | 400 | Bad request (invalid stars or missing fields) | JSON: `{ "error": "Invalid request body" }` | `recipeId` (recipe ID) |
     | POST   | 401 | Unauthorized | JSON: `{ "error": "Unauthorized" }` | `recipeId` (recipe ID) |
 
@@ -133,7 +135,7 @@ Users should be able to:
             "id": "integer",
             "recipeId": "integer",
             "userId": "integer",
-            "userName": "string",
+            "Name": "string",
             "stars": "integer",
             "comment": "string",
             "createdAt": "DateTime"
@@ -141,18 +143,18 @@ Users should be able to:
     ]
     ```
 
-2. `/reviews/{id}`
+2. `/reviews/{reviewId}`
 
-    | Method | Status Code | Description | Response Body |
-    |--------|-------------|-------------|---------------|
-    | DELETE | 204 | Successfully deleted review | JSON: `{ "message": "Review deleted" }` |
-    | DELETE | 403 | Forbidden (not review owner) |JSON: `{ "error": "Forbidden" }` |
-    | DELETE | 404 | Review not found | JSON: `{ "error": "Review not found" }` |
-    |-|-|-|-|
-    | PUT    | 200 | Successfully updated review  | Updated review object |
-    | PUT    | 400 | Invalid request body | JSON: `{ "error": "Invalid request body" }` |
-    | PUT    | 403 | Forbidden (not review owner) | JSON: `{ "error": "Forbidden" }` |
-    | PUT    | 404 | Review not found | JSON: `{ "error": "Review not found" }` |
+    | Method | Status Code | Description | Response Body | Path Parameter |
+    |--------|-------------|-------------|---------------|----------------|
+    | PUT    | 200 | Successfully updated review  | Updated review object | `reviewId` (review ID) |
+    | PUT    | 400 | Invalid request body | JSON: `{ "error": "Invalid request body" }` | `reviewId` (review ID) |
+    | PUT    | 403 | Forbidden (not review owner) | - | `reviewId` (review ID) |
+    | PUT    | 404 | Review not found | JSON: `{ "error": "Review not found" }` | `reviewId` (review ID) |
+    |-|-|-|-|-|
+    | DELETE | 204 | Successfully deleted review | - | `reviewId` (review ID) |
+    | DELETE | 403 | Forbidden (not review owner) | - | `reviewId` (review ID) |
+    | DELETE | 404 | Review not found | JSON: `{ "error": "Review not found" }` | `reviewId` (review ID) |
 
     **Request Body**
 
@@ -165,44 +167,41 @@ Users should be able to:
 
 ### Polls
 
-1. `polls/{id}/vote`
+1. `/polls/active`
+
+    | Method | Status Code | Description | Response Body |
+    |--------|-------------|-------------|---------------|
+    | GET    | 200 | Returns the current active poll | JSON object |
+    | GET    | 404 | No active poll found | JSON: `{ "error": "No active poll" }` |
+
+    **Response Body**
+
+    ```json
+    {
+        "id": "integer",
+        "question": "string",
+        "options": [
+            { "id": "integer", "OptionText": "string", "voteCount": "integer" },
+            { "id": "integer", "OptionText": "string", "voteCount": "integer" },
+            { "id": "integer", "OptionText": "string", "voteCount": "integer" }
+        ]
+    }
+    ```
+
+2. `polls/{pollId}/vote`
 
     | Method | Status Code | Description | Response Body | Path Parameter |
-    |--------|-------------|-----------|---------------|----------------|
-    | POST | 200 | Successfully voted for an option | JSON: `{ "success": true, "message": "Vote recorded" }` | `id` (poll ID) |
-    | POST | 400 | Invalid option ID | JSON: `{ "error": "Invalid option" }` | `id` (poll ID) |
-    | POST | 404 | Poll not found |  JSON: `{ "error": "Poll not found" }` | `id` (poll ID) |
+    |--------|-------------|-------------|---------------|----------------|
+    | POST   | 200 | Successfully voted for an option | JSON: `{ "message": "Vote recorded" }` | `pollId` (poll ID) |
+    | POST   | 400 | Invalid option ID | JSON: `{ "error": "Invalid option" }` | `pollId` (poll ID) |
+    | POST   | 404 | Poll not found | JSON: `{ "error": "Poll not found" }` | `pollId` (poll ID) |
 
     **Request Body**
 
     ```json
     {
-      "optionId": 2
+      "optionId": "integer"
     }
-    ```
-
-2. `/polls/active`
-
-    | Method | Status Code | Description | Response Body |
-    |--------|-------------|-------------|---------------|
-    | GET | 200 | Returns the current active poll | JSON object |
-    | GET | 404 | No active poll found | JSON: `{ "error": "No active poll" }` |
-
-    **Response Body**
-
-    ```json
-    [
-        {
-            "id": "integer",
-            "question": "string",
-            "isActive": "bool",
-            "options": [
-                { "id": "integer", "text": "string", "voteCount": "integer" },
-                { "id": "integer", "text": "string", "voteCount": "integer" },
-                { "id": "integer", "text": "string", "voteCount": "integer" }
-            ]
-        }
-    ]
     ```
 
 ### Favorites
@@ -211,7 +210,7 @@ Users should be able to:
 
     | Method | Status Code | Description | Response Body |
     |--------|-------------|-------------|---------------|
-    | GET | 200 | Gets all favorite recipes for user  as a **list** | JSON array of favourites |
+    | GET    | 200 | Gets all favorite recipes for user | Array of favourite objects |
 
     **Response Body**
 
@@ -222,46 +221,125 @@ Users should be able to:
             "difficulty": "string",
             "timeMinutes": "integer",
             "servings": "integer",
-            "dishPicture": "string"
+            "dishPicture": "string URL"
         }
     ]
     ```
 
-2. `user/favorites/{recipeId}`
+2. `/user/favorites/{recipeId}`
 
     | Method | Status Code | Description | Response Body | Path Parameter |
     |--------|-------------|-------------|---------------|----------------|
-    | POST | 201 | Successfully added recipe to favorites | JSON: `{ "message": "Recipe added to favorites" }` | `recipeId` (recipe ID) |
-    | POST | 404 | Recipe not found | JSON: `{ "error": "Recipe not found" }` | `recipeId` (recipe ID) |
-    | DELETE | 204 | Successfully removed recipe from favorites | JSON: `{ "message": "Recipe removed from favorites" }` | `recipeId` (recipe ID) |
+    | POST   | 201 | Successfully added recipe to favorites | JSON: `{ "message": "Recipe added to favorites" }` | `recipeId` (recipe ID) |
+    | POST   | 404 | Recipe not found | JSON: `{ "error": "Recipe not found" }` | `recipeId` (recipe ID) |
+    | DELETE | 204 | Successfully removed recipe from favorites | - | `recipeId` (recipe ID) |
     | DELETE | 404 | Recipe not found | JSON: `{ "error": " Recipe not found" }` | `recipeId` (recipe ID) |
 
 ## Testing
 
-Manual and functional tests:
+Create tests for each endpoint using Postman.
 
-Recipes
+### RecipesTests
 
-- Fetch all recipes and a single recipe.
-- Create, edit, delete recipes (check auth/validation).
-- Search recipes using multiple filter combinations.
+`GET /recipes`
 
-Reviews:
+- 200 - returns list of recipes
 
-- Fetch reviews for a recipe.
-- Add, update, delete reviews (check ownership and auth).
-- Validate stars range (1–5) and required comment.
+---
 
-Polls:
+`POST /recipes/create`
 
-- Vote on active poll options.
-- Check error when voting for invalid option or non-existing poll.
-- Fetch current active poll.
+- 201 - valid and authorized
+- 400 - invalid or missing data
+- 401 - unauthorized
 
-Favorites:
+---
 
-- Add/remove recipes from favorites.
-- Check listing of favorite recipes.
+`GET /recipes/{id}`
+
+- 200 - valid, returns single recipe
+- 404 - recipe not found
+
+`PUT /recipes/{id}`
+
+- 200 - valid and authorized
+- 400 - invalid request body
+- 401 - unauthorized
+- 404 - recipe not found
+
+`DELETE /recipes/{id}`
+
+- 200 - valid and authorized
+- 401 - unauthorized
+- 404 - recipe not found
+
+### SearchTests
+
+`GET /recipes/search`
+
+- 200 - returns list of recipes based on search params
+- 400 - invalid or missing parameters
+
+### ReviewTests
+
+`GET /recipes/{id}/reviews`
+
+- 200 - returns list of reviews
+- 404 - recipe not found
+
+`POST /recipes/{id}/reviews`
+
+- 201 - valid and authorized
+- 400 - invalid or missing data
+- 401 - unauthorized
+
+---
+
+`PUT /reviews/{id}`
+
+- 200 - valid and authorized
+- 400 - invalid or missing data
+- 403 - forbidden
+- 404 - review not found
+
+`DELETE /review/{id}`
+
+- 204 - valid and authorized
+- 403 - forbidden
+- 404 - review not found
+
+### PollTests
+
+`GET polls/active`
+
+- 200 - returns the active poll
+- 404 - poll not found
+
+---
+
+`POST polls/{id}/vote`
+
+- 200 - valid and authorized
+- 400 - invalid id
+- 404 - poll not found
+
+### FavoriteTests
+
+`GET /user/favorites`
+
+- 200 - returns a list of the user's favourite recipes
+
+---
+
+`POST /user/favorites/{id}`
+
+- 201 - valid and authorized
+- 404 - recipe not found
+
+`DELETE /user/favorites/{id}`
+
+- 204 - valid and authorized
+- 404 - recipe not found
 
 ## Deliverables
 
@@ -269,7 +347,7 @@ Favorites:
 - Review system with ownership validation.
 - Poll voting and active poll retrieval.
 - User favorites functionality.
-- Proper error handling for all endpoints.
+- All Postman tests should pass successfully.
 
 ## Estimated Duration
 
