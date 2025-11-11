@@ -1,6 +1,6 @@
 ﻿namespace Recepttar.Server.DTO.RecipeDTO
 {
-    public class FavoritRecipe
+    public class FavoriteRecipe
     {
         public string Title { get; set; }
         public Enums.RecipeDiffEnum Difficulty { get; set; }

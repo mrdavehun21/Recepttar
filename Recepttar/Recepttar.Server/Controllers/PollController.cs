@@ -13,59 +13,7 @@ namespace Recepttar.Server.Controllers
             return NotFound(new { error = "No active poll" });
 
             // Return found active polls (Status code 200)
-            var FoundActivePolls = new List<DTO.PollDTO.ActivePoll>()
-            {
-                new DTO.PollDTO.ActivePoll()
-                {
-                    Id = 1,
-                    Options = new List<DTO.PollDTO.PollOption>()
-                    {
-                        new DTO.PollDTO.PollOption()
-                        {
-                            Id = 1,
-                            OptionText = "Option1",
-                            VoteCount = 1,
-                        },
-                        new DTO.PollDTO.PollOption()
-                        {
-                            Id = 2,
-                            OptionText = "Option2",
-                            VoteCount = 1,
-                        },
-                        new DTO.PollDTO.PollOption()
-                        {
-                            Id = 3,
-                            OptionText = "Option3",
-                            VoteCount = 1,
-                        }
-                    }
-                },
-                new DTO.PollDTO.ActivePoll()
-                {
-                    Id = 2,
-                    Options = new List<DTO.PollDTO.PollOption>()
-                    {
-                        new DTO.PollDTO.PollOption()
-                        {
-                            Id = 4,
-                            OptionText = "Option1",
-                            VoteCount = 1,
-                        },
-                        new DTO.PollDTO.PollOption()
-                        {
-                            Id = 5,
-                            OptionText = "Option2",
-                            VoteCount = 1,
-                        },
-                        new DTO.PollDTO.PollOption()
-                        {
-                            Id = 6,
-                            OptionText = "Option3",
-                            VoteCount = 1,
-                        }
-                    }
-                }
-            };
+            var FoundActivePolls = new List<DTO.PollDTO.ActivePoll>(); // TODO: Find the actual active poll list
 
             return Ok(FoundActivePolls);
         }
