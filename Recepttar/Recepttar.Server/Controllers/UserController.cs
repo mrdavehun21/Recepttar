@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Recepttar.Server.Constants;
 using Recepttar.Server.HelperMethods;
 using Recepttar.Server.Models;
 using System.Security.Cryptography;
@@ -83,7 +84,7 @@ namespace Recepttar.Server.Controllers
             }
 
             // Create a sessionID
-            HttpContext.Session.SetInt32("UserID", FindUser.Id);
+            HttpContext.Session.SetInt32(SessionKeys.UserId, FindUser.Id);
 
             // Successful loggin (Status code 200)
             return Ok(new { message = "Successfully logged in", token = "TODO" });
@@ -93,7 +94,16 @@ namespace Recepttar.Server.Controllers
         public IActionResult Logout()
         {
             // If already logged out (Status code 401)
-            return Unauthorized(new { message = "Unauthorized" });
+            if (IsUserUnauthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
+
+            // Clears every session paramaters
+            HttpContext.Session.Clear();
+
+            // Clearing browser-side cookies
+            Response.Cookies.Delete(".AspNetCore.Session");
 
             // Successful logout (Status code 200)
             return Ok(new { message = "Successfully logged out" });
@@ -103,7 +113,10 @@ namespace Recepttar.Server.Controllers
         public IActionResult GetProfile()
         {
             // Prevent user from requesting profile data if not logged in
-            return Unauthorized(new { error = "Unauthorized" });
+            if (IsUserUnauthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
 
             var UserData = new DTO.RequestProfileData()
             {
@@ -119,7 +132,10 @@ namespace Recepttar.Server.Controllers
         public IActionResult UpdateProfile([FromForm] User user)
         {
             // Unauthorized access (Status 401)
-            return Unauthorized(new { error = "Unauthorized" });
+            if (IsUserUnauthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
 
             // User not found (Status 404)
             return NotFound(new { error = "User not found" });
@@ -157,7 +173,10 @@ namespace Recepttar.Server.Controllers
             return NotFound(new { error = "User not found" });
 
             // If preventing user from accessing image (Status code 401)
-            return Unauthorized(new { error = "Unauthorized" });
+            if (IsUserUnauthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
 
             // If all goes well, return with image (Status code 200)
             byte[] Image = new byte[] { };
