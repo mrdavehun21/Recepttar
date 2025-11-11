@@ -206,24 +206,58 @@ namespace Recepttar.Server.Controllers
         [HttpGet("profile/profilepicture")]
         public IActionResult ReturnProfilePic()
         {
-            // If user not found (Status code 404)
-            return NotFound(new { error = "User not found" });
-
             // If preventing user from accessing image (Status code 401)
-            if (IsUserAuthorized.IsAuthorized(HttpContext))
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
             {
                 return Unauthorized(new { error = "Unauthorized" });
             }
 
+            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
+
+            // If user not found (Status code 404)
+            if (FindUser == null)
+            {
+                return NotFound(new { error = "User not found" });
+            }
+
             // If all goes well, return with image (Status code 200)
-            byte[] Image = new byte[] { };
+            byte[] Image = FindUser.ProfilePicture;
             return File(Image, "image/jpg");
         }
 
         [HttpPost("profile/profilepicture")]
         public IActionResult UpdateProfilePic([FromForm] DTO.UpdateProfilePicture ProfilePicture)
         {
-            byte[] Image = new byte[] { };
+            // If preventing user from accessing image (Status code 401)
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
+
+            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
+
+            // If user not found (Status code 404)
+            if (FindUser == null)
+            {
+                return NotFound(new { error = "User not found" });
+            }
+
+            if (ProfilePicture.ProfilePicture != null)
+            {
+                using (var stream = new MemoryStream())
+                {
+                    ProfilePicture.ProfilePicture.CopyTo(stream);
+                    FindUser.ProfilePicture = stream.ToArray();
+                }
+            }
+
+            _context.SaveChanges();
+
+            byte[] Image = FindUser.ProfilePicture;
             return File(Image, "image/jpg");
         }
 
