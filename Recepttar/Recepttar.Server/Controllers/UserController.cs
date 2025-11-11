@@ -186,14 +186,19 @@ namespace Recepttar.Server.Controllers
         [HttpGet("profile/{userId}")]
         public IActionResult GetOthersProfile(int userId)
         {
+            var FindUser = _context.User.FirstOrDefault(d => d.Id == userId);
+
             // If requested user doesn't exists (Status code 404)
-            return NotFound(new { error = "User not found", userId = userId});
+            if(FindUser == null)
+            {
+                return NotFound(new { error = "User not found", userId});
+            }
 
             // If found user, return profile data (Status code 200)
             var UserData = new DTO.RequestProfileData
             {
-                Name = "",
-                Bio = "",
+                Name = FindUser.Name,
+                Bio = FindUser.Bio,
             };
             return Ok(UserData);
         }
