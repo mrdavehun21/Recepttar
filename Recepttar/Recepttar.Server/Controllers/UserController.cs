@@ -194,7 +194,6 @@ namespace Recepttar.Server.Controllers
             {
                 Name = "",
                 Bio = "",
-                ProfilePicture = ""
             };
             return Ok(UserData);
         }
