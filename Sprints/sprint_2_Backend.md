@@ -92,6 +92,18 @@ Users should be able to:
     }
     ```
 
+6. `/user/profile/profilepicture`
+
+    | Method | Status Code | Description | Response Body |
+    |--------|-------------|-------------|---------------|
+    | GET | 200 | Returns with a raw image file of session | Binary file |
+    | GET | 401 | User unauthorized | JSON: `{ "error": "Unauthorized" }`|
+    | GET | 404 | User not found    | JSON: `{ "error": "User not found" }`|
+    | - | - | - | - |
+    | POST | 200 | Returns with a raw image file of session | Binary file |
+    | POST | 401 | User unauthorized | JSON: `{ "error": "Unauthorized" }`|
+    | POST | 404 | User not found    | JSON: `{ "error": "User not found" }`|
+
 ## Testing
 
 Create tests for each endpoint using Postman.
