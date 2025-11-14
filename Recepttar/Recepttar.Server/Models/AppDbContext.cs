@@ -11,5 +11,26 @@ namespace Recepttar.Server.Models
         public DbSet<Review> Review { get; set; }
         public DbSet<Poll> Poll { get; set; }
         public DbSet<PollOption> PollOption { get; set; }
+        public DbSet<Favorites> Favorites { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Recipe>()
+                .Property(r => r.Difficulty)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => Enum.Parse<Enums.RecipeDiffEnum>(v)
+                );
+
+            modelBuilder.Entity<Recipe>()
+                .Property(r => r.Type)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => Enum.Parse<Enums.RecipeTypeEnum>(v)
+                );
+        }
+
     }
 }

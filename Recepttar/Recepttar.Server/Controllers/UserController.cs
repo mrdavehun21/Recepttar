@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Recepttar.Server.Constants;
+using Recepttar.Server.DTO.RecipeDTO;
 using Recepttar.Server.HelperMethods;
 using Recepttar.Server.Models;
 using System.Security.Cryptography;
@@ -265,17 +266,73 @@ namespace Recepttar.Server.Controllers
         [HttpGet("favorites")]
         public IActionResult GetUserFavorites()
         {
-            var EveryFavorite = new List<DTO.RecipeDTO.FavoriteRecipe>();
+            // If preventing user from accessing image (Status code 401)
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
+
+            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
+
+            // If user not found (Status code 404)
+            if (FindUser == null)
+            {
+                return NotFound(new { error = "User not found" });
+            }
+
+            var count = _context.Favorites.Count(f => f.UserId == UserId);
+
+            var favorites = _context.Favorites
+                .Where(f => f.UserId == UserId)
+                .Select(f => new FavoriteRecipe()
+                {
+                    Title = f.Recipe.Title,
+                    Difficulty = f.Recipe.Difficulty,
+                    TimeMinutes = f.Recipe.TimeMinutes,
+                    Servings = f.Recipe.Servings,
+                    DishPicture = "recipes/" + f.RecipeId
+                })
+                .ToList();
 
             // Return with all the favorites (Status code 200)
-            return Ok(EveryFavorite);
+            return Ok(favorites);
         }
 
         [HttpPost("favorites/{recipeId}")]
         public IActionResult AddToUserFavorites(int recipeId)
         {
+            var Recipe = _context.Recipe.FirstOrDefault(f => f.Id == recipeId);
+
             // If recipe not found (Status code 404)
-            return NotFound(new { error = "Recipe not found" });
+            if(Recipe == null)
+            {
+                return NotFound(new { error = "Recipe not found" });
+            }
+
+            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
+
+            var ItemInFavorite = _context.Favorites.FirstOrDefault(f => f.UserId == UserId && f.RecipeId == recipeId);
+
+            // Remove from favorite
+            if (ItemInFavorite != null)
+            {
+                _context.Favorites.Remove(ItemInFavorite);
+                _context.SaveChanges();
+
+                // Successfully removed recipe from favorites
+                return Ok(new { message = "Recipe removed from favorites" });
+            }
+
+            _context.Favorites.Add(new Favorites()
+            {
+                UserId = (int)UserId,
+                RecipeId = recipeId
+            });
+            _context.SaveChanges();
 
             // Recipe successfully added to favorites (Status code 200)
             return Ok(new { message = "Recipe added to favorites" });
