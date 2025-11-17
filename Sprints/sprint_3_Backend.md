@@ -230,7 +230,7 @@ Users should be able to:
 
     | Method | Status Code | Description | Response Body | Path Parameter |
     |--------|-------------|-------------|---------------|----------------|
-    | POST   | 201 | Successfully added recipe to favorites | JSON: `{ "message": "Recipe added to favorites" }` | `recipeId` (recipe ID) |
+    | POST   | 201 | Successfully added recipe to favorites | JSON: `{ "message": "Recipe added to favorites" }` or `{ message = "Recipe removed from favorites" }` | `recipeId` (recipe ID) |
     | POST   | 404 | Recipe not found | JSON: `{ "error": "Recipe not found" }` | `recipeId` (recipe ID) |
     | DELETE | 204 | Successfully removed recipe from favorites | - | `recipeId` (recipe ID) |
     | DELETE | 404 | Recipe not found | JSON: `{ "error": " Recipe not found" }` | `recipeId` (recipe ID) |

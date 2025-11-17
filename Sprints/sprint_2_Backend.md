@@ -104,6 +104,14 @@ Users should be able to:
     | POST | 401 | User unauthorized | JSON: `{ "error": "Unauthorized" }`|
     | POST | 404 | User not found    | JSON: `{ "error": "User not found" }`|
 
+6. `/user/profile/profilepicture/{userId}`
+
+    | Method | Status Code | Description | Response Body | Path Parameter |
+    |--------|-------------|-------------|---------------|----------------|
+    | GET | 200 | Returns with a raw image file on userId | Binary file | `userId` (user ID) |
+    | GET | 401 | User unauthorized | JSON: `{ "error": "Unauthorized" }`| `userId` (user ID) |
+    | GET | 404 | User not found    | JSON: `{ "error": "User not found" }`| `userId` (user ID) |
+
 ## Testing
 
 Create tests for each endpoint using Postman.
