@@ -200,6 +200,7 @@ namespace Recepttar.Server.Controllers
             {
                 Name = FindUser.Name,
                 Bio = FindUser.Bio,
+                ProfilePicture = ProfilePicturePath.Path + "/" + userId
             };
             return Ok(UserData);
         }
@@ -216,6 +217,28 @@ namespace Recepttar.Server.Controllers
             int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
 
             var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
+
+            // If user not found (Status code 404)
+            if (FindUser == null)
+            {
+                return NotFound(new { error = "User not found" });
+            }
+
+            // If all goes well, return with image (Status code 200)
+            byte[] Image = FindUser.ProfilePicture;
+            return File(Image, "image/jpg");
+        }
+
+        [HttpGet("profile/profilepicture{userID}")]
+        public IActionResult ReturnProfilePic(int userId)
+        {
+            // If preventing user from accessing image (Status code 401)
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
+
+            var FindUser = _context.User.FirstOrDefault(d => d.Id == userId);
 
             // If user not found (Status code 404)
             if (FindUser == null)

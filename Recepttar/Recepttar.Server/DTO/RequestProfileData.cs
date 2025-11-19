@@ -1,9 +1,11 @@
-﻿namespace Recepttar.Server.DTO
+﻿using Recepttar.Server.Constants;
+
+namespace Recepttar.Server.DTO
 {
     public class RequestProfileData
     {
         public string Name { get; set; }
         public string Bio { get; set; }
-        public string ProfilePicture { get; } = "profile/profilepicture";
+        public string ProfilePicture { get; set; } = ProfilePicturePath.Path;
     }
 }
