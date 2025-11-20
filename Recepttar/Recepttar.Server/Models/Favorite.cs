@@ -2,7 +2,7 @@
 
 namespace Recepttar.Server.Models
 {
-    public class Favorites
+    public class Favorite
     {
         [Key]
         public int Id { get; set; }

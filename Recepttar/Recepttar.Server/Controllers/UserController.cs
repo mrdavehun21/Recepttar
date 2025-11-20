@@ -305,9 +305,9 @@ namespace Recepttar.Server.Controllers
                 return NotFound(new { error = "User not found" });
             }
 
-            var count = _context.Favorites.Count(f => f.UserId == UserId);
+            var count = _context.Favorite.Count(f => f.UserId == UserId);
 
-            var favorites = _context.Favorites
+            var favorites = _context.Favorite
                 .Where(f => f.UserId == UserId)
                 .Select(f => new FavoriteRecipe()
                 {
@@ -338,19 +338,19 @@ namespace Recepttar.Server.Controllers
 
             var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
 
-            var ItemInFavorite = _context.Favorites.FirstOrDefault(f => f.UserId == UserId && f.RecipeId == recipeId);
+            var ItemInFavorite = _context.Favorite.FirstOrDefault(f => f.UserId == UserId && f.RecipeId == recipeId);
 
             // Remove from favorite
             if (ItemInFavorite != null)
             {
-                _context.Favorites.Remove(ItemInFavorite);
+                _context.Favorite.Remove(ItemInFavorite);
                 _context.SaveChanges();
 
                 // Successfully removed recipe from favorites
                 return Ok(new { message = "Recipe removed from favorites" });
             }
 
-            _context.Favorites.Add(new Favorites()
+            _context.Favorite.Add(new Favorite()
             {
                 UserId = (int)UserId,
                 RecipeId = recipeId
