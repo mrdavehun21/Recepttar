@@ -29,8 +29,26 @@ Users should be able to:
         "password": "string"
     }
     ```
+    
+2. `/user/checkemail`
 
-2. `/user/login`
+    | Method | Status Code | Description | Response Body |
+    |--------|-------------|-------------|---------------|
+    | GET   | 200 | Email does exist     | JSON: `{ "message": "Email exists" }` |
+    | GET   | 400 | Bad request (missing fields, email exists) | JSON: `{ "error": "Bad request" }` |
+    | GET   | 404 | Email not found      | JSON: `{ "error": "Email not found" }` |
+
+    **Query parameter (required)**
+
+    | Parameter     | Type    |
+    |---------------|---------|
+    | `email`       | string  |
+
+    **Example request**
+
+    `GET /user/checkemail?email=youremail@gmail.com`
+
+3. `/user/login`
 
     | Method | Status Code | Description | Response Body |
     |--------|-------------|-------------|---------------|
@@ -47,14 +65,14 @@ Users should be able to:
     }
     ```
 
-3. `/user/logout`
+4. `/user/logout`
 
     | Method | Status Code | Description | Response Body |
     |--------|-------------|-------------|---------------|
     | POST   | 200 | Successfully logged out | JSON: `{ "message": "Successfully logged out" }` |
     | POST   | 401 | Unauthorized | JSON: `{ "error": "Unauthorized" }` |
 
-4. `/user/profile`
+5. `/user/profile`
 
     | Method | Status Code | Description | Response Body |
     |--------|-------------|-------------|---------------|
@@ -75,7 +93,7 @@ Users should be able to:
     }
     ```
 
-5. `/user/profile/{userId}`
+6. `/user/profile/{userId}`
 
     | Method | Status Code | Description | Response Body | Path Parameter |
     |--------|-------------|-------------|---------------|----------------|
@@ -92,7 +110,7 @@ Users should be able to:
     }
     ```
 
-6. `/user/profile/profilepicture`
+7. `/user/profile/profilepicture`
 
     | Method | Status Code | Description | Response Body |
     |--------|-------------|-------------|---------------|
@@ -104,7 +122,7 @@ Users should be able to:
     | POST | 401 | User unauthorized | JSON: `{ "error": "Unauthorized" }`|
     | POST | 404 | User not found    | JSON: `{ "error": "User not found" }`|
 
-6. `/user/profile/profilepicture/{userId}`
+8. `/user/profile/profilepicture/{userId}`
 
     | Method | Status Code | Description | Response Body | Path Parameter |
     |--------|-------------|-------------|---------------|----------------|

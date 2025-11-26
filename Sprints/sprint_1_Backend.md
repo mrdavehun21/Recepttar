@@ -28,7 +28,7 @@ Create models and fields
 
     | Field            | C# Type      | Database Type (MySQL) |  Description               |
     |------------------|--------------|-----------------------|----------------------------|
-    | `Id`             | int (PK)     | INT AUTO_INCREMENT PK | Unique identifier          |
+    | `Id`             | integer (PK) | INT AUTO_INCREMENT PK | Unique identifier          |
     | `Name`           | string       | VARCHAR(255)          | Display name of the user   |
     | `Email`          | string       | VARCHAR(255) UNIQUE   | Used for login (unique)    |
     | `PasswordHash`   | string       | VARCHAR(128)          | Hashed password            |
@@ -38,19 +38,19 @@ Create models and fields
 
 - `Models\Recipe.cs`
 
-    | Field           | Type                  | Database Type (MySQL) | Description                         |
-    |-----------------|-----------------------|-----------------------|-------------------------------------|
-    | `Id`            | int (PK)              | INT AUTO_INCREMENT PK | Unique identifier                   |
-    | `Title`         | string                | VARCHAR(255)          | Recipe name                         |
-    | `Description`   | string                | TEXT                  | Overview and short instructions     |
-    | `Difficulty`    | enum                  | ENUM                  | “Easy”, “Medium”, “Hard”            |
-    | `TimeMinutes`   | int                   | INT                   | Preparation time in minutes         |
-    | `Servings`      | int                   | INT                   | Number of servings                  |
-    | `IsExpensive`   | bool                  | BOOLEAN               | true = expensive, false = cheap     |
-    | `IsVegan`       | bool                  | BOOLEAN               | true = vegan, false = not vegan     |
-    | `Type`          | enum                  | ENUM                  | “Appetizer”, “MainDish”, “Dessert”  |
-    | `DishPicture`   | byte[]                | MEDUIMBLOB            | A chooseable dish img               |
-    | `AuthorId`      | int (FK -> `User.Id`) | INT                   | References `User.Id`                |
+    | Field           | Type                      | Database Type (MySQL) | Description                         |
+    |-----------------|---------------------------|-----------------------|-------------------------------------|
+    | `Id`            | integer (PK)              | INT AUTO_INCREMENT PK | Unique identifier                   |
+    | `Title`         | string                    | VARCHAR(255)          | Recipe name                         |
+    | `Description`   | string                    | TEXT                  | Overview and short instructions     |
+    | `Difficulty`    | enum                      | ENUM                  | “Easy”, “Medium”, “Hard”            |
+    | `TimeMinutes`   | integer                   | INT                   | Preparation time in minutes         |
+    | `Servings`      | integer                   | INT                   | Number of servings                  |
+    | `IsExpensive`   | bool                      | BOOLEAN               | true = expensive, false = cheap     |
+    | `IsVegan`       | bool                      | BOOLEAN               | true = vegan, false = not vegan     |
+    | `Type`          | enum                      | ENUM                  | “Appetizer”, “MainDish”, “Dessert”  |
+    | `DishPicture`   | byte[]                    | MEDUIMBLOB            | A chooseable dish img               |
+    | `AuthorId`      | integer (FK -> `User.Id`) | -                     | References `User.Id`                |
 
 - `Models/Poll.cs`
 
@@ -67,7 +67,15 @@ Create models and fields
     | `Id`         | integer (PK)               | INT AUTO_INCREMENT PK | Unique identifier               |
     | `PollId`     | integer (FK -> `Poll.Id`)  | -                     | References the poll             |
     | `OptionText` | string                     | VARCHAR(255)          | Option text                     |
-    | `VoteCount`  | integer                    | INT                   | Number of votes for this option |
+
+- `Models/Vote.cs`
+
+    | Field       | Type                            | Database Type (MySQL) | Description                                                |
+    |-------------|---------------------------------|-----------------------|------------------------------------------------------------|
+    | `Id`        | integer (PK)                    | INT AUTO_INCREMENT PK | Unique identifier                                          |
+    | `UserId`    | integer (FK -> `Users.Id`)      | -                     | References `User.Id`                                       |
+    | `PollId`    | integer (FK -> `Poll.Id`)       | -                     | References `Poll.Id`                                       |
+    | `OptionId`  | integer (FK -> `PollOption.Id`) | -                     | References `PollOption.Id`                                 |
 
 - `Models/Review.cs`
 
@@ -81,7 +89,7 @@ Create models and fields
     | `CreatedAt` | DateTime                     | TIMESTAMP Current     | When the review was created                |
     | `UpdatedAt` | DateTime Null                | TIMESTAMP Null        | When the review was last updated           |
 
-- `Models/Favorites.cs`
+- `Models/Favorite.cs`
 
     | Field       | Type                         | Database Type (MySQL) | Description                                                |
     |-------------|------------------------------|-----------------------|------------------------------------------------------------|
@@ -109,12 +117,12 @@ Create models and fields
 
 - Run the project locally and confirm the test endpoint returns a response.
 - Verify the database schema exists in MYSQL.
-- Confirm relationships work correctly between User, Recipe, Poll, PollOption, Review and Favorites tables.
+- Confirm relationships work correctly between User, Recipe, Poll, PollOption, Vote, Review and Favorite tables.
 
 ## Deliverables
 
 - Working ASP .NET Core Web API project connected to MySQL.
-- Initial database created with **User**, **Recipe**, **Poll**, **PollOption**, **Review** and **Favorites** tables.
+- Initial database created with **User**, **Recipe**, **Poll**, **PollOption**, **Vote**, **Review** and **Favorite** tables.
 
 ## Estimated Duration
 
