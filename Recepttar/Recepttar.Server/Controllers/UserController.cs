@@ -65,6 +65,26 @@ namespace Recepttar.Server.Controllers
             return Created(string.Empty, new { message = "User created" });
         }
 
+        [HttpGet("checkEmail")]
+        public IActionResult CheckEmail([FromQuery] string email)
+        {
+            // Validate input
+            if (string.IsNullOrEmpty(email))
+                return BadRequest(new { error = "Email is required" });
+
+            // Check if the email exists
+            var exists = _context.User.Any(u => u.Email == email);
+
+            if (exists)
+            {
+                // Email exists (Status code 200)
+                return Ok(new { exists = true, message = "Email found" });
+            }
+
+            // Email does not exist (Status code 404)
+            return NotFound(new { exists = false, message = "Email not found" });
+        }
+
         [HttpPost("login")]
         public IActionResult LoginUser([FromForm] DTO.LogInUser user)
         {
