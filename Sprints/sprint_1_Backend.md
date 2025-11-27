@@ -81,6 +81,14 @@ Create models and fields
     | `CreatedAt` | DateTime                     | TIMESTAMP Current     | When the review was created                |
     | `UpdatedAt` | DateTime Null                | TIMESTAMP Null        | When the review was last updated           |
 
+- `Models/Favorites.cs`
+
+    | Field       | Type                         | Database Type (MySQL) | Description                                                |
+    |-------------|------------------------------|-----------------------|------------------------------------------------------------|
+    | `Id`        | integer (PK)                 | INT AUTO_INCREMENT PK | Unique identifier                                          |
+    | `UserId`    | integer (FK -> `Users.Id`)   | -                     | Reference to the user who added that recipe as favorite    |
+    | `RecipeId`  | integer (FK -> `Recipes.Id`) | -                     | Reference to the recipe that the user added as favorite    |
+
 - Define the one-to-many relationships between the classes.
 
 ### 3. **Version Control**
@@ -101,12 +109,12 @@ Create models and fields
 
 - Run the project locally and confirm the test endpoint returns a response.
 - Verify the database schema exists in MYSQL.
-- Confirm relationships work correctly between User, Recipe, Poll, PollOption and Review tables.
+- Confirm relationships work correctly between User, Recipe, Poll, PollOption, Review and Favorites tables.
 
 ## Deliverables
 
 - Working ASP .NET Core Web API project connected to MySQL.
-- Initial database created with **User**, **Recipe**, **Poll**, **PollOption** and **Review** tables.
+- Initial database created with **User**, **Recipe**, **Poll**, **PollOption**, **Review** and **Favorites** tables.
 
 ## Estimated Duration
 
