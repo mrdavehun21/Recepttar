@@ -1,4 +1,4 @@
-# Sprint 1 — Frontend Setup and Authentication Pages
+# Sprint 1 - Frontend Setup and Authentication Pages
 
 ## Goal
 
@@ -10,14 +10,12 @@ Users should be able to:
 - Maintain session state
 - View and edit their profile
 
----
-
 ## Tasks
 
 ### Setup
 
 - Install dependencies:
-  - `axios`, `react-router-dom`, `bootstrap`
+  - `axios`, `react-router-dom`, `bootstrap`, `Playwright`
   - `react-query` or custom hooks for data fetching (optional)
 - Configure base API URL for backend communication
 
@@ -47,24 +45,19 @@ Users should be able to:
 - Set up routes: `/login`, `/register`, `/profile`, `/home`
 - Protect routes (redirect to login if unauthenticated)
 
----
-
 ### Testing — Frontend Behavior
 
 - Registration and login works
 - Session persists across page reloads
 - Unauthorized users are redirected correctly
 - Profile editing updates UI and backend data
-
----
+- Use Playwright for testing
 
 ### Deliverables
 
 - React app connected to backend auth endpoints  
 - Working login, register, logout, and profile pages  
 - Session management implemented  
-
----
 
 ### Estimated Duration
 
