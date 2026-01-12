@@ -1,4 +1,4 @@
-# Sprint 1 — Frontend Setup and Authentication Pages
+# Sprint 1 - Frontend Setup and Authentication Pages
 
 ## Goal
 
