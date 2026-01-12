@@ -52,7 +52,7 @@ namespace Recepttar.Server.Controllers
                 PasswordHash = Hashedpwd,
                 Bio = "",
                 ProfilePicture = new byte[] { },
-                Role = false
+                Rank = Enums.UserRanksEnum.Hobbi_szakács
             };
 
             // Add new user to database
@@ -148,6 +148,7 @@ namespace Recepttar.Server.Controllers
             {
                 Name = FindUser.Name,
                 Bio = FindUser.Bio,
+                Rank = FindUser.Rank
             };
             // Successful request (Status code 200)
             return Ok(UserData);
@@ -220,7 +221,9 @@ namespace Recepttar.Server.Controllers
             {
                 Name = FindUser.Name,
                 Bio = FindUser.Bio,
-                ProfilePicture = ProfilePicturePath.Path + "/" + userId
+                ProfilePicture = ProfilePicturePath.Path + "/" + ,
+                Rank = FindUser.Rank
+                
             };
             return Ok(UserData);
         }

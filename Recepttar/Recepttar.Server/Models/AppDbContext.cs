@@ -31,6 +31,13 @@ namespace Recepttar.Server.Models
                     v => v.ToString(),
                     v => Enum.Parse<Enums.RecipeTypeEnum>(v)
                 );
+
+            modelBuilder.Entity<User>()
+                .Property(r => r.Rank)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => Enum.Parse<Enums.UserRanksEnum>(v)
+                );
         }
 
     }
