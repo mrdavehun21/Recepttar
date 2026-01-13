@@ -221,7 +221,7 @@ namespace Recepttar.Server.Controllers
             {
                 Name = FindUser.Name,
                 Bio = FindUser.Bio,
-                ProfilePicture = ProfilePicturePath.Path + "/" + ,
+                ProfilePicture = ProfilePicturePath.Path + "/" + userId,
                 Rank = FindUser.Rank
                 
             };
