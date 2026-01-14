@@ -148,6 +148,7 @@ namespace Recepttar.Server.Controllers
             {
                 Name = FindUser.Name,
                 Bio = FindUser.Bio,
+                ProfilePicture = "/user/" + ProfilePicturePath.Path,
                 Rank = FindUser.Rank
             };
             // Successful request (Status code 200)
