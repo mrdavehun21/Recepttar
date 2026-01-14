@@ -52,7 +52,7 @@ namespace Recepttar.Server.Controllers
                 PasswordHash = Hashedpwd,
                 Bio = "",
                 ProfilePicture = new byte[] { },
-                Role = false
+                Rank = Enums.UserRanksEnum.Hobbi_szakács
             };
 
             // Add new user to database
@@ -70,7 +70,7 @@ namespace Recepttar.Server.Controllers
         {
             // Validate input
             if (string.IsNullOrEmpty(email))
-                return BadRequest(new { error = "Email is required" });
+                return BadRequest(new { error = "Bad request" });
 
             // Check if the email exists
             var exists = _context.User.Any(u => u.Email == email);
@@ -78,11 +78,11 @@ namespace Recepttar.Server.Controllers
             if (exists)
             {
                 // Email exists (Status code 200)
-                return Ok(new { exists = true, message = "Email found" });
+                return Ok(new { message = "Email exists" });
             }
 
             // Email does not exist (Status code 404)
-            return NotFound(new { exists = false, message = "Email not found" });
+            return NotFound(new { error = "Email not found" });
         }
 
         [HttpPost("login")]
@@ -109,7 +109,7 @@ namespace Recepttar.Server.Controllers
             HttpContext.Session.SetInt32(SessionKeys.UserId, FindUser.Id);
 
             // Successful loggin (Status code 200)
-            return Ok(new { message = "Successfully logged in", token = "TODO" });
+            return Ok(new { message = "Successfully logged in" });
         }
 
         [HttpPost("logout")]
@@ -148,6 +148,8 @@ namespace Recepttar.Server.Controllers
             {
                 Name = FindUser.Name,
                 Bio = FindUser.Bio,
+                ProfilePicture = "/user/" + ProfilePicturePath.Path,
+                Rank = FindUser.Rank
             };
             // Successful request (Status code 200)
             return Ok(UserData);
@@ -220,7 +222,9 @@ namespace Recepttar.Server.Controllers
             {
                 Name = FindUser.Name,
                 Bio = FindUser.Bio,
-                ProfilePicture = ProfilePicturePath.Path + "/" + userId
+                ProfilePicture = ProfilePicturePath.Path + "/" + userId,
+                Rank = FindUser.Rank
+                
             };
             return Ok(UserData);
         }

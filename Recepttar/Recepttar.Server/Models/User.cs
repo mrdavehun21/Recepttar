@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Recepttar.Server.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Recepttar.Server.Models
 {
@@ -11,6 +12,6 @@ namespace Recepttar.Server.Models
         public string PasswordHash { get; set; }
         public string Bio { get; set; }
         public byte[] ProfilePicture { get; set; }
-        public bool Role { get; set; }
+        public UserRanksEnum Rank { get; set; }
     }
 }
