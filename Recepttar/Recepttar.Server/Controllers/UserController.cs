@@ -109,7 +109,7 @@ namespace Recepttar.Server.Controllers
             HttpContext.Session.SetInt32(SessionKeys.UserId, FindUser.Id);
 
             // Successful loggin (Status code 200)
-            return Ok(new { message = "Successfully logged in", token = "TODO" });
+            return Ok(new { message = "Successfully logged in" });
         }
 
         [HttpPost("logout")]
