@@ -19,6 +19,13 @@ namespace Recepttar.Server.Controllers
         [HttpGet("active")]
         public IActionResult ActivePolls()
         {
+            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            if(UserId == null)
+            {
+                UserId = -1;
+            }
+
             // Return found active polls (Status code 200)
             var FoundActivePolls = _context.Poll.Join(_context.PollOption, pollTable => pollTable.Id, pollOptionTable => pollOptionTable.PollId, (pollTable, pollOptionTable) => new {pollTable, pollOptionTable})
                 .GroupBy(d => new { d.pollTable.Id, d.pollTable.Question })
@@ -30,8 +37,9 @@ namespace Recepttar.Server.Controllers
                     {
                         id = x.pollOptionTable.Id,
                         optionText = x.pollOptionTable.OptionText,
-                        voteCount = _context.Vote.Count(d => d.OptionId == x.pollOptionTable.Id && d.PollId == x.pollOptionTable.PollId)
-                    }).ToList()
+                        voteCount = _context.Vote.Count(d => d.OptionId == x.pollOptionTable.Id && d.PollId == x.pollOptionTable.PollId),
+                    }).ToList(),
+                    votedOn = _context.Vote.Where(v => v.UserId == UserId && v.PollId == g.Key.Id).Select(v => (int?)v.OptionId).FirstOrDefault()
                 });
 
             if(FoundActivePolls == null)
@@ -144,6 +152,37 @@ namespace Recepttar.Server.Controllers
 
             _context.SaveChanges();
             return Ok(new { message = "Poll posted successfuly" });
+        }
+
+        [HttpPost("deletepoll/{pollId}")]
+        public IActionResult DeletePoll(int pollId)
+        {
+            // Check if user is logged in and has the necessary rank to create a poll
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
+
+            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            var UserDetails = _context.User.FirstOrDefault(d => d.Id == UserId);
+
+            var PollDetail = _context.Poll.FirstOrDefault(d => d.Id == pollId);
+
+            if (PollDetail == null)
+            {
+                return BadRequest(new { error = "Poll does not exist" });
+            }
+
+            if (UserDetails == null || UserDetails.Id != PollDetail.AuthorId)
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
+
+            _context.Poll.Remove(PollDetail);
+
+            _context.SaveChanges();
+            return Ok(new { message = "Poll removed successfuly" });
         }
     }
 }
