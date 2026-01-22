@@ -1,140 +1,49 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Recepttar.Server.Constants;
 using Recepttar.Server.DTO.RecipeDTO;
+using Recepttar.Server.DTO.ReviewsDTO;
 using Recepttar.Server.HelperMethods;
 using Recepttar.Server.Models;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Recepttar.Server.Controllers
 {
     [ApiController()]
-    [Route("user/")]
-    public class UserController : Controller // ALWAYS INHERIT IF CONTROLLER
+    [Route("recipes/")]
+    public class RecipeController : Controller
     {
         private readonly AppDbContext _context;
-
-        public UserController(AppDbContext context)
+        public RecipeController(AppDbContext context)
         {
             _context = context;
         }
 
-        [HttpPost("register")]
-        public IActionResult RegisterUser([FromForm] DTO.RegisterUser newUser)
+        #region Recipe viewing
+        [HttpGet]
+        public IActionResult GetAllRecipes()
         {
-            // Don't forget that the data from dto might be null!!!
-            if (string.IsNullOrEmpty(newUser.Email) ||
-                string.IsNullOrEmpty(newUser.Password) ||
-                string.IsNullOrEmpty(newUser.Name))
+            var recipesFromDb = _context.Recipe.ToList();
+
+            // Return with every recipe in the recipe table (Status code 200)
+            var recipeDto = recipesFromDb.Select(r => new RequestFullRecipe
             {
-                // if something goes wrong (Status code 400)
-                return BadRequest(new { error = "Bad request" });
-            }
+                Title = r.Title,
+                Description = r.Description,
+                Difficulty = r.Difficulty,
+                TimeMinutes = r.TimeMinutes,
+                Servings = r.Servings,
+                IsExpensive = r.IsExpensive,
+                IsVegan = r.IsVegan,
+                Type = r.Type,
+                DishPicture = DishPicturePath.GetPath(r.Id)
+            }).ToList();
 
-            // Check, if the user already exists
-            var FindUser = _context.User.Where(d => d.Email == newUser.Email).Count();
-
-            if (FindUser != 0)
-            {
-                // Return with error code that user already exists (??? error code)
-                return BadRequest(new { error = "User already exists with this email" });
-            }
-
-            // Create a hashed password
-            string Hashedpwd = PasswordHash.PasswordHasher(newUser.Password);
-
-            var user = new User()
-            {
-                Name = newUser.Name,
-                Email = newUser.Email,
-                PasswordHash = Hashedpwd,
-                Bio = "",
-                ProfilePicture = new byte[] { },
-                //Role = false
-            };
-
-            // Add new user to database
-            _context.User.Add(user);
-
-            // Save changes
-            _context.SaveChanges();
-
-            // If all goes well (Status code 201)
-            return Created(string.Empty, new { message = "User created" });
+            return Ok(recipeDto);
         }
 
-        [HttpGet("checkEmail")]
-        public IActionResult CheckEmail([FromQuery] string email)
+        [HttpPost("create")]
+        public IActionResult CreateRecipe([FromForm] DTO.RecipeDTO.CreateRecipe newRecipe)
         {
-            // Validate input
-            if (string.IsNullOrEmpty(email))
-                return BadRequest(new { error = "Email is required" });
-
-            // Check if the email exists
-            var exists = _context.User.Any(u => u.Email == email);
-
-            if (exists)
-            {
-                // Email exists (Status code 200)
-                return Ok(new { exists = true, message = "Email found" });
-            }
-
-            // Email does not exist (Status code 404)
-            return NotFound(new { exists = false, message = "Email not found" });
-        }
-
-        [HttpPost("login")]
-        public IActionResult LoginUser([FromForm] DTO.LogInUser user)
-        {
-            // Don't forget that the data from dto might be null!!!
-            if (string.IsNullOrEmpty(user.Email) ||
-                string.IsNullOrEmpty(user.Password))
-            {
-                // Missing username/password (Status code 400)
-                return BadRequest(new { error = "Email and password are required" });
-            }
-
-            // Check if user exists and if their password is matching
-            var FindUser = _context.User.FirstOrDefault(d => d.Email == user.Email);
-            if(FindUser == null || 
-                FindUser.PasswordHash != PasswordHash.PasswordHasher(user.Password))
-            {
-                // Invalid credentials (Status code 401)
-                return Unauthorized(new { error = "Invalid email or password" });
-            }
-
-            // Create a sessionID
-            HttpContext.Session.SetInt32(SessionKeys.UserId, FindUser.Id);
-
-            // Successful loggin (Status code 200)
-            return Ok(new { message = "Successfully logged in", token = "TODO" });
-        }
-
-        [HttpPost("logout")]
-        public IActionResult Logout()
-        {
-            // If already logged out (Status code 401)
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
-            {
-                return Unauthorized(new { error = "Unauthorized" });
-            }
-
-            // Clears every session paramaters
-            HttpContext.Session.Clear();
-
-            // Clearing browser-side cookies
-            Response.Cookies.Delete(".AspNetCore.Session");
-
-            // Successful logout (Status code 200)
-            return Ok(new { message = "Successfully logged out" });
-        }
-
-        [HttpGet("profile")]
-        public IActionResult GetProfile()
-        {
-            // Prevent user from requesting profile data if not logged in
+            // Unauthorized access (Status code 401)
             if (!IsUserAuthorized.IsAuthorized(HttpContext))
             {
                 return Unauthorized(new { error = "Unauthorized" });
@@ -142,244 +51,349 @@ namespace Recepttar.Server.Controllers
 
             int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
 
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
+            var user = _context.User.FirstOrDefault(d => d.Id == UserId);
 
-            var UserData = new DTO.RequestProfileData()
+            // Bad request or missing/invalid data (Status code 400)
+            if (newRecipe.TimeMinutes <= 1 ||
+                newRecipe.Servings < 1)
             {
-                Name = FindUser.Name,
-                Bio = FindUser.Bio,
+                return BadRequest(new { error = "Invalid request body" });
+            }
+
+            var recipe = new Recipe()
+            {
+                AuthorId = user.Id,
+                Title = newRecipe.Title,
+                Description = newRecipe.Description,
+                Difficulty = newRecipe.Difficulty,
+                TimeMinutes = newRecipe.TimeMinutes,
+                Servings = newRecipe.Servings,
+                IsExpensive = newRecipe.IsExpensive,
+                IsVegan = newRecipe.IsVegan,
+                Type = newRecipe.Type
             };
-            // Successful request (Status code 200)
-            return Ok(UserData);
-        }
 
-        [HttpPut("profile")]
-        public IActionResult UpdateProfile([FromForm] DTO.UpdateProfileData user)
-        {
-            // Unauthorized access (Status 401)
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
-            {
-                return Unauthorized(new { error = "Unauthorized" });
-            }
-
-            // User not found (Status 404)
-            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
-
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
-
-            if(FindUser == null)
-            {
-                return NotFound(new { error = "User not found" });
-            }
-
-            if (!string.IsNullOrEmpty(user.Name))
-            {
-                FindUser.Name = user.Name;
-            }
-            if(!string.IsNullOrEmpty(user.Email))
-            {
-                FindUser.Email = user.Email;
-            }
-            if(!string.IsNullOrEmpty(user.PasswordHash))
-            {
-                FindUser.PasswordHash = PasswordHash.PasswordHasher(user.PasswordHash);
-            }
-            if(!string.IsNullOrEmpty(user.Bio))
-            {
-                FindUser.Bio = user.Bio;
-            }
-            if (user.ProfilePicture != null)
-            {
-                FindUser.ProfilePicture = user.ProfilePicture;
-            }
-
-            _context.SaveChanges();
-
-            // Successfully updated profile (200)
-            var UserData = new DTO.RequestProfileData
-            {
-                Name = FindUser.Name,
-                Bio = FindUser.Bio,
-            };
-            return Ok(UserData);
-        }
-
-        [HttpGet("profile/{userId}")]
-        public IActionResult GetOthersProfile(int userId)
-        {
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == userId);
-
-            // If requested user doesn't exists (Status code 404)
-            if(FindUser == null)
-            {
-                return NotFound(new { error = "User not found", userId});
-            }
-
-            // If found user, return profile data (Status code 200)
-            var UserData = new DTO.RequestProfileData
-            {
-                Name = FindUser.Name,
-                Bio = FindUser.Bio,
-                ProfilePicture = ProfilePicturePath.Path + "/" + userId
-            };
-            return Ok(UserData);
-        }
-
-        [HttpGet("profile/profilepicture")]
-        public IActionResult ReturnProfilePic()
-        {
-            // If preventing user from accessing image (Status code 401)
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
-            {
-                return Unauthorized(new { error = "Unauthorized" });
-            }
-
-            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
-
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
-
-            // If user not found (Status code 404)
-            if (FindUser == null)
-            {
-                return NotFound(new { error = "User not found" });
-            }
-
-            // If all goes well, return with image (Status code 200)
-            byte[] Image = FindUser.ProfilePicture;
-            return File(Image, "image/jpg");
-        }
-
-        [HttpGet("profile/profilepicture{userID}")]
-        public IActionResult ReturnProfilePic(int userId)
-        {
-            // If preventing user from accessing image (Status code 401)
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
-            {
-                return Unauthorized(new { error = "Unauthorized" });
-            }
-
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == userId);
-
-            // If user not found (Status code 404)
-            if (FindUser == null)
-            {
-                return NotFound(new { error = "User not found" });
-            }
-
-            // If all goes well, return with image (Status code 200)
-            byte[] Image = FindUser.ProfilePicture;
-            return File(Image, "image/jpg");
-        }
-
-        [HttpPost("profile/profilepicture")]
-        public IActionResult UpdateProfilePic([FromForm] DTO.UpdateProfilePicture ProfilePicture)
-        {
-            // If preventing user from accessing image (Status code 401)
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
-            {
-                return Unauthorized(new { error = "Unauthorized" });
-            }
-
-            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
-
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
-
-            // If user not found (Status code 404)
-            if (FindUser == null)
-            {
-                return NotFound(new { error = "User not found" });
-            }
-
-            if (ProfilePicture.ProfilePicture != null)
+            if (newRecipe.DishPicture != null)
             {
                 using (var stream = new MemoryStream())
                 {
-                    ProfilePicture.ProfilePicture.CopyTo(stream);
-                    FindUser.ProfilePicture = stream.ToArray();
+                    newRecipe.DishPicture.CopyTo(stream);
+                    recipe.DishPicture = stream.ToArray();
                 }
             }
 
+            _context.Recipe.Add(recipe);
+
             _context.SaveChanges();
 
-            byte[] Image = FindUser.ProfilePicture;
+            // Recipe added successfully (Status code 201)
+            return Created(string.Empty, new { message = "Recipe created" });
+        }
+
+        [HttpGet("{recipeId}/image")]
+        public IActionResult GetRecipeImage(int recipeId)
+        {
+            var recipe = _context.Recipe.FirstOrDefault(d => d.Id == recipeId);
+
+            if (recipe == null || recipe.DishPicture == null)
+            {
+                return NotFound(new { error = "Dish picture not found" });
+            }
+
+            byte[] Image = recipe.DishPicture;
             return File(Image, "image/jpg");
         }
 
-        #region User favorite
-        [HttpGet("favorites")]
-        public IActionResult GetUserFavorites()
+        [HttpGet("{recipeId}")]
+        public IActionResult GetRecipe(int recipeId)
         {
-            // If preventing user from accessing image (Status code 401)
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
-            {
-                return Unauthorized(new { error = "Unauthorized" });
-            }
+            var recipe = _context.Recipe.FirstOrDefault(d => d.Id == recipeId);
 
-            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
-
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
-
-            // If user not found (Status code 404)
-            if (FindUser == null)
-            {
-                return NotFound(new { error = "User not found" });
-            }
-
-            var count = _context.Favorite.Count(f => f.UserId == UserId);
-
-            var favorites = _context.Favorite
-                .Where(f => f.UserId == UserId)
-                .Select(f => new FavoriteRecipe()
-                {
-                    Title = f.Recipe.Title,
-                    Difficulty = f.Recipe.Difficulty,
-                    TimeMinutes = f.Recipe.TimeMinutes,
-                    Servings = f.Recipe.Servings,
-                    DishPicture = "recipes/" + f.RecipeId
-                })
-                .ToList();
-
-            // Return with all the favorites (Status code 200)
-            return Ok(favorites);
-        }
-
-        [HttpPost("favorites/{recipeId}")]
-        public IActionResult AddToUserFavorites(int recipeId)
-        {
-            var Recipe = _context.Recipe.FirstOrDefault(f => f.Id == recipeId);
-
-            // If recipe not found (Status code 404)
-            if(Recipe == null)
+            // Recipe not found (Status code 404)
+            if (recipe == null)
             {
                 return NotFound(new { error = "Recipe not found" });
             }
 
-            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
-
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
-
-            var ItemInFavorite = _context.Favorite.FirstOrDefault(f => f.UserId == UserId && f.RecipeId == recipeId);
-
-            // Remove from favorite
-            if (ItemInFavorite != null)
+            // Recipe found by id
+            var Recipe = new DTO.RecipeDTO.RequestFullRecipe
             {
-                _context.Favorite.Remove(ItemInFavorite);
-                _context.SaveChanges();
+                Title = recipe.Title,
+                Description = recipe.Description,
+                Difficulty = recipe.Difficulty,
+                TimeMinutes = recipe.TimeMinutes,
+                Servings = recipe.Servings,
+                IsExpensive = recipe.IsExpensive,
+                IsVegan = recipe.IsVegan,
+                Type = recipe.Type,
+                DishPicture = DishPicturePath.GetPath(recipeId),
+                AuthorId = recipe.AuthorId
+            };
 
-                // Successfully removed recipe from favorites
-                return Ok(new { message = "Recipe removed from favorites" });
+            return Ok(Recipe);
+        }
+
+        [HttpPatch("{recipeId}")]
+        public IActionResult UpdateRecipe(int recipeId, [FromForm] DTO.RecipeDTO.PatchRecipe updates)
+        {
+            // Unauthorized access (Status code 401)
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
             }
 
-            _context.Favorite.Add(new Favorite()
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            var recipe = _context.Recipe.FirstOrDefault(d => d.Id == recipeId);
+
+            // Recipe not found (Status code 404)
+            if (recipe == null)
             {
-                UserId = (int)UserId,
-                RecipeId = recipeId
-            });
+                return NotFound(new { error = "Recipe not found" });
+            }
+
+            // User is authenticated but not the owner of the recipe (Status code 403)
+            if (recipe.AuthorId != userId)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new
+                {
+                    error = "You are not allowed to edit this recipe"
+                });
+            }
+
+            // Track if anything was updated
+            bool wasUpdated = false;
+
+            // Update only the fields that were provided
+            if (!string.IsNullOrWhiteSpace(updates.Title))
+            {
+                recipe.Title = updates.Title;
+                wasUpdated = true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(updates.Description))
+            {
+                recipe.Description = updates.Description;
+                wasUpdated = true;
+            }
+
+            if (updates.Difficulty.HasValue)
+            {
+                recipe.Difficulty = updates.Difficulty.Value;
+                wasUpdated = true;
+            }
+
+            if (updates.TimeMinutes.HasValue)
+            {
+                recipe.TimeMinutes = updates.TimeMinutes.Value;
+                wasUpdated = true;
+            }
+
+            if (updates.Servings.HasValue)
+            {
+                recipe.Servings = updates.Servings.Value;
+                wasUpdated = true;
+            }
+
+            if (updates.IsExpensive.HasValue)
+            {
+                recipe.IsExpensive = updates.IsExpensive.Value;
+                wasUpdated = true;
+            }
+
+            if (updates.IsVegan.HasValue)
+            {
+                recipe.IsVegan = updates.IsVegan.Value;
+                wasUpdated = true;
+            }
+
+            if (updates.Type.HasValue)
+            {
+                recipe.Type = updates.Type.Value;
+                wasUpdated = true;
+            }
+
+            if (updates.DishPicture != null)
+            {
+                using (var stream = new MemoryStream())
+                {
+                    updates.DishPicture.CopyTo(stream);
+                    recipe.DishPicture = stream.ToArray();
+                    wasUpdated = true;
+                }
+            }
+
+            // Only save if something was actually updated
+            if (wasUpdated)
+            {
+                _context.SaveChanges();
+
+                return Ok(new { message = "Recipe updated" });
+            }
+            else
+            {
+                // No changes were made
+                return Ok(new { message = "No changes were made to the recipe" });
+            }
+        }
+
+        [HttpDelete("{recipeId}")]
+        public IActionResult DeleteRecipe(int recipeId)
+        {
+            // Unauthorized access (Status code 401)
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
+
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            var recipe = _context.Recipe.FirstOrDefault(d => d.Id == recipeId);
+
+            // Recipe not found (Status code 404)
+            if (recipe == null)
+            {
+                return NotFound(new { error = "Recipe not found" });
+            }
+
+            // User is authenticated but not the owner of the recipe (403)
+            if (recipe.AuthorId != userId)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new
+                {
+                    error = "You are not allowed to delete this recipe"
+                });
+            }
+
+            _context.Recipe.Remove(recipe);
+
             _context.SaveChanges();
 
-            // Recipe successfully added to favorites (Status code 200)
-            return Ok(new { message = "Recipe added to favorites" });
+            // Successful deletion (Status code 204)
+            return NoContent();
         }
-        #endregion User favorite
+        #endregion Recipe viewing
+
+        #region Recipe search
+        [HttpGet("search")]
+        public IActionResult SearchRecipe([FromQuery] DTO.SearchQueries queries)
+        {
+            // Example request: /recipes/search?type=dessert&difficulty=easy&isVegan=true&isExpensive=true&search=chocolate
+
+            var recipeQuery = _context.Recipe.AsQueryable();
+
+            if (queries.Type.HasValue)
+            {
+                recipeQuery = recipeQuery.Where(r => r.Type == queries.Type.Value);
+            }
+
+            if (queries.Difficulty.HasValue)
+            {
+                recipeQuery = recipeQuery.Where(r => r.Difficulty == queries.Difficulty.Value);
+            }
+
+            if (queries.IsVegan.HasValue)
+            {
+                recipeQuery = recipeQuery.Where(r => r.IsVegan == queries.IsVegan.Value);
+            }
+
+            if (queries.IsExpensive.HasValue)
+            {
+                recipeQuery = recipeQuery.Where(r => r.IsExpensive == queries.IsExpensive.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(queries.Search))
+            {
+                recipeQuery = recipeQuery.Where(r => r.Title.Contains(queries.Search) || r.Description.Contains(queries.Search));
+            }
+            
+            var resultsDto = recipeQuery.Select(r => new RequestFullRecipe
+            {
+                DishPicture = DishPicturePath.GetPath(r.Id),
+                Title = r.Title,
+                Description = r.Description,
+                Difficulty = r.Difficulty,
+                TimeMinutes = r.TimeMinutes,
+                Servings = r.Servings,
+                IsExpensive = r.IsExpensive,
+                IsVegan = r.IsVegan,
+                Type = r.Type,
+                AuthorId = r.AuthorId
+            }).ToList();
+
+            // If found recipe, return (Status code 200)
+            return Ok(resultsDto);
+        }
+        #endregion Recipe search
+
+        #region Reviews
+        [HttpGet("{recipeId}/reviews")]
+        public IActionResult Getreviews(int recipeId)
+        {
+            var recipe = _context.Recipe.FirstOrDefault(d => d.Id == recipeId);
+
+            var reviews = _context.Review.Where(r => r.RecipeId == recipeId).OrderByDescending(r => r.CreatedAt).ToList();
+
+            // If recipe not found (Status code 404)
+            if (recipe == null)
+            {
+                return NotFound(new { error = "Recipe not found" });
+            }
+
+            // If recipe exists, list all the reviews belonging to it
+            var reviewsDto = reviews.Select(r => new GetRecipeReviews
+            {
+                RecipeId = r.RecipeId,
+                UserId = r.UserId,
+                Stars = r.Stars,
+                Comment = r.Comment,
+                CreatedAt = r.CreatedAt,
+                UpdatedAt = r.UpdatedAt
+            }).ToList();
+
+            return Ok(reviewsDto);
+        }
+
+        [HttpPost("{recipeId}/reviews")]
+        public IActionResult PostReview([FromForm] DTO.ReviewsDTO.AddReview newReview, int recipeId)
+        {
+            // Unauthorized access (Status code 401)
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
+
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            // Check if recipe exists
+            var recipe = _context.Recipe.FirstOrDefault(d => d.Id == recipeId);
+            if (recipe == null)
+            {
+                return NotFound(new { error = "Recipe not found" });
+            }
+
+            // Bad request or missing/invalid data (Status code 400)
+            if (newReview.Stars < 1 || newReview.Stars > 5)
+            {
+                return BadRequest(new { error = "Invalid request body" });
+            }
+
+            var reviewEntity = new Review
+            {
+                RecipeId = recipeId,
+                UserId = userId.Value,
+                Stars = newReview.Stars,
+                Comment = newReview.Comment,
+                CreatedAt = DateTime.Now,
+            };
+
+            _context.Review.Add(reviewEntity);
+
+            _context.SaveChanges();
+
+            // Comment added successfully (Status code 201)
+            return Created(string.Empty, new { message = "Review added successfully" });
+        }
+        #endregion Reviews
     }
 }
