@@ -184,7 +184,7 @@ namespace Recepttar.Server.Controllers
             _context.Poll.Remove(PollDetail);
 
             _context.SaveChanges();
-            return Ok(new { message = "Poll removed successfuly" });
+            return StatusCode(StatusCodes.Status204NoContent, new { message = "Poll removed successfuly" });
         }
     }
 }
