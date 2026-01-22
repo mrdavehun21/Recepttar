@@ -103,7 +103,7 @@ namespace Recepttar.Server.Controllers
             return Ok(new { message = "Vote recorded" });
         }
 
-        [HttpPut("create")]
+        [HttpPatch("create")]
         public IActionResult CreatePoll([FromForm] DTO.PollDTO.ActivePoll poll)
         {
             // Check if user is logged in and has the necessary rank to create a poll
