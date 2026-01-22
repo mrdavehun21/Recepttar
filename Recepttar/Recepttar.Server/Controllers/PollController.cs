@@ -32,6 +32,7 @@ namespace Recepttar.Server.Controllers
                 .Select(g => new
                 {
                     id = g.Key.Id,
+                    authorId = _context.Poll.First(d => d.Id == g.Key.Id).AuthorId,
                     question = g.Key.Question,
                     options = g.Select(x => new
                     {
@@ -133,6 +134,7 @@ namespace Recepttar.Server.Controllers
             // Upload poll to poll table
             Poll newPoll = new Poll()
             {
+                AuthorId = UserDetails.Id,
                 Question = poll.Question
             };
 
