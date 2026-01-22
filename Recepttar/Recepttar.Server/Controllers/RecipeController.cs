@@ -1,4 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Recepttar.Server.Constants;
+using Recepttar.Server.DTO.RecipeDTO;
+using Recepttar.Server.DTO.ReviewsDTO;
+using Recepttar.Server.HelperMethods;
 using Recepttar.Server.Models;
 
 namespace Recepttar.Server.Controllers
@@ -17,79 +21,308 @@ namespace Recepttar.Server.Controllers
         [HttpGet]
         public IActionResult GetAllRecipes()
         {
+            var recipesFromDb = _context.Recipe.ToList();
+
             // Return with every recipe in the recipe table (Status code 200)
-            var recepies = new List<DTO.RecipeDTO.RequestFullRecipe>(); // List all the records in recipes table (TODO)
-            return Ok(new DTO.RecipeDTO.RequestFullRecipe());
+            var recipeDto = recipesFromDb.Select(r => new RequestFullRecipe
+            {
+                Title = r.Title,
+                Description = r.Description,
+                Difficulty = r.Difficulty,
+                TimeMinutes = r.TimeMinutes,
+                Servings = r.Servings,
+                IsExpensive = r.IsExpensive,
+                IsVegan = r.IsVegan,
+                Type = r.Type,
+                DishPicture = DishPicturePath.GetPath(r.Id)
+            }).ToList();
+
+            return Ok(recipeDto);
         }
 
         [HttpPost("create")]
-        public IActionResult CreateRecipe([FromForm] DTO.RecipeDTO.CreateRecipe recipe)
+        public IActionResult CreateRecipe([FromForm] DTO.RecipeDTO.CreateRecipe newRecipe)
         {
-            // Bad request or missing/invalid data (Status code 400)
-            return BadRequest(new { error = "Invalid request body" });
-
             // Unauthorized access (Status code 401)
-            return Unauthorized(new { error = "Unauthorized" });
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
+
+            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            var user = _context.User.FirstOrDefault(d => d.Id == UserId);
+
+            // Bad request or missing/invalid data (Status code 400)
+            if (newRecipe.TimeMinutes <= 1 ||
+                newRecipe.Servings < 1)
+            {
+                return BadRequest(new { error = "Invalid request body" });
+            }
+
+            var recipe = new Recipe()
+            {
+                AuthorId = user.Id,
+                Title = newRecipe.Title,
+                Description = newRecipe.Description,
+                Difficulty = newRecipe.Difficulty,
+                TimeMinutes = newRecipe.TimeMinutes,
+                Servings = newRecipe.Servings,
+                IsExpensive = newRecipe.IsExpensive,
+                IsVegan = newRecipe.IsVegan,
+                Type = newRecipe.Type
+            };
+
+            if (newRecipe.DishPicture != null)
+            {
+                using (var stream = new MemoryStream())
+                {
+                    newRecipe.DishPicture.CopyTo(stream);
+                    recipe.DishPicture = stream.ToArray();
+                }
+            }
+
+            _context.Recipe.Add(recipe);
+
+            _context.SaveChanges();
 
             // Recipe added successfully (Status code 201)
             return Created(string.Empty, new { message = "Recipe created" });
         }
 
+        [HttpGet("{recipeId}/image")]
+        public IActionResult GetRecipeImage(int recipeId)
+        {
+            var recipe = _context.Recipe.FirstOrDefault(d => d.Id == recipeId);
+
+            if (recipe == null || recipe.DishPicture == null)
+            {
+                return NotFound(new { error = "Dish picture not found" });
+            }
+
+            byte[] Image = recipe.DishPicture;
+            return File(Image, "image/jpg");
+        }
+
         [HttpGet("{recipeId}")]
         public IActionResult GetRecipe(int recipeId)
         {
+            var recipe = _context.Recipe.FirstOrDefault(d => d.Id == recipeId);
+
             // Recipe not found (Status code 404)
-            return NotFound(new { error = "Recipe not found" });
+            if (recipe == null)
+            {
+                return NotFound(new { error = "Recipe not found" });
+            }
 
             // Recipe found by id
-            var Recipe = new DTO.RecipeDTO.RequestFullRecipe(); // Search for recipe (TODO)
+            var Recipe = new DTO.RecipeDTO.RequestFullRecipe
+            {
+                Title = recipe.Title,
+                Description = recipe.Description,
+                Difficulty = recipe.Difficulty,
+                TimeMinutes = recipe.TimeMinutes,
+                Servings = recipe.Servings,
+                IsExpensive = recipe.IsExpensive,
+                IsVegan = recipe.IsVegan,
+                Type = recipe.Type,
+                DishPicture = DishPicturePath.GetPath(recipeId),
+                AuthorId = recipe.AuthorId
+            };
+
             return Ok(Recipe);
         }
 
-        [HttpPut("{recipeId}")]
-        public IActionResult UpdateRecipe(int recipeId)
+        [HttpPatch("{recipeId}")]
+        public IActionResult UpdateRecipe(int recipeId, [FromForm] DTO.RecipeDTO.PatchRecipe updates)
         {
-            // Recipe not found (Status code 404)
-            return NotFound(new { error = "Recipe not found" });
-
             // Unauthorized access (Status code 401)
-            return Unauthorized(new { error = "Unauthorized" });
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
 
-            // Invalid request body (Status code 400)
-            return BadRequest(new { error = "Invalid request body" });
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
 
-            // Successful update (Status code 200)
-            return Ok(new { message = "Recipe updated" });
+            var recipe = _context.Recipe.FirstOrDefault(d => d.Id == recipeId);
+
+            // Recipe not found (Status code 404)
+            if (recipe == null)
+            {
+                return NotFound(new { error = "Recipe not found" });
+            }
+
+            // User is authenticated but not the owner of the recipe (Status code 403)
+            if (recipe.AuthorId != userId)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new
+                {
+                    error = "You are not allowed to edit this recipe"
+                });
+            }
+
+            // Track if anything was updated
+            bool wasUpdated = false;
+
+            // Update only the fields that were provided
+            if (!string.IsNullOrWhiteSpace(updates.Title))
+            {
+                recipe.Title = updates.Title;
+                wasUpdated = true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(updates.Description))
+            {
+                recipe.Description = updates.Description;
+                wasUpdated = true;
+            }
+
+            if (updates.Difficulty.HasValue)
+            {
+                recipe.Difficulty = updates.Difficulty.Value;
+                wasUpdated = true;
+            }
+
+            if (updates.TimeMinutes.HasValue)
+            {
+                recipe.TimeMinutes = updates.TimeMinutes.Value;
+                wasUpdated = true;
+            }
+
+            if (updates.Servings.HasValue)
+            {
+                recipe.Servings = updates.Servings.Value;
+                wasUpdated = true;
+            }
+
+            if (updates.IsExpensive.HasValue)
+            {
+                recipe.IsExpensive = updates.IsExpensive.Value;
+                wasUpdated = true;
+            }
+
+            if (updates.IsVegan.HasValue)
+            {
+                recipe.IsVegan = updates.IsVegan.Value;
+                wasUpdated = true;
+            }
+
+            if (updates.Type.HasValue)
+            {
+                recipe.Type = updates.Type.Value;
+                wasUpdated = true;
+            }
+
+            if (updates.DishPicture != null)
+            {
+                using (var stream = new MemoryStream())
+                {
+                    updates.DishPicture.CopyTo(stream);
+                    recipe.DishPicture = stream.ToArray();
+                    wasUpdated = true;
+                }
+            }
+
+            // Only save if something was actually updated
+            if (wasUpdated)
+            {
+                _context.SaveChanges();
+
+                return Ok(new { message = "Recipe updated" });
+            }
+            else
+            {
+                // No changes were made
+                return Ok(new { message = "No changes were made to the recipe" });
+            }
         }
 
         [HttpDelete("{recipeId}")]
         public IActionResult DeleteRecipe(int recipeId)
         {
-            // Recipe not found (Status code 404)
-            return NotFound(new { error = "Recipe not found" });
-
             // Unauthorized access (Status code 401)
-            return Unauthorized(new { error = "Unauthorized" });
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
 
-            // Successful deletion (Status code 200)
-            return Ok(new { message = "Recipe deleted successfully" });
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            var recipe = _context.Recipe.FirstOrDefault(d => d.Id == recipeId);
+
+            // Recipe not found (Status code 404)
+            if (recipe == null)
+            {
+                return NotFound(new { error = "Recipe not found" });
+            }
+
+            // User is authenticated but not the owner of the recipe (403)
+            if (recipe.AuthorId != userId)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new
+                {
+                    error = "You are not allowed to delete this recipe"
+                });
+            }
+
+            _context.Recipe.Remove(recipe);
+
+            _context.SaveChanges();
+
+            // Successful deletion (Status code 204)
+            return NoContent();
         }
         #endregion Recipe viewing
 
         #region Recipe search
         [HttpGet("search")]
-        public IActionResult SearchRecipe([FromQuery] DTO.SearchQueries Queries)
+        public IActionResult SearchRecipe([FromQuery] DTO.SearchQueries queries)
         {
-            // Example request: /recipes/search?type=dessert&difficulty=easy&vegan=true&priceCategory=medium&search=chocolate
+            // Example request: /recipes/search?type=dessert&difficulty=easy&isVegan=true&isExpensive=true&search=chocolate
 
-            // If I make every parameter required and even just one is missing, it'll give a 400 bonding error. I have no control over that error message.
+            var recipeQuery = _context.Recipe.AsQueryable();
 
-            // Missing or invalid parameters (Status code 400)
-            return BadRequest(new { error = "Invalid search parameters" });
+            if (queries.Type.HasValue)
+            {
+                recipeQuery = recipeQuery.Where(r => r.Type == queries.Type.Value);
+            }
+
+            if (queries.Difficulty.HasValue)
+            {
+                recipeQuery = recipeQuery.Where(r => r.Difficulty == queries.Difficulty.Value);
+            }
+
+            if (queries.IsVegan.HasValue)
+            {
+                recipeQuery = recipeQuery.Where(r => r.IsVegan == queries.IsVegan.Value);
+            }
+
+            if (queries.IsExpensive.HasValue)
+            {
+                recipeQuery = recipeQuery.Where(r => r.IsExpensive == queries.IsExpensive.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(queries.Search))
+            {
+                recipeQuery = recipeQuery.Where(r => r.Title.Contains(queries.Search) || r.Description.Contains(queries.Search));
+            }
+            
+            var resultsDto = recipeQuery.Select(r => new RequestFullRecipe
+            {
+                DishPicture = DishPicturePath.GetPath(r.Id),
+                Title = r.Title,
+                Description = r.Description,
+                Difficulty = r.Difficulty,
+                TimeMinutes = r.TimeMinutes,
+                Servings = r.Servings,
+                IsExpensive = r.IsExpensive,
+                IsVegan = r.IsVegan,
+                Type = r.Type,
+                AuthorId = r.AuthorId
+            }).ToList();
 
             // If found recipe, return (Status code 200)
-            var Recipe = new DTO.RecipeDTO.RequestFullRecipe(); // TODO: Try finding it from the database
-            return Ok(Recipe);
+            return Ok(resultsDto);
         }
         #endregion Recipe search
 
@@ -97,21 +330,66 @@ namespace Recepttar.Server.Controllers
         [HttpGet("{recipeId}/reviews")]
         public IActionResult Getreviews(int recipeId)
         {
+            var recipe = _context.Recipe.FirstOrDefault(d => d.Id == recipeId);
+
+            var reviews = _context.Review.Where(r => r.RecipeId == recipeId).OrderByDescending(r => r.CreatedAt).ToList();
+
             // If recipe not found (Status code 404)
-            return NotFound(new { error = "Recipe not found" });
+            if (recipe == null)
+            {
+                return NotFound(new { error = "Recipe not found" });
+            }
 
             // If recipe exists, list all the reviews belonging to it
-            var reviews = new DTO.ReviewsDTO.GetRecipeReviews(); // TODO: Get all the reviews to that recipe
-            return Ok(reviews);
-        }
-        [HttpPost("{recipeId}/reviews")]
-        public IActionResult PostReview([FromForm] DTO.ReviewsDTO.AddReview NewReview, int recipeId)
-        {
-            // If one or more data is missing, it automatically sends a 400 error(?)
-            return BadRequest(new { error = "Invalid request body" });
+            var reviewsDto = reviews.Select(r => new GetRecipeReviews
+            {
+                RecipeId = r.RecipeId,
+                UserId = r.UserId,
+                Stars = r.Stars,
+                Comment = r.Comment,
+                CreatedAt = r.CreatedAt,
+                UpdatedAt = r.UpdatedAt
+            }).ToList();
 
-            // In case of unauthorized access (Status code 401)
-            return Unauthorized(new { error = "Unauthorized" });
+            return Ok(reviewsDto);
+        }
+
+        [HttpPost("{recipeId}/reviews")]
+        public IActionResult PostReview([FromForm] DTO.ReviewsDTO.AddReview newReview, int recipeId)
+        {
+            // Unauthorized access (Status code 401)
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
+
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            // Check if recipe exists
+            var recipe = _context.Recipe.FirstOrDefault(d => d.Id == recipeId);
+            if (recipe == null)
+            {
+                return NotFound(new { error = "Recipe not found" });
+            }
+
+            // Bad request or missing/invalid data (Status code 400)
+            if (newReview.Stars < 1 || newReview.Stars > 5)
+            {
+                return BadRequest(new { error = "Invalid request body" });
+            }
+
+            var reviewEntity = new Review
+            {
+                RecipeId = recipeId,
+                UserId = userId.Value,
+                Stars = newReview.Stars,
+                Comment = newReview.Comment,
+                CreatedAt = DateTime.Now,
+            };
+
+            _context.Review.Add(reviewEntity);
+
+            _context.SaveChanges();
 
             // Comment added successfully (Status code 201)
             return Created(string.Empty, new { message = "Review added successfully" });
