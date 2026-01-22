@@ -103,7 +103,7 @@ namespace Recepttar.Server.Controllers
             return Ok(new { message = "Vote recorded" });
         }
 
-        [HttpPost("createpoll")]
+        [HttpPut("create")]
         public IActionResult CreatePoll([FromForm] DTO.PollDTO.ActivePoll poll)
         {
             // Check if user is logged in and has the necessary rank to create a poll
@@ -156,7 +156,7 @@ namespace Recepttar.Server.Controllers
             return Ok(new { message = "Poll posted successfuly" });
         }
 
-        [HttpPost("deletepoll/{pollId}")]
+        [HttpDelete("/{pollId}")]
         public IActionResult DeletePoll(int pollId)
         {
             // Check if user is logged in and has the necessary rank to create a poll
@@ -178,7 +178,7 @@ namespace Recepttar.Server.Controllers
 
             if (UserDetails == null || UserDetails.Id != PollDetail.AuthorId)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = "You are not allowed to delete this poll" });
             }
 
             _context.Poll.Remove(PollDetail);
