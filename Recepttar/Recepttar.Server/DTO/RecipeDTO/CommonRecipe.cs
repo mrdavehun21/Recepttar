@@ -10,5 +10,6 @@
         public bool IsExpensive { get; set; }
         public bool IsVegan { get; set; }
         public Enums.RecipeTypeEnum Type { get; set; }
+        public int AuthorId { get; set; }
     }
 }
