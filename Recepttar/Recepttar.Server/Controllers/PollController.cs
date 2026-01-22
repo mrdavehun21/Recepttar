@@ -178,7 +178,7 @@ namespace Recepttar.Server.Controllers
 
             if (UserDetails == null || UserDetails.Id != PollDetail.AuthorId)
             {
-                return StatusCode(StatusCodes.Status403Forbidden, new { message = "You are not allowed to delete this poll" });
+                return StatusCode(StatusCodes.Status403Forbidden, new { error = "You are not allowed to delete this poll" });
             }
 
             _context.Poll.Remove(PollDetail);
