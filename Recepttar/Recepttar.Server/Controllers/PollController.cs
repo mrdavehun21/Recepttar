@@ -103,7 +103,7 @@ namespace Recepttar.Server.Controllers
             return Ok(new { message = "Vote recorded" });
         }
 
-        [HttpPatch("create")]
+        [HttpPut("create")]
         public IActionResult CreatePoll([FromForm] DTO.PollDTO.ActivePoll poll)
         {
             // Check if user is logged in and has the necessary rank to create a poll
@@ -184,7 +184,7 @@ namespace Recepttar.Server.Controllers
             _context.Poll.Remove(PollDetail);
 
             _context.SaveChanges();
-            return StatusCode(StatusCodes.Status204NoContent, new { message = "Poll removed successfuly" });
+            return StatusCode(StatusCodes.Status200OK, new { message = "Poll removed successfuly" });
         }
     }
 }
