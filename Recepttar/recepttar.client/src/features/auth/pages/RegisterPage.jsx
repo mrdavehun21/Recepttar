@@ -1,0 +1,86 @@
+import './RegisterPage.css';
+import registerImage from '../../../assets/login-background.jpg';
+import { useRegister } from '../hooks/useRegister';
+import NameSet from '../components/NameSet'
+import EmailStep from '../components/EmailStep';
+import PasswordStep from '../components/PasswordStep';
+import { useNavigate } from 'react-router-dom';
+
+export default function RegisterPage() {
+    const navigate = useNavigate();
+    const {
+        step,
+        name,
+        email,
+        password,
+        error,
+        setName,
+        setEmail,
+        setPassword,
+        checkEmailExists,
+        handleRegister,
+        goBackToEmail
+    } = useRegister();
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            step === 1 ? checkEmailExists() : handleRegister();
+        }
+    };
+
+    return (
+        <div className="container-fluid vh-100 p-0">
+            <div className="row g-0 h-100">
+                <div className="col-md-6 d-none d-md-block">
+                    <img src={registerImage} alt="" className="register-image" />
+                </div>
+
+                <div className="col-md-6 d-flex align-items-center justify-content-center bg-light">
+                    <div className="register-container p-4 p-lg-5">
+                        <h1 className="h2 fw-bold mb-4 text-dark">Register</h1>
+
+                        {error && (
+                            <div className="alert alert-danger fade show mb-3">
+                                {error}
+                            </div>
+                        )}
+
+                        {step === 1 && (
+                            <>
+                                <NameSet name={name} setName={setName} />
+                                <EmailStep
+                                    email={email}
+                                    onEmailChange={(e) => setEmail(e.target.value)}
+                                    onContinue={checkEmailExists}
+                                    onKeyDown={handleKeyDown}
+                                    onSignUp={() => navigate('/register')}
+                                    onLogin={() => navigate('/login') }
+                                    onDiscover={() => navigate('/')}
+                                    theme="register"
+                                />
+                            </>
+
+                            
+                        )}
+
+                        {step === 2 && (
+                            <PasswordStep
+                                email={email}
+                                password={password}
+                                onPasswordChange={(e) => setPassword(e.target.value)}
+                                onSubmit={handleRegister}
+                                onBack={goBackToEmail}
+                                onKeyDown={handleKeyDown}
+                                theme="register"
+                            />
+                        )}
+
+                        <div className="mt-5 pt-4 text-center text-muted">
+                            <small>&copy; 2026 Recepttár</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
