@@ -1,0 +1,15 @@
+.Titlebar{
+    height: 100px;
+    background-color: rgb(43, 133, 51);
+    color: white;
+}
+
+.Logo{
+    height: 100%;
+}
+
+li:hover{
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}

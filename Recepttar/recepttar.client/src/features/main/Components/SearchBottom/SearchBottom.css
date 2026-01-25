@@ -1,0 +1,25 @@
+.OptionButton {
+    border: none;
+    max-width: fit-content;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.OptionButton:hover{
+    background-color: rgb(0, 183, 255);
+    transform: scale(1.1);
+}
+
+@media screen and (max-width: 575px){
+    .LeftSegment{
+        width: 100% !important;
+        margin-bottom: 20px;
+    }
+    .RightSegment{
+        width: 100% !important;
+        padding: 0 !important;
+    }
+    .ContentBox{
+        width: 75% !important;
+    }
+}
