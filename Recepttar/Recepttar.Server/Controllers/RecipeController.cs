@@ -26,6 +26,7 @@ namespace Recepttar.Server.Controllers
             // Return with every recipe in the recipe table (Status code 200)
             var recipeDto = recipesFromDb.Select(r => new RequestFullRecipe
             {
+                Id = r.Id,
                 Title = r.Title,
                 Description = r.Description,
                 Difficulty = r.Difficulty,
@@ -306,9 +307,10 @@ namespace Recepttar.Server.Controllers
             {
                 recipeQuery = recipeQuery.Where(r => r.Title.Contains(queries.Search) || r.Description.Contains(queries.Search));
             }
-            
+
             var resultsDto = recipeQuery.Select(r => new RequestFullRecipe
             {
+                Id = r.Id,
                 DishPicture = DishPicturePath.GetPath(r.Id),
                 Title = r.Title,
                 Description = r.Description,
