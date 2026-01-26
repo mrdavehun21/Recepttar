@@ -1,5 +1,9 @@
+import { useEffect } from 'react';
+import * as bootstrap from 'bootstrap';
+
 export default function EmailStep({
     email,
+    isEmailValid,
     onEmailChange,
     onContinue,
     onKeyDown,
@@ -8,15 +12,27 @@ export default function EmailStep({
     onDiscover,
     theme = 'login'
 }) {
+    useEffect(() => {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+    }, []);
+
     const primaryClass = theme === 'login' ? 'login-btn-primary' : 'register-btn-primary';
     const outlineClass = theme === 'login' ? 'login-btn-outline' : 'register-btn-outline';
     const accountText = theme === 'login' ? 'Create an Account' : 'Log In';
     const accountOnclick = theme === 'login' ? onSignUp : onLogin;
 
     return (
-        <div className="mt-4">
-            <div className="mb-4">
-                <label className="form-label fw-semibold">Email Address</label>
+        <>
+            <div className="mb-4 mt-2">
+                <label className="form-label fw-semibold">Email Address
+                    <i
+                        className="bi bi-question-circle ms-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="right"
+                        title="Please use the following pattern: info@recepttar.hu"
+                    />
+                </label>
                 <input
                     type="email"
                     className="form-control form-control-lg"
@@ -31,7 +47,7 @@ export default function EmailStep({
                 type="button"
                 className={`btn ${primaryClass} btn-lg w-100`}
                 onClick={onContinue}
-                disabled={!email}
+                disabled={!isEmailValid}
             >
                 Continue
             </button>
@@ -46,7 +62,6 @@ export default function EmailStep({
                 type="button"
                 className={`btn ${outlineClass} btn-lg w-100 mb-4`}
                 onClick={accountOnclick}
-                //style={{ color: '#f27127', borderColor: '#f27127' }}
             >
                 { accountText }
             </button>
@@ -55,10 +70,9 @@ export default function EmailStep({
                 type="button"
                 className={`btn ${outlineClass} btn-lg w-100`}
                 onClick={onDiscover}
-                //style={{ backgroundColor: '#f27127', borderColor: '#f27127' }}
             >
                 Discover recipes
             </button>
-        </div>
+        </>
     )
 }

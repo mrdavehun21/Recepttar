@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { checkEmailApi, loginApi } from '../api/auth.api'
+import {
+    validateEmailInput,
+    validatePasswordInput,
+    getApiErrorMessage,
+    validateEmail,
+    validatePassword
+} from './authHelper'
 
 export function useLogin() {
     const [step, setStep] = useState(1)
@@ -9,16 +16,18 @@ export function useLogin() {
     const [error, setError] = useState('')
     const navigate = useNavigate()
 
+    const isEmailValid = validateEmailInput(email);
+    const isPasswordValid = validatePasswordInput(password);
+
     useEffect(() => {
-        if (!error) return
+        if (!error) return;
 
         const timer = setTimeout(() => setError(''), 5000)
         return () => clearTimeout(timer)
     }, [error])
 
     const checkEmail = async () => {
-        if (!email) {
-            setError('Please enter your email')
+        if (!validateEmail(email, setError)) {
             return
         }
 
@@ -27,25 +36,20 @@ export function useLogin() {
             setStep(2)
             setError('')
         } catch (err) {
-            setError(err.response?.data?.message || 'No account found.')
+            setError(getApiErrorMessage(err) || 'No account found.')
         }
     }
 
     const handleLogin = async () => {
-        if (!password) {
-            setError('Please enter your password')
+        if (!validatePassword(password, setError)) {
             return
         }
 
         try {
             await loginApi(email, password)
-            navigate('/dashboard', { replace: true })
+            navigate('/', { replace: true })
         } catch (err) {
-            setError(
-                err.response?.data?.message ||
-                err.response?.data?.error ||
-                'Login failed'
-            )
+            setError(getApiErrorMessage(err) || 'Login failed')
         }
     }
 
@@ -58,7 +62,9 @@ export function useLogin() {
     return {
         step,
         email,
+        isEmailValid,
         password,
+        isPasswordValid,
         error,
         setEmail,
         setPassword,

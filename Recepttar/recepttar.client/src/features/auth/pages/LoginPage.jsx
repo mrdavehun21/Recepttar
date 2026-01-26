@@ -1,5 +1,5 @@
 ﻿import './LoginPage.css'
-import loginImage from '../../../assets/login-background.jpg'
+import loginImage from '../../../assets/auth-background.jpg'
 import { useLogin } from '../hooks/useLogin'
 import EmailStep from '../components/EmailStep'
 import PasswordStep from '../components/PasswordStep'
@@ -10,7 +10,9 @@ export default function LoginPage() {
     const {
         step,
         email,
+        isEmailValid,
         password,
+        isPasswordValid,
         error,
         setEmail,
         setPassword,
@@ -33,7 +35,7 @@ export default function LoginPage() {
                 </div>
 
                 <div className="col-md-6 d-flex align-items-center justify-content-center bg-light">
-                    <div className="login-container p-4 p-lg-5">
+                    <div className="login-container p-4 p-lg-2">
                         <h1 className="h2 fw-bold text-dark">Sign In</h1>
 
                         <div style={{ minHeight: '60px' }}>
@@ -47,6 +49,7 @@ export default function LoginPage() {
                         {step === 1 && (
                             <EmailStep
                                 email={email}
+                                isEmailValid={isEmailValid}
                                 onEmailChange={(e) => setEmail(e.target.value)}
                                 onContinue={checkEmail}
                                 onKeyDown={handleKeyDown}
@@ -61,6 +64,7 @@ export default function LoginPage() {
                             <PasswordStep
                                 email={email}
                                 password={password}
+                                isPasswordValid={isPasswordValid}
                                 onPasswordChange={(e) => setPassword(e.target.value)}
                                 onSubmit={handleLogin}
                                 onBack={goBackToEmail}
@@ -69,7 +73,7 @@ export default function LoginPage() {
                             />
                         )}
 
-                        <div className="mt-5 pt-4 text-center text-muted">
+                        <div className="mt-3 text-center text-muted">
                             <small>&copy; 2026 Recepttár</small>
                         </div>
                     </div>
