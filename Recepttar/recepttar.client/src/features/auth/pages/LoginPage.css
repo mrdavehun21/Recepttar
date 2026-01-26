@@ -1,3 +1,11 @@
+:root {
+    --login-primary: #f27127;
+    --login-primary-hover: #e05c1a;
+    --login-border: #ddd;
+    --login-text-muted: #666;
+    --login-white: #fff;
+}
+
 /* layout */
 .login-container {
     width: 100vh;
@@ -13,49 +21,54 @@
 
 /* inputs */
 .login-input {
-    border-color: #ddd;
+    border-color: var(--login-border);
     border-radius: 8px;
     padding: 14px;
 }
 
 /* buttons */
-/*style={{ backgroundColor: '#f27127', borderColor: '#f27127' }}*/
 .login-btn-primary {
-    background-color: #f27127 !important;
-    border-color: #f27127;
+    background-color: var(--login-primary) !important;
+    border-color: var(--login-primary);
     border-radius: 8px;
     font-size: 1.1rem;
     font-weight: 600;
 }
 
-    .login-btn-primary:disabled {
-        opacity: 0.6;
-    }
+.login-btn-primary:hover:not(:disabled) {
+    background-color: var(--login-primary-hover) !important;
+    border-color: var(--login-primary-hover);
+}
+
+.login-btn-primary:disabled {
+    opacity: 0.6;
+}
 
 .login-btn-outline {
-    color: #f27127;
-    border: 2px solid #f27127;
+    color: var(--login-primary);
+    border: 2px solid var(--login-primary);
     border-radius: 8px;
     font-size: 1.1rem;
     font-weight: 600;
     background: transparent;
+    transition: all 0.2s;
 }
 
-    .login-btn-outline:hover {
-        background-color: #f27127;
-        color: #fff;
-    }
+.login-btn-outline:hover {
+    background-color: var(--login-primary);
+    color: var(--login-white);
+}
 
 /* back button */
 .login-back-btn {
     font-size: 1.5rem;
     text-decoration: none;
-    color: #666;
+    color: var(--login-text-muted);
 }
 
 /* links */
 .login-link {
-    color: #f27127;
+    color: var(--login-primary);
     font-size: 0.9rem;
     text-decoration: none;
 }

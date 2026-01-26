@@ -1,6 +1,13 @@
 ﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { registerApi, checkEmailApi } from '../api/auth.api';
+import { registerApi, loginApi, checkEmailApi } from '../api/auth.api';
+import {
+    validateEmailInput,
+    validatePasswordInput,
+    getApiErrorMessage,
+    validateEmail,
+    validatePassword
+} from './authHelper';
 
 export function useRegister() {
     const [step, setStep] = useState(1);
@@ -9,6 +16,9 @@ export function useRegister() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+
+    const isEmailValid = validateEmailInput(email);
+    const isPasswordValid = validatePasswordInput(password);
 
     useEffect(() => {
         if (!error) return;
@@ -23,8 +33,7 @@ export function useRegister() {
             return;
         }
 
-        if (!email) {
-            setError('Please enter your email');
+        if (!validateEmail(email, setError)) {
             return;
         }
 
@@ -37,28 +46,23 @@ export function useRegister() {
                 setStep(2);
                 setError('');
             } else {
-                setError('Failed to check email.');
+                setError(getApiErrorMessage(err) || 'Failed to check email.');
             }
         }
-
     };
 
     // Password
     const handleRegister = async () => {
-        if (!password) {
-            setError('Please enter your password');
+        if (!validatePassword(password, setError)) {
             return;
         }
 
         try {
             await registerApi(name, email, password);
+            await loginApi(email, password);
             navigate('/', { replace: true });
         } catch (err) {
-            setError(
-                err.response?.data?.message ||
-                err.response?.data?.error ||
-                'Registration failed'
-            );
+            setError(getApiErrorMessage(err) || 'Registration failed');
         }
     };
 
@@ -72,7 +76,9 @@ export function useRegister() {
         step,
         name,
         email,
+        isEmailValid,
         password,
+        isPasswordValid,
         error,
         setName,
         setEmail,
