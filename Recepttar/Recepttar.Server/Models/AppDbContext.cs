@@ -11,7 +11,7 @@ namespace Recepttar.Server.Models
         public DbSet<Review> Review { get; set; }
         public DbSet<Poll> Poll { get; set; }
         public DbSet<PollOption> PollOption { get; set; }
-        public DbSet<Favorite> Favorite { get; set; }
+        public DbSet<Favorite> Favorites { get; set; }
         public DbSet<Vote> Vote { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

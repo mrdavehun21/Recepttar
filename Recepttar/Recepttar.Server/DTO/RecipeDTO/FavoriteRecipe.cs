@@ -2,6 +2,7 @@
 {
     public class FavoriteRecipe
     {
+        public int Id { get; set; }
         public string Title { get; set; }
         public Enums.RecipeDiffEnum Difficulty { get; set; }
         public int TimeMinutes { get; set; }

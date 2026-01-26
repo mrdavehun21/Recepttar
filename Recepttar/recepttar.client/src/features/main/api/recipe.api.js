@@ -7,12 +7,25 @@ export async function searchRecipes(query = '', type = '') {
         `https://localhost:7035/recipes/search?${params.toString()}`
     );
 
-    if (!res.ok) {
-        throw new Error('Failed to fetch recipes');
-    }
+    if (!res.ok) throw new Error('Failed to fetch recipes');
+    const recipes = await res.json();
 
-    return res.json();
+    const favRes = await fetch(`https://localhost:7035/user/favorites`, {
+        credentials: 'include'
+    });
+    if (!favRes.ok) throw new Error('Failed to fetch favorites');
+
+    const favoritesData = await favRes.json();
+    const favoriteIds = favoritesData.map(fav => fav.id); // Extract IDs
+
+    const recipesWithFavorites = recipes.map(recipe => ({
+        ...recipe,
+        isFavorite: favoriteIds.includes(recipe.id)
+    }));
+
+    return recipesWithFavorites;
 }
+
 
 export async function getRecipeReviews(recipeId) {
     const res = await fetch(
@@ -27,7 +40,9 @@ export async function getRecipeReviews(recipeId) {
 }
 
 export async function fetchActivePolls() {
-    const res = await fetch('https://localhost:7035/polls/active');
+    const res = await fetch('https://localhost:7035/polls/active', {
+        credentials: 'include'
+    });
     if (!res.ok) {
         throw new Error('Failed to fetch polls');
     }
@@ -35,16 +50,42 @@ export async function fetchActivePolls() {
 }
 
 export async function submitVote(pollId, optionId) {
-    const res = await fetch(`https://localhost:7035/polls/${pollId}/vote`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ optionId }),
-    });
+    const body = new URLSearchParams();
+    body.append('OptionId', optionId);
+
+    const res = await fetch(
+        `https://localhost:7035/polls/${pollId}/vote`,
+        {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: body.toString(),
+        }
+    );
 
     if (!res.ok) {
         throw new Error('Failed to submit vote');
+    }
+
+    return res.json();
+}
+
+export async function updateFavoriteState(recipeId) {
+    const res = await fetch(
+        `https://localhost:7035/user/favorites/` + recipeId,
+        {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        }
+    );
+
+    if (!res.ok) {
+        throw new Error('Failed to modify favorite state');
     }
 
     return res.json();

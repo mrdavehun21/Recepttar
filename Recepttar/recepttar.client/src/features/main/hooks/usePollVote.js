@@ -9,7 +9,7 @@ export function usePollVote(initialSelected = null) {
     const handleSubmit = async (pollId) => {
         if (!selectedOptionId) {
             setError('Please select an option');
-            return;
+            return false;
         }
 
         setSubmitting(true);
@@ -17,12 +17,15 @@ export function usePollVote(initialSelected = null) {
 
         try {
             await submitVote(pollId, selectedOptionId);
+            return true;
         } catch (err) {
             setError(err.message);
+            return false;
         } finally {
             setSubmitting(false);
         }
     };
+
 
     return {
         selectedOptionId,

@@ -49,7 +49,7 @@ function Titlebar({ onSearch }) {
                 </div>
                 <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li className="nav-item">
-                        <a href="#" className="nav-link text-light">Log in</a>
+                        <a href="/login" className="nav-link text-light">Log in</a>
                     </li>
                 </ul>
             </div>

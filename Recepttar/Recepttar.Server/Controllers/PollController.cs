@@ -80,10 +80,10 @@ namespace Recepttar.Server.Controllers
                 return NotFound(new { error = "Poll not found" });
             }
 
-            var pollOptions = _context.PollOption.Count(d => d.PollId == pollId);
+            var pollOptions = _context.PollOption.Where(d => d.PollId == pollId).Select(d => d.Id).ToList();
 
             // If user chooses an invalid option (Status code 400)
-            if(voted.OptionId > pollOptions || voted.OptionId <= 0)
+            if(!pollOptions.Contains(voted.OptionId))
             {
                 return BadRequest(new { error = "Invalid option" });
             }
