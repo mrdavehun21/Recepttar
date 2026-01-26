@@ -13,3 +13,11 @@ li:hover{
     font-weight: bold;
     cursor: pointer;
 }
+
+.ProfileBox{
+    max-height: 75px;
+}
+
+.ProfileBoxImage{
+    max-height: 50px;
+}

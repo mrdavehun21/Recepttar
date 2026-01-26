@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import Logo from '../../../../assets/Logo.png';
 import './Titlebar.css';
+import { useLoginStatus } from '../../hooks/useLoginState'
 
 function Titlebar({ onSearch }) {
     const [search, setSearch] = useState("");
+    const { user } = useLoginStatus();
 
     useEffect(() => {
         if (!search.trim()) return;
@@ -20,6 +22,7 @@ function Titlebar({ onSearch }) {
             <img src={Logo} alt="Logo" className="Logo" />
 
             <button
+
                 className="navbar-toggler ms-auto"
                 type="button"
                 data-bs-toggle="collapse"
@@ -47,11 +50,20 @@ function Titlebar({ onSearch }) {
                         Search
                     </button>
                 </div>
-                <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li className="nav-item">
-                        <a href="/login" className="nav-link text-light">Log in</a>
-                    </li>
-                </ul>
+                {
+                    user.isLoggedIn == false ? (
+                        <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+                            <li className="nav-item">
+                                <a href="/login" className="nav-link text-light">Log in</a>
+                            </li>
+                        </ul>
+                    ) : (
+                        <div className="ProfileBox navbar-nav ms-auto mb-2 mb-lg-0 bg-light rounded-1 d-flex align-items-center gap-2 p-2">
+                            <img src={"https://localhost:7035" + user.profilePicture} className="rounded-1 ProfileBoxImage" />
+                            <span className="fw-bold d-block">{user.name}</span>
+                        </div>
+                    )
+                }
             </div>
         </nav>
     );

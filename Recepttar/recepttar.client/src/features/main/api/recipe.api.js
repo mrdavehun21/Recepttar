@@ -13,10 +13,12 @@ export async function searchRecipes(query = '', type = '') {
     const favRes = await fetch(`https://localhost:7035/user/favorites`, {
         credentials: 'include'
     });
-    if (!favRes.ok) throw new Error('Failed to fetch favorites');
+    if (!favRes.ok) {
+        return recipes;
+    }
 
     const favoritesData = await favRes.json();
-    const favoriteIds = favoritesData.map(fav => fav.id); // Extract IDs
+    const favoriteIds = favoritesData.map(fav => fav.id);
 
     const recipesWithFavorites = recipes.map(recipe => ({
         ...recipe,
@@ -86,6 +88,25 @@ export async function updateFavoriteState(recipeId) {
 
     if (!res.ok) {
         throw new Error('Failed to modify favorite state');
+    }
+
+    return res.json();
+}
+
+export async function getUserProfile(recipeId) {
+    const res = await fetch(
+        `https://localhost:7035/user/profile`,
+        {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        }
+    );
+
+    if (!res.ok) {
+        return { isLoggedIn: false }
     }
 
     return res.json();
