@@ -6,6 +6,23 @@ import FilledHeart from "../../../../assets/fullHeart.svg";
 function Card({ data }) {
     const { isFavorite, toggleFavorite } = useFavorites(data.isFavorite);
 
+    const StarRating = ({ rating, maxStars = 5 }) => {
+        const roundedRating = Math.ceil(rating);
+
+        return (
+            <>
+                {[...Array(maxStars)].map((_, index) => (
+                    <i
+                        key={index}
+                        className={`bi ${index < roundedRating ? "bi-star-fill" : "bi-star"
+                            }`}
+                    ></i>
+                ))}
+            </>
+        );
+    };
+
+
     return (
         <div
             className="card shadow"
@@ -42,7 +59,12 @@ function Card({ data }) {
                     </div>
                     <ul className="list-group list-group-flush list-unstyled">
                         <div className="d-flex justify-content-between p-3">
-                            <li className="card-title">{data.averageRating} star(s)</li>
+                            <li className="card-title">
+                                <StarRating rating={data.averageRating} />
+                                <span className="ms-2">
+                                    ({Math.ceil(data.averageRating)} star{Math.ceil(data.averageRating) !== 1 && "s"})
+                                </span>
+                            </li>
                             <li className="card-title">{data.reviewCount} review(s)</li>
                         </div>
                     </ul>

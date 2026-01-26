@@ -335,7 +335,7 @@ namespace Recepttar.Server.Controllers
                 .Where(f => f.UserId == UserId)
                 .Select(f => new FavoriteRecipe()
                 {
-                    Id = f.Id,
+                    Id = f.RecipeId,
                     Title = f.Recipe.Title,
                     Difficulty = f.Recipe.Difficulty,
                     TimeMinutes = f.Recipe.TimeMinutes,

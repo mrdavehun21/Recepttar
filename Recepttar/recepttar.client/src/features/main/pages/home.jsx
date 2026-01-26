@@ -11,19 +11,19 @@ import './index.css';
 function Home() {
     const {
         recipes,
-        loading,
+        //loading,
         error,
         fetchRecipes
     } = useRecipes();
 
+            //{loading && <p className="text-center mt-4">Loading...</p>}
     return (
         <>
             <Titlebar onSearch={fetchRecipes} />
 
-            {loading && <p className="text-center mt-4">Loading...</p>}
             {error && <p className="text-danger text-center">{error}</p>}
 
-            {!loading && !error && <Recipes recipes={recipes} />}
+            {!error && <Recipes recipes={recipes} />}
 
             <PollApp />
             <SearchBottom />

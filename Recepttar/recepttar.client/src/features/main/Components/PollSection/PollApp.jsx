@@ -2,10 +2,10 @@ import PollCard from './PollCard';
 import { usePolls } from '../../hooks/usePoll';
 
 function PollApp() {
-    const { polls, loading, error } = usePolls();
+    const { polls } = usePolls();
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error}</p>;
+    //if (loading) return <p>Loading...</p>;
+    //if (error) return <p>Error: {error}</p>;
 
     return (
         <div className="mt-5">
