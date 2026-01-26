@@ -1,5 +1,5 @@
-import './RegisterPage.css';
-import registerImage from '../../../assets/login-background.jpg';
+﻿import './RegisterPage.css';
+import registerImage from '../../../assets/auth-background.jpg';
 import { useRegister } from '../hooks/useRegister';
 import NameSet from '../components/NameSet'
 import EmailStep from '../components/EmailStep';
@@ -12,7 +12,9 @@ export default function RegisterPage() {
         step,
         name,
         email,
+        isEmailValid,
         password,
+        isPasswordValid,
         error,
         setName,
         setEmail,
@@ -37,10 +39,10 @@ export default function RegisterPage() {
 
                 <div className="col-md-6 d-flex align-items-center justify-content-center bg-light">
                     <div className="register-container p-4 p-lg-5">
-                        <h1 className="h2 fw-bold mb-4 text-dark">Register</h1>
+                        <h1 className="h2 fw-bold mb-2 text-dark">Register</h1>
 
                         {error && (
-                            <div className="alert alert-danger fade show mb-3">
+                            <div className="alert alert-danger fade show">
                                 {error}
                             </div>
                         )}
@@ -50,6 +52,7 @@ export default function RegisterPage() {
                                 <NameSet name={name} setName={setName} />
                                 <EmailStep
                                     email={email}
+                                    isEmailValid={isEmailValid}
                                     onEmailChange={(e) => setEmail(e.target.value)}
                                     onContinue={checkEmailExists}
                                     onKeyDown={handleKeyDown}
@@ -59,14 +62,13 @@ export default function RegisterPage() {
                                     theme="register"
                                 />
                             </>
-
-                            
                         )}
 
                         {step === 2 && (
                             <PasswordStep
                                 email={email}
                                 password={password}
+                                isPasswordValid={isPasswordValid}
                                 onPasswordChange={(e) => setPassword(e.target.value)}
                                 onSubmit={handleRegister}
                                 onBack={goBackToEmail}
@@ -75,8 +77,8 @@ export default function RegisterPage() {
                             />
                         )}
 
-                        <div className="mt-5 pt-4 text-center text-muted">
-                            <small>&copy; 2026 Receptt�r</small>
+                        <div className="mt-3 text-center text-muted">
+                            <small>&copy; 2026 Recepttár</small>
                         </div>
                     </div>
                 </div>
