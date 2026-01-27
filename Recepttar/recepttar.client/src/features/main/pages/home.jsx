@@ -11,12 +11,10 @@ import './index.css';
 function Home() {
     const {
         recipes,
-        //loading,
         error,
         fetchRecipes
     } = useRecipes();
 
-            //{loading && <p className="text-center mt-4">Loading...</p>}
     return (
         <>
             <Titlebar onSearch={fetchRecipes} />

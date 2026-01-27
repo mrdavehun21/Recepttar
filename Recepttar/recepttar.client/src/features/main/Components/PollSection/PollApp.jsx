@@ -4,9 +4,6 @@ import { usePolls } from '../../hooks/usePoll';
 function PollApp() {
     const { polls } = usePolls();
 
-    //if (loading) return <p>Loading...</p>;
-    //if (error) return <p>Error: {error}</p>;
-
     return (
         <div className="mt-5">
             <h1 className="m-2 ms-md-4">Polls</h1>

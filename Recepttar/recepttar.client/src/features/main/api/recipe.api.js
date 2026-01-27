@@ -1,113 +1,73 @@
+import axios from 'axios'
+
+axios.defaults.withCredentials = true;
+
 export async function searchRecipes(query = '', type = '') {
     const params = new URLSearchParams();
     if (query) params.append('search', query);
     if (type) params.append('type', type);
 
-    const res = await fetch(
-        `https://localhost:7035/recipes/search?${params.toString()}`
-    );
+    const res = await axios.get('https://localhost:7035/recipes/search', { params });
 
-    if (!res.ok) throw new Error('Failed to fetch recipes');
-    const recipes = await res.json();
+    const recipes = res.data;
 
-    const favRes = await fetch(`https://localhost:7035/user/favorites`, {
-        credentials: 'include'
-    });
-    if (!favRes.ok) {
-        return recipes;
+    try {
+        const favRes = await axios.get('https://localhost:7035/user/favorites');
+
+        const favoriteIds = favRes.data.map(fav => fav.id);
+
+        return recipes.map(recipe => ({
+            ...recipe,
+            isFavorite: favoriteIds.includes(recipe.id)
+        }));
+    } catch (err) {
+        if (err.response?.status === 401) {
+            return recipes;
+        }
+
+        throw err;
     }
-
-    const favoritesData = await favRes.json();
-    const favoriteIds = favoritesData.map(fav => fav.id);
-
-    const recipesWithFavorites = recipes.map(recipe => ({
-        ...recipe,
-        isFavorite: favoriteIds.includes(recipe.id)
-    }));
-
-    return recipesWithFavorites;
 }
 
-
 export async function getRecipeReviews(recipeId) {
-    const res = await fetch(
-        `https://localhost:7035/recipes/${recipeId}/reviews`
-    );
-
-    if (!res.ok) {
-        throw new Error('Failed to fetch reviews');
-    }
-
-    return res.json();
+    const res = await axios.get(`https://localhost:7035/recipes/${recipeId}/reviews`);
+    return res.data;
 }
 
 export async function fetchActivePolls() {
-    const res = await fetch('https://localhost:7035/polls/active', {
-        credentials: 'include'
-    });
-    if (!res.ok) {
+    const res = await axios.get('https://localhost:7035/polls/active')
+
+    if (res.status != 200) {
         throw new Error('Failed to fetch polls');
     }
-    return res.json();
+    return res.data;
 }
 
 export async function submitVote(pollId, optionId) {
     const body = new URLSearchParams();
     body.append('OptionId', optionId);
 
-    const res = await fetch(
-        `https://localhost:7035/polls/${pollId}/vote`,
-        {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: body.toString(),
-        }
-    );
+    const res = await axios.post(`https://localhost:7035/polls/${pollId}/vote`, body.toString());
 
-    if (!res.ok) {
-        throw new Error('Failed to submit vote');
-    }
-
-    return res.json();
+    return res.data;
 }
 
 export async function updateFavoriteState(recipeId) {
-    const res = await fetch(
-        `https://localhost:7035/user/favorites/` + recipeId,
-        {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-        }
-    );
 
-    if (!res.ok) {
-        throw new Error('Failed to modify favorite state');
-    }
-
-    return res.json();
+    const res = await axios.post(`https://localhost:7035/user/favorites/` + recipeId);
+    return res.data;
 }
 
-export async function getUserProfile(recipeId) {
-    const res = await fetch(
-        `https://localhost:7035/user/profile`,
-        {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
+export async function getUserProfile() {
+    try {
+        const res = await axios.get('https://localhost:7035/user/profile');
+
+        return res.data;
+    } catch (err) {
+        if (err.response?.status === 401) {
+            return { isLoggedIn: false };
         }
-    );
 
-    if (!res.ok) {
-        return { isLoggedIn: false }
+        throw err;
     }
-
-    return res.json();
 }
