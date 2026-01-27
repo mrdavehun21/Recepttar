@@ -32,7 +32,7 @@ export default function PasswordStep({
                 <strong>{email}</strong>
             </div>
 
-            <div className="">
+            <div className="mb-4">
                 <label className="form-label fw-semibold">Password
                     <i
                         className="bi bi-question-circle ms-2"

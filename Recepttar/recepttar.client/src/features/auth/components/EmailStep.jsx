@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import * as bootstrap from 'bootstrap';
 
 export default function EmailStep({
+    isNameValid,
     email,
     isEmailValid,
     onEmailChange,
@@ -21,6 +22,10 @@ export default function EmailStep({
     const outlineClass = theme === 'login' ? 'login-btn-outline' : 'register-btn-outline';
     const accountText = theme === 'login' ? 'Create an Account' : 'Log In';
     const accountOnclick = theme === 'login' ? onSignUp : onLogin;
+
+    const shouldDisable = theme === 'login'
+        ? !isEmailValid
+        : !isEmailValid || !isNameValid;
 
     return (
         <>
@@ -47,7 +52,7 @@ export default function EmailStep({
                 type="button"
                 className={`btn ${primaryClass} btn-lg w-100`}
                 onClick={onContinue}
-                disabled={!isEmailValid}
+                disabled={shouldDisable}
             >
                 Continue
             </button>
