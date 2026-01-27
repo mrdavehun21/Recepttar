@@ -2,9 +2,11 @@
 import { useNavigate } from 'react-router-dom';
 import { registerApi, loginApi, checkEmailApi } from '../api/auth.api';
 import {
+    validateNameInput,
     validateEmailInput,
     validatePasswordInput,
     getApiErrorMessage,
+    validateName,
     validateEmail,
     validatePassword
 } from './authHelper';
@@ -17,6 +19,7 @@ export function useRegister() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    const isNameValid = validateNameInput(name);
     const isEmailValid = validateEmailInput(email);
     const isPasswordValid = validatePasswordInput(password);
 
@@ -28,8 +31,7 @@ export function useRegister() {
 
     // Email
     const checkEmailExists = async () => {
-        if (!name) {
-            setError('Please enter your name');
+        if (!validateName(name, setError)) {
             return;
         }
 
@@ -75,6 +77,7 @@ export function useRegister() {
     return {
         step,
         name,
+        isNameValid,
         email,
         isEmailValid,
         password,

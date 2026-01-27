@@ -23,7 +23,6 @@
 .login-input {
     border-color: var(--login-border);
     border-radius: 8px;
-    padding: 14px;
 }
 
 /* buttons */
