@@ -6,6 +6,7 @@ import { useLoginStatus } from '../../hooks/useLoginState'
 function Titlebar({ onSearch }) {
     const [search, setSearch] = useState("");
     const { user } = useLoginStatus();
+    const [collapsed, setCollapsed] = useState(true);
 
     useEffect(() => {
         if (!search.trim()) return;
@@ -22,19 +23,20 @@ function Titlebar({ onSearch }) {
             <img src={Logo} alt="Logo" className="Logo" />
 
             <button
-
                 className="navbar-toggler ms-auto"
                 type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarContent"
+                onClick={() => setCollapsed(!collapsed)}
                 aria-controls="navbarContent"
-                aria-expanded="false"
+                aria-expanded={!collapsed}
                 aria-label="Toggle navigation"
             >
                 <span className="navbar-toggler-icon"></span>
             </button>
 
-            <div className="collapse navbar-collapse" id="navbarContent">
+            <div
+                className={`collapse navbar-collapse${collapsed ? "" : " show"}`}
+                id="navbarContent"
+            >
                 <div className="d-flex my-2 my-lg-0 me-lg-3" style={{ height: "45px" }}>
                     <input
                         type="text"
@@ -54,11 +56,11 @@ function Titlebar({ onSearch }) {
                     user.isLoggedIn == false ? (
                         <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
                             <li className="nav-item">
-                                <a href="/login" className="nav-link text-light">Log in</a>
+                                <a href="/login" className="nav-link text-light ms-2">Log in</a>
                             </li>
                         </ul>
                     ) : (
-                        <div className="ProfileBox navbar-nav ms-auto mb-2 mb-lg-0 bg-light rounded-1 d-flex align-items-center gap-2 p-2">
+                        <div className="ProfileBox navbar-nav ms-2 ms-sm-auto mb-2 mb-lg-0 bg-light rounded-1 align-items-center gap-2 p-2 flex-row w-25">
                             <img src={"https://localhost:7035" + user.profilePicture} className="rounded-1 ProfileBoxImage" />
                             <span className="fw-bold d-block">{user.name}</span>
                         </div>
