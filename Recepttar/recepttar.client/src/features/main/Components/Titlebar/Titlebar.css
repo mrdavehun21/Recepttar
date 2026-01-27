@@ -13,8 +13,9 @@ li:hover{
     cursor: pointer;
 }
 
-.ProfileBox{
+.ProfileBox {
     max-height: 75px;
+    width: fit-content !important;
 }
 
 .ProfileBoxImage{
