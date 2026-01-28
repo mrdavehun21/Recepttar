@@ -7,6 +7,7 @@ using Recepttar.Server.HelperMethods;
 using Recepttar.Server.Models;
 using System.Security.Cryptography;
 using System.Text;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Recepttar.Server.Controllers
 {
@@ -155,8 +156,8 @@ namespace Recepttar.Server.Controllers
             return Ok(UserData);
         }
 
-        [HttpPut("profile")]
-        public IActionResult UpdateProfile([FromForm] DTO.UpdateProfileData user)
+        [HttpPatch("profile")]
+        public IActionResult UpdateProfile([FromForm] DTO.UpdateProfileData userUpdates)
         {
             // Unauthorized access (Status 401)
             if (!IsUserAuthorized.IsAuthorized(HttpContext))
@@ -164,46 +165,58 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(new { error = "Unauthorized" });
             }
 
-            // User not found (Status 404)
             int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
 
             var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
 
-            if(FindUser == null)
+            // Track if anything was updated
+            bool wasUpdated = false;
+
+            if(!string.IsNullOrWhiteSpace(userUpdates.Name))
             {
-                return NotFound(new { error = "User not found" });
+                FindUser.Name = userUpdates.Name;
+                wasUpdated = true;
             }
 
-            if (!string.IsNullOrEmpty(user.Name))
+            if(!string.IsNullOrWhiteSpace(userUpdates.Email))
             {
-                FindUser.Name = user.Name;
-            }
-            if(!string.IsNullOrEmpty(user.Email))
-            {
-                FindUser.Email = user.Email;
-            }
-            if(!string.IsNullOrEmpty(user.PasswordHash))
-            {
-                FindUser.PasswordHash = PasswordHash.PasswordHasher(user.PasswordHash);
-            }
-            if(!string.IsNullOrEmpty(user.Bio))
-            {
-                FindUser.Bio = user.Bio;
-            }
-            if (user.ProfilePicture != null)
-            {
-                FindUser.ProfilePicture = user.ProfilePicture;
+                FindUser.Email = userUpdates.Email;
+                wasUpdated = true;
             }
 
-            _context.SaveChanges();
-
-            // Successfully updated profile (200)
-            var UserData = new DTO.RequestProfileData
+            if(!string.IsNullOrWhiteSpace(userUpdates.Password))
             {
-                Name = FindUser.Name,
-                Bio = FindUser.Bio,
-            };
-            return Ok(UserData);
+                FindUser.PasswordHash = PasswordHash.PasswordHasher(userUpdates.Password);
+                wasUpdated = true;
+            }
+
+            if(!string.IsNullOrWhiteSpace(userUpdates.Bio))
+            {
+                FindUser.Bio = userUpdates.Bio;
+            }
+
+            if (userUpdates.ProfilePicture != null)
+            {
+                using (var stream = new MemoryStream())
+                {
+                    userUpdates.ProfilePicture.CopyTo(stream);
+                    FindUser.ProfilePicture = stream.ToArray();
+                    wasUpdated = true;
+                }
+            }
+
+            // Only save if something was actually updated
+            if (wasUpdated)
+            {
+                _context.SaveChanges();
+
+                return Ok(new { message = "User updated" });
+            }
+            else
+            {
+                // No changes were made
+                return Ok(new { message = "No changes were made to the user" });
+            }
         }
 
         [HttpGet("profile/{userId}")]
@@ -211,20 +224,13 @@ namespace Recepttar.Server.Controllers
         {
             var FindUser = _context.User.FirstOrDefault(d => d.Id == userId);
 
-            // If requested user doesn't exists (Status code 404)
-            if(FindUser == null)
-            {
-                return NotFound(new { error = "User not found", userId});
-            }
-
             // If found user, return profile data (Status code 200)
             var UserData = new DTO.RequestProfileData
             {
                 Name = FindUser.Name,
                 Bio = FindUser.Bio,
-                ProfilePicture = ProfilePicturePath.Path + "/" + userId,
+                ProfilePicture = "/user/" + ProfilePicturePath.Path + "/" + userId,
                 Rank = FindUser.Rank
-                
             };
             return Ok(UserData);
         }
@@ -232,7 +238,7 @@ namespace Recepttar.Server.Controllers
         [HttpGet("profile/profilepicture")]
         public IActionResult ReturnProfilePic()
         {
-            // If preventing user from accessing image (Status code 401)
+            // Unauthorized access (Status code 401)
             if (!IsUserAuthorized.IsAuthorized(HttpContext))
             {
                 return Unauthorized(new { error = "Unauthorized" });
@@ -242,69 +248,18 @@ namespace Recepttar.Server.Controllers
 
             var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
 
-            // If user not found (Status code 404)
-            if (FindUser == null)
-            {
-                return NotFound(new { error = "User not found" });
-            }
-
             // If all goes well, return with image (Status code 200)
             byte[] Image = FindUser.ProfilePicture;
             return File(Image, "image/jpg");
         }
 
-        [HttpGet("profile/profilepicture{userID}")]
+
+        [HttpGet("profile/profilepicture/{userID}")]
         public IActionResult ReturnProfilePic(int userId)
         {
-            // If preventing user from accessing image (Status code 401)
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
-            {
-                return Unauthorized(new { error = "Unauthorized" });
-            }
-
             var FindUser = _context.User.FirstOrDefault(d => d.Id == userId);
 
-            // If user not found (Status code 404)
-            if (FindUser == null)
-            {
-                return NotFound(new { error = "User not found" });
-            }
-
             // If all goes well, return with image (Status code 200)
-            byte[] Image = FindUser.ProfilePicture;
-            return File(Image, "image/jpg");
-        }
-
-        [HttpPost("profile/profilepicture")]
-        public IActionResult UpdateProfilePic([FromForm] DTO.UpdateProfilePicture ProfilePicture)
-        {
-            // If preventing user from accessing image (Status code 401)
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
-            {
-                return Unauthorized(new { error = "Unauthorized" });
-            }
-
-            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
-
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
-
-            // If user not found (Status code 404)
-            if (FindUser == null)
-            {
-                return NotFound(new { error = "User not found" });
-            }
-
-            if (ProfilePicture.ProfilePicture != null)
-            {
-                using (var stream = new MemoryStream())
-                {
-                    ProfilePicture.ProfilePicture.CopyTo(stream);
-                    FindUser.ProfilePicture = stream.ToArray();
-                }
-            }
-
-            _context.SaveChanges();
-
             byte[] Image = FindUser.ProfilePicture;
             return File(Image, "image/jpg");
         }
@@ -313,7 +268,7 @@ namespace Recepttar.Server.Controllers
         [HttpGet("favorites")]
         public IActionResult GetUserFavorites()
         {
-            // If preventing user from accessing image (Status code 401)
+            // Unauthorized access (Status code 401)
             if (!IsUserAuthorized.IsAuthorized(HttpContext))
             {
                 return Unauthorized(new { error = "Unauthorized" });
@@ -323,15 +278,9 @@ namespace Recepttar.Server.Controllers
 
             var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
 
-            // If user not found (Status code 404)
-            if (FindUser == null)
-            {
-                return NotFound(new { error = "User not found" });
-            }
+            var count = _context.Favorites.Count(f => f.UserId == UserId);
 
-            var count = _context.Favorite.Count(f => f.UserId == UserId);
-
-            var favorites = _context.Favorite
+            var favorites = _context.Favorites
                 .Where(f => f.UserId == UserId)
                 .Select(f => new FavoriteRecipe()
                 {
@@ -350,6 +299,16 @@ namespace Recepttar.Server.Controllers
         [HttpPost("favorites/{recipeId}")]
         public IActionResult AddToUserFavorites(int recipeId)
         {
+            // Unauthorized access (Status code 401)
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
+
+            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
+
             var Recipe = _context.Recipe.FirstOrDefault(f => f.Id == recipeId);
 
             // If recipe not found (Status code 404)
@@ -358,31 +317,52 @@ namespace Recepttar.Server.Controllers
                 return NotFound(new { error = "Recipe not found" });
             }
 
-            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+            var existingFavorite = _context.Favorites.FirstOrDefault(f => f.UserId == UserId && f.RecipeId == recipeId);
 
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
-
-            var ItemInFavorite = _context.Favorite.FirstOrDefault(f => f.UserId == UserId && f.RecipeId == recipeId);
-
-            // Remove from favorite
-            if (ItemInFavorite != null)
+            if (existingFavorite != null)
             {
-                _context.Favorite.Remove(ItemInFavorite);
-                _context.SaveChanges();
-
-                // Successfully removed recipe from favorites
-                return Ok(new { message = "Recipe removed from favorites" });
+                return Conflict(new { error = "Recipe already in favorites" });
             }
 
-            _context.Favorite.Add(new Favorite()
+            _context.Favorites.Add(new Favorite
             {
-                UserId = (int)UserId,
+                UserId = UserId.Value,
                 RecipeId = recipeId
             });
+
             _context.SaveChanges();
 
             // Recipe successfully added to favorites (Status code 200)
             return Ok(new { message = "Recipe added to favorites" });
+        }
+
+        [HttpDelete("favorites/{recipeId}")]
+        public IActionResult RemoveFromFavorites(int recipeId)
+        {
+            // Unauthorized access (Status code 401)
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
+
+            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
+
+            var favorite = _context.Favorites.FirstOrDefault(f => f.UserId == UserId && f.RecipeId == recipeId);
+
+            // If recipe not found (Status code 404)
+            if (favorite == null)
+            {
+                return NotFound(new { error = "Recipe not in favorites" });
+            }
+
+            _context.Favorites.Remove(favorite);
+
+            _context.SaveChanges();
+
+            // Successful deletion (Status code 204)
+            return NoContent();
         }
         #endregion User favorite
     }
