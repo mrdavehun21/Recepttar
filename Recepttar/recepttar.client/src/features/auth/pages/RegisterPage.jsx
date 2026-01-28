@@ -11,6 +11,7 @@ export default function RegisterPage() {
     const {
         step,
         name,
+        isNameValid,
         email,
         isEmailValid,
         password,
@@ -49,8 +50,9 @@ export default function RegisterPage() {
 
                         {step === 1 && (
                             <>
-                                <NameSet name={name} setName={setName} />
+                                <NameSet name={name} setName={setName}  />
                                 <EmailStep
+                                    isNameValid={isNameValid}
                                     email={email}
                                     isEmailValid={isEmailValid}
                                     onEmailChange={(e) => setEmail(e.target.value)}
