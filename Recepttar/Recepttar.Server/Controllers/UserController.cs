@@ -7,7 +7,6 @@ using Recepttar.Server.HelperMethods;
 using Recepttar.Server.Models;
 using System.Security.Cryptography;
 using System.Text;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Recepttar.Server.Controllers
 {
