@@ -132,7 +132,7 @@ namespace Recepttar.Server.Controllers
             }
 
             var Ingredients = _context.RecipeIngredients.Join(_context.Ingredients, RecipeIngredients => RecipeIngredients.IngredientId, Ingredients => Ingredients.Id, (RecipeIngredients, Ingredients) => new { RecipeIngredients, Ingredients })
-                .Select(d => new DTO.RecipeDTO.IngredientsDTO { IngredientName = d.Ingredients.Name, Quantity = d.RecipeIngredients.Quantity, MeasurementUnit = d.RecipeIngredients.MeasurementUnit }).ToList();
+                .Select(d => new DTO.RecipeDTO.IngredientsDTO { Id = d.Ingredients.Id, IngredientName = d.Ingredients.Name, Quantity = d.RecipeIngredients.Quantity, MeasurementUnit = d.RecipeIngredients.MeasurementUnit }).ToList();
 
             var RecipeSteps = _context.RecipeSteps.Where(d => d.RecipeId == recipeId).OrderBy(d => d.StepNumber)
                 .Select(d => new RecipeStepsDTO { RecipeStepNumber = d.StepNumber, RecipeStepDescription = d.StepDescription }).ToList();
