@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Recepttar.Server.Constants;
 using Recepttar.Server.DTO.RecipeDTO;
 using Recepttar.Server.DTO.ReviewsDTO;
 using Recepttar.Server.HelperMethods;
 using Recepttar.Server.Models;
+using System.Linq;
 
 namespace Recepttar.Server.Controllers
 {
@@ -87,6 +89,19 @@ namespace Recepttar.Server.Controllers
 
             _context.SaveChanges();
 
+            foreach(var item in newRecipe.Ingredients)
+            {
+                var Ingredient = new RecipeIngredients()
+                {
+                    RecipeId = recipe.Id,
+                    IngredientId = item.Id,
+                    Quantity = item.Quantity,
+                    MeasurementUnit = item.MeasurementUnit
+                };
+                _context.RecipeIngredients.Add(Ingredient);
+            }
+            _context.SaveChanges();
+
             // Recipe added successfully (Status code 201)
             return Created(string.Empty, new { message = "Recipe created" });
         }
@@ -116,6 +131,12 @@ namespace Recepttar.Server.Controllers
                 return NotFound(new { error = "Recipe not found" });
             }
 
+            var Ingredients = _context.RecipeIngredients.Join(_context.Ingredients, RecipeIngredients => RecipeIngredients.IngredientId, Ingredients => Ingredients.Id, (RecipeIngredients, Ingredients) => new { RecipeIngredients, Ingredients })
+                .Select(d => new DTO.RecipeDTO.IngredientsDTO { IngredientName = d.Ingredients.Name, Quantity = d.RecipeIngredients.Quantity, MeasurementUnit = d.RecipeIngredients.MeasurementUnit }).ToList();
+
+            var RecipeSteps = _context.RecipeSteps.Where(d => d.RecipeId == recipeId).OrderBy(d => d.StepNumber)
+                .Select(d => new RecipeStepsDTO { RecipeStepNumber = d.StepNumber, RecipeStepDescription = d.StepDescription }).ToList();
+
             // Recipe found by id
             var Recipe = new DTO.RecipeDTO.RequestFullRecipe
             {
@@ -128,7 +149,9 @@ namespace Recepttar.Server.Controllers
                 IsVegan = recipe.IsVegan,
                 Type = recipe.Type,
                 DishPicture = DishPicturePath.GetPath(recipeId),
-                AuthorId = recipe.AuthorId
+                AuthorId = recipe.AuthorId,
+                Ingredients = Ingredients,
+                RecipeSteps = RecipeSteps
             };
 
             return Ok(Recipe);
@@ -224,6 +247,25 @@ namespace Recepttar.Server.Controllers
                 }
             }
 
+            if(updates.Ingredients != null)
+            {
+                var ingredients = _context.RecipeIngredients.Where(d => d.RecipeId == recipeId).ExecuteDelete();
+
+                foreach(var item in updates.Ingredients)
+                {
+                    var recipeIngredient = new RecipeIngredients()
+                    {
+                        IngredientId = item.Id,
+                        RecipeId = recipeId,
+                        Quantity = item.Quantity,
+                        MeasurementUnit = item.MeasurementUnit
+                    };
+                    _context.RecipeIngredients.Add(recipeIngredient);
+                }
+
+                wasUpdated = true;
+            }
+
             // Only save if something was actually updated
             if (wasUpdated)
             {
@@ -279,7 +321,7 @@ namespace Recepttar.Server.Controllers
         [HttpGet("search")]
         public IActionResult SearchRecipe([FromQuery] DTO.SearchQueries queries)
         {
-            // Example request: /recipes/search?type=dessert&difficulty=easy&isVegan=true&isExpensive=true&search=chocolate
+            // Example request: /recipes/search?type=dessert&difficulty=easy&isVegan=true&isExpensive=true&search=chocolate&ingredients=1,2
 
             var recipeQuery = _context.Recipe.AsQueryable();
 
@@ -306,6 +348,23 @@ namespace Recepttar.Server.Controllers
             if (!string.IsNullOrWhiteSpace(queries.Search))
             {
                 recipeQuery = recipeQuery.Where(r => r.Title.Contains(queries.Search) || r.Description.Contains(queries.Search));
+            }
+
+            if (!string.IsNullOrEmpty(queries.Ingredients))
+            {
+                var ingredientIds = queries.Ingredients
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(int.Parse)
+                    .ToList();
+
+                recipeQuery = recipeQuery
+                    .Join(_context.RecipeIngredients,
+                        r => r.Id,
+                        ri => ri.RecipeId,
+                        (r, ri) => new { r, ri })
+                    .Where(x => ingredientIds.Contains(x.ri.IngredientId))
+                    .Select(x => x.r)
+                    .Distinct();
             }
 
             var resultsDto = recipeQuery.Select(r => new RequestFullRecipe
