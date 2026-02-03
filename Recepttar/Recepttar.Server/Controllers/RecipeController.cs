@@ -154,6 +154,7 @@ namespace Recepttar.Server.Controllers
             // Recipe found by id
             var Recipe = new DTO.RecipeDTO.RequestFullRecipe
             {
+                Id = recipe.Id,
                 Title = recipe.Title,
                 Description = recipe.Description,
                 Difficulty = recipe.Difficulty,
