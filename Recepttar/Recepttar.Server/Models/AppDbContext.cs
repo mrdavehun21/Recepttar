@@ -13,6 +13,9 @@ namespace Recepttar.Server.Models
         public DbSet<PollOption> PollOption { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
         public DbSet<Vote> Vote { get; set; }
+        public DbSet<Ingredients> Ingredients { get; set; }
+        public DbSet<RecipeIngredients> RecipeIngredients { get; set; }
+        public DbSet<RecipeSteps> RecipeSteps { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,6 +40,12 @@ namespace Recepttar.Server.Models
                 .HasConversion(
                     v => v.ToString(),
                     v => Enum.Parse<Enums.UserRanksEnum>(v)
+                );
+            modelBuilder.Entity<RecipeIngredients>()
+                .Property(r => r.MeasurementUnit)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => Enum.Parse<Enums.MeasurementUnitEnum>(v)
                 );
         }
 
