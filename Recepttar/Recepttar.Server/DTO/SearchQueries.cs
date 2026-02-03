@@ -9,5 +9,6 @@
         public bool? IsVegan { get; set; }
         public bool? IsExpensive { get; set; }
         public string? Search { get; set; }
+        public string? Ingredients { get; set; }
     }
 }
