@@ -3,12 +3,10 @@ import { searchRecipes, getRecipeReviews } from '../api/recipe.api';
 
 export function useRecipes() {
     const [recipes, setRecipes] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState({errorCode: null, errorMessage: null});
 
     const fetchRecipes = useCallback(async (query = '', type = '') => {
-        setLoading(true);
-        setError(null);
+        setError({ errorCode: null, errorMessage: null });
 
         try {
             const data = await searchRecipes(query, type);
@@ -31,9 +29,7 @@ export function useRecipes() {
 
             setRecipes(dataWithRatings);
         } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
+            setError({ errorCode: err.status, errorMessage: 'Something went wrong' });
         }
     }, []);
 
@@ -43,7 +39,6 @@ export function useRecipes() {
 
     return {
         recipes,
-        loading,
         error,
         fetchRecipes
     };

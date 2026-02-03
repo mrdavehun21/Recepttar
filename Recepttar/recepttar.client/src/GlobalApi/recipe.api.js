@@ -52,27 +52,16 @@ export async function submitVote(pollId, optionId) {
     return res.data;
 }
 
-export async function updateFavoriteState(recipeId, favoriteState) {
-    let res = null;
-    if (!favoriteState) {
-        res = await axios.post(`https://localhost:7035/user/favorites/` + recipeId);
-    }
-    else {
-        res = await axios.delete(`https://localhost:7035/user/favorites/` + recipeId);
-    }
+export async function updateFavoriteState(recipeId) {
+
+    const res = await axios.post(`https://localhost:7035/user/favorites/` + recipeId);
     return res.data;
 }
 
-export async function getUserProfile() {
-    try {
-        const res = await axios.get('https://localhost:7035/user/profile');
+export async function getLoginStatus() {
+    return await axios.get('https://localhost:7035/user/profile');
+}
 
-        return res.data;
-    } catch (err) {
-        if (err.response?.status === 401) {
-            return { isLoggedIn: false };
-        }
-
-        throw err;
-    }
+export async function submitLogoutRequest() {
+    return await axios.post('https://localhost:7035/user/logout');
 }

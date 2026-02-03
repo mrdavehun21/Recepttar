@@ -6,7 +6,7 @@ export function useFavorites(initialState = false) {
 
     const toggleFavorite = async (recipeId) => {
         try {
-            await updateFavoriteState(recipeId);
+            await updateFavoriteState(recipeId, isFavorite);
             setIsFavorite(prev => !prev);
         } catch (error) {
             console.error("Failed to update favorite:", error);

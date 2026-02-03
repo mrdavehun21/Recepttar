@@ -85,6 +85,16 @@ namespace Recepttar.Server.Controllers
             return NotFound(new { error = "Email not found" });
         }
 
+        [HttpGet("isLoggedIn")]
+        public IActionResult IsLoggedIn()
+        {
+            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
+            return Ok();
+        }
+
         [HttpPost("login")]
         public IActionResult LoginUser([FromForm] DTO.LogInUser user)
         {
@@ -276,8 +286,6 @@ namespace Recepttar.Server.Controllers
             int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
 
             var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
-
-            var count = _context.Favorites.Count(f => f.UserId == UserId);
 
             var count = _context.Favorites.Count(f => f.UserId == UserId);
 

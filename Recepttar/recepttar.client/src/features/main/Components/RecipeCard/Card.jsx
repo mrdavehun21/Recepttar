@@ -4,7 +4,7 @@ import EmptyHeart from "../../../../assets/emptyHeart.svg";
 import FilledHeart from "../../../../assets/fullHeart.svg";
 import './Card.css'
 
-function Card({ data }) {
+function Card({ data, allowFavorites = false }) {
     const { isFavorite, toggleFavorite } = useFavorites(data.isFavorite);
 
     const StarRating = ({ rating, maxStars = 5 }) => {
@@ -26,12 +26,18 @@ function Card({ data }) {
 
     return (
         <div className="card shadow MainCard">
-            <div
-                className="position-absolute bg-light p-1 rounded-2 CardHeart"
-                onClick={(e) => { e.stopPropagation(); toggleFavorite(data.id); }}
-            >
-                <img src={isFavorite ? FilledHeart : EmptyHeart} className="w-100" />
-            </div>
+            {
+                allowFavorites ? (
+                    <div
+                        className="position-absolute bg-light p-1 rounded-2 CardHeart"
+                        onClick={(e) => { e.stopPropagation(); toggleFavorite(data.id); }}
+                    >
+                        <img src={isFavorite ? FilledHeart : EmptyHeart} className="w-100" />
+                    </div>
+                ) : (
+                    <div></div>
+                )
+            }
 
             <Link
                 to={`/recipe/${data.id}`} className="CardLink">

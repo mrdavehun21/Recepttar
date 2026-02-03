@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { usePollCard } from '../../hooks/usePollVote';
+import { useIsLoggedIn } from '../../../../GlobalHooks/useLoginState'
 
 function PollCard({ data }) {
     const {
@@ -14,6 +14,8 @@ function PollCard({ data }) {
         submitVote
     } = usePollCard(data);
 
+    const { isLoggedIn, profileData } = useIsLoggedIn();
+
     return (
         <div
             className="card overflow-hidden shadow m-3"
@@ -21,7 +23,9 @@ function PollCard({ data }) {
         >
             <div className="card-body">
                 <h4 className="card-title">{question}</h4>
-                {error && <p className="text-danger">{error}</p>}
+                {
+                    (isLoggedIn) ? <></> : <p className="text-danger">{error.errorMessage == null ? "Sign in to vote!" : error.errorMessage }</p>
+                }
             </div>
 
             {options.map(option => {
@@ -47,7 +51,7 @@ function PollCard({ data }) {
 
             <button
                 className="w-100 text-light fw-bold border-0 bg-primary p-2"
-                disabled={hasVoted || submitting || !selectedOptionId}
+                disabled={hasVoted || submitting || !selectedOptionId || !isLoggedIn}
                 onClick={submitVote}
             >
                 {hasVoted ? 'Already voted' : submitting ? 'Submitting...' : 'Submit'}

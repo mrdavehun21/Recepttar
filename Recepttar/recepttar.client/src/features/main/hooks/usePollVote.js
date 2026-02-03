@@ -4,22 +4,41 @@ import { submitVote } from '../api/recipe.api';
 export function usePollVote(initialSelected = null) {
     const [selectedOptionId, setSelectedOptionId] = useState(initialSelected);
     const [submitting, setSubmitting] = useState(false);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState({ errorCode: null, errorMessage: null });
 
     const handleSubmit = async (pollId) => {
         if (!selectedOptionId) {
-            setError('Please select an option');
+            setError({
+                errorCode: 402,
+                errorMessage: 'Please select an option'
+            });
             return false;
         }
 
         setSubmitting(true);
-        setError(null);
+        setError({
+            errorCode: null,
+            errorMessage: null
+        });
 
         try {
             await submitVote(pollId, selectedOptionId);
             return true;
         } catch (err) {
-            setError(err.message);
+            switch (err.status) {
+                case 401:
+                    setError({
+                        errorCode: err.status,
+                        errorMessage: 'Sign in to vote!'
+                    });
+                    break;
+                default:
+                    setError({
+                        errorCode: err.status,
+                        errorMessage: 'Something went wrong!'
+                    });
+                    break;
+            }
             return false;
         } finally {
             setSubmitting(false);
