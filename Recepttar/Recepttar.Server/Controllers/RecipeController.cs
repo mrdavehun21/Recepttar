@@ -58,7 +58,9 @@ namespace Recepttar.Server.Controllers
 
             // Bad request or missing/invalid data (Status code 400)
             if (newRecipe.TimeMinutes <= 1 ||
-                newRecipe.Servings < 1)
+                newRecipe.Servings < 1 || 
+                newRecipe.Ingredients.Count == 0 ||
+                newRecipe.RecipeSteps.Count == 0)
             {
                 return BadRequest(new { error = "Invalid request body" });
             }
@@ -99,6 +101,18 @@ namespace Recepttar.Server.Controllers
                     MeasurementUnit = item.MeasurementUnit
                 };
                 _context.RecipeIngredients.Add(Ingredient);
+            }
+            _context.SaveChanges();
+
+            foreach (var item in newRecipe.RecipeSteps)
+            {
+                var RecipeStep = new RecipeSteps()
+                {
+                    RecipeId = recipe.Id,
+                    StepNumber = item.RecipeStepNumber,
+                    StepDescription = item.RecipeStepDescription
+                };
+                _context.RecipeSteps.Add(RecipeStep);
             }
             _context.SaveChanges();
 

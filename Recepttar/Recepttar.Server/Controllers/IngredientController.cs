@@ -27,5 +27,16 @@ namespace Recepttar.Server.Controllers
                 return Ok(res.GetRange(0, Math.Min(res.Count, 4)));
             }
         }
+
+        [HttpGet("units")]
+        public IActionResult GetUnits()
+        {
+            List<string> units = new List<string>();
+            foreach(var unit in Enum.GetValues<Enums.MeasurementUnitEnum>())
+            {
+                units.Add(unit.ToString());
+            }
+            return Ok(units);
+        }
     }
 }
