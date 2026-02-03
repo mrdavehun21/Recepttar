@@ -280,6 +280,24 @@ namespace Recepttar.Server.Controllers
                 wasUpdated = true;
             }
 
+            if (updates.RecipeSteps != null)
+            {
+                var ingredients = _context.RecipeSteps.Where(d => d.RecipeId == recipeId).ExecuteDelete();
+
+                foreach (var item in updates.RecipeSteps)
+                {
+                    var recipeStep = new RecipeSteps()
+                    {
+                        RecipeId = recipeId,
+                        StepNumber = item.RecipeStepNumber,
+                        StepDescription = item.RecipeStepDescription
+                    };
+                    _context.RecipeSteps.Add(recipeStep);
+                }
+
+                wasUpdated = true;
+            }
+
             // Only save if something was actually updated
             if (wasUpdated)
             {
