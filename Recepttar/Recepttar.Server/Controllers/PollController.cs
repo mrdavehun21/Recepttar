@@ -173,7 +173,7 @@ namespace Recepttar.Server.Controllers
 
             if (PollDetail == null)
             {
-                return BadRequest(new { error = "Poll does not exist" });
+                return NotFound(new { error = "Poll not found" });
             }
 
             if (UserDetails == null || UserDetails.Id != PollDetail.AuthorId)
@@ -184,7 +184,7 @@ namespace Recepttar.Server.Controllers
             _context.Poll.Remove(PollDetail);
 
             _context.SaveChanges();
-            return StatusCode(StatusCodes.Status200OK, new { message = "Poll removed successfuly" });
+            return NoContent();
         }
     }
 }

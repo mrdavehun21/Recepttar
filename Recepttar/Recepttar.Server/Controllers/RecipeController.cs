@@ -125,7 +125,12 @@ namespace Recepttar.Server.Controllers
         {
             var recipe = _context.Recipe.FirstOrDefault(d => d.Id == recipeId);
 
-            if (recipe == null || recipe.DishPicture == null)
+            if (recipe == null)
+            {
+                return NotFound(new { error = "Recipe not found" });
+            }
+
+            if(recipe.DishPicture == null)
             {
                 return NotFound(new { error = "Dish picture not found" });
             }

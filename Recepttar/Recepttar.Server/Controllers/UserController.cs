@@ -233,6 +233,11 @@ namespace Recepttar.Server.Controllers
         {
             var FindUser = _context.User.FirstOrDefault(d => d.Id == userId);
 
+            if(FindUser == null)
+            {
+                return NotFound(new { error = "User not found" });
+            }
+
             // If found user, return profile data (Status code 200)
             var UserData = new DTO.RequestProfileData
             {
@@ -267,6 +272,11 @@ namespace Recepttar.Server.Controllers
         public IActionResult ReturnProfilePic(int userId)
         {
             var FindUser = _context.User.FirstOrDefault(d => d.Id == userId);
+
+            if (FindUser == null)
+            {
+                return NotFound(new { error = "User not found" });
+            }
 
             // If all goes well, return with image (Status code 200)
             byte[] Image = FindUser.ProfilePicture;
