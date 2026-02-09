@@ -18,12 +18,12 @@ namespace Recepttar.Server.Controllers
         {
             if (string.IsNullOrWhiteSpace(search))
             {
-                var res = _context.Ingredients.ToList().GetRange(0, 4);
+                var res = _context.Ingredient.ToList().GetRange(0, 4);
                 return Ok(res);
             }
             else
             {
-                var res = _context.Ingredients.Where(d => d.Name.Contains(search)).ToList();
+                var res = _context.Ingredient.Where(d => d.Name.Contains(search)).ToList();
                 return Ok(res.GetRange(0, Math.Min(res.Count, 4)));
             }
         }

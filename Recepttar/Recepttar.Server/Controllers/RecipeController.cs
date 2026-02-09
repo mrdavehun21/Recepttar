@@ -93,26 +93,26 @@ namespace Recepttar.Server.Controllers
 
             foreach(var item in newRecipe.Ingredients)
             {
-                var Ingredient = new RecipeIngredients()
+                var Ingredient = new RecipeIngredient()
                 {
                     RecipeId = recipe.Id,
                     IngredientId = item.Id,
                     Quantity = item.Quantity,
                     MeasurementUnit = item.MeasurementUnit
                 };
-                _context.RecipeIngredients.Add(Ingredient);
+                _context.RecipeIngredient.Add(Ingredient);
             }
             _context.SaveChanges();
 
             foreach (var item in newRecipe.RecipeSteps)
             {
-                var RecipeStep = new RecipeSteps()
+                var RecipeStep = new RecipeStep()
                 {
                     RecipeId = recipe.Id,
                     StepNumber = item.RecipeStepNumber,
                     StepDescription = item.RecipeStepDescription
                 };
-                _context.RecipeSteps.Add(RecipeStep);
+                _context.RecipeStep.Add(RecipeStep);
             }
             _context.SaveChanges();
 
@@ -150,10 +150,10 @@ namespace Recepttar.Server.Controllers
                 return NotFound(new { error = "Recipe not found" });
             }
 
-            var Ingredients = _context.RecipeIngredients.Join(_context.Ingredients, RecipeIngredients => RecipeIngredients.IngredientId, Ingredients => Ingredients.Id, (RecipeIngredients, Ingredients) => new { RecipeIngredients, Ingredients })
+            var Ingredients = _context.RecipeIngredient.Join(_context.Ingredient, RecipeIngredients => RecipeIngredients.IngredientId, Ingredients => Ingredients.Id, (RecipeIngredients, Ingredients) => new { RecipeIngredients, Ingredients })
                 .Select(d => new DTO.RecipeDTO.IngredientsDTO { Id = d.Ingredients.Id, IngredientName = d.Ingredients.Name, Quantity = d.RecipeIngredients.Quantity, MeasurementUnit = d.RecipeIngredients.MeasurementUnit }).ToList();
 
-            var RecipeSteps = _context.RecipeSteps.Where(d => d.RecipeId == recipeId).OrderBy(d => d.StepNumber)
+            var RecipeSteps = _context.RecipeStep.Where(d => d.RecipeId == recipeId).OrderBy(d => d.StepNumber)
                 .Select(d => new RecipeStepsDTO { RecipeStepNumber = d.StepNumber, RecipeStepDescription = d.StepDescription }).ToList();
 
             // Recipe found by id
@@ -269,18 +269,18 @@ namespace Recepttar.Server.Controllers
 
             if(updates.Ingredients != null)
             {
-                var ingredients = _context.RecipeIngredients.Where(d => d.RecipeId == recipeId).ExecuteDelete();
+                var ingredients = _context.RecipeIngredient.Where(d => d.RecipeId == recipeId).ExecuteDelete();
 
                 foreach(var item in updates.Ingredients)
                 {
-                    var recipeIngredient = new RecipeIngredients()
+                    var recipeIngredient = new RecipeIngredient()
                     {
                         IngredientId = item.Id,
                         RecipeId = recipeId,
                         Quantity = item.Quantity,
                         MeasurementUnit = item.MeasurementUnit
                     };
-                    _context.RecipeIngredients.Add(recipeIngredient);
+                    _context.RecipeIngredient.Add(recipeIngredient);
                 }
 
                 wasUpdated = true;
@@ -288,17 +288,17 @@ namespace Recepttar.Server.Controllers
 
             if (updates.RecipeSteps != null)
             {
-                var ingredients = _context.RecipeSteps.Where(d => d.RecipeId == recipeId).ExecuteDelete();
+                var ingredients = _context.RecipeStep.Where(d => d.RecipeId == recipeId).ExecuteDelete();
 
                 foreach (var item in updates.RecipeSteps)
                 {
-                    var recipeStep = new RecipeSteps()
+                    var recipeStep = new RecipeStep()
                     {
                         RecipeId = recipeId,
                         StepNumber = item.RecipeStepNumber,
                         StepDescription = item.RecipeStepDescription
                     };
-                    _context.RecipeSteps.Add(recipeStep);
+                    _context.RecipeStep.Add(recipeStep);
                 }
 
                 wasUpdated = true;
@@ -396,7 +396,7 @@ namespace Recepttar.Server.Controllers
                     .ToList();
 
                 recipeQuery = recipeQuery
-                    .Join(_context.RecipeIngredients,
+                    .Join(_context.RecipeIngredient,
                         r => r.Id,
                         ri => ri.RecipeId,
                         (r, ri) => new { r, ri })

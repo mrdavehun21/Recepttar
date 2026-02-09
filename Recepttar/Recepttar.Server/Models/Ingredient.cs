@@ -2,7 +2,7 @@
 
 namespace Recepttar.Server.Models
 {
-    public class Ingredients
+    public class Ingredient
     {
         [Key]
         public int Id { get; set; }

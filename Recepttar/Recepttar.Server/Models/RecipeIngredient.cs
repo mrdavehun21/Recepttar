@@ -2,7 +2,7 @@
 
 namespace Recepttar.Server.Models
 {
-    public class RecipeIngredients
+    public class RecipeIngredient
     {
         [Key]
         public int Id { get; set; }
@@ -11,7 +11,7 @@ namespace Recepttar.Server.Models
         public Recipe Recipe { get; set; }
 
         public int IngredientId { get; set; }
-        public Ingredients Ingredient { get; set; }
+        public Ingredient Ingredient { get; set; }
 
         public float Quantity { get; set; }
         public Enums.MeasurementUnitEnum MeasurementUnit { get; set; }

@@ -121,7 +121,7 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(new { error = "Unauthorized" });
             }
 
-            if(UserDetails.Rank == Enums.UserRanksEnum.Hobbi_szakács)
+            if(UserDetails.Rank == Enums.UserRanksEnum.HomeCook)
             {
                 return BadRequest(new { error = "Rank level too low" });
             }

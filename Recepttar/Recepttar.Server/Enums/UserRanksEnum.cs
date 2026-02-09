@@ -2,8 +2,8 @@
 {
     public enum UserRanksEnum
     {
-        Hobbi_szakács,
-        Konyhamester,
-        Receptbajnok
+        HomeCook,
+        ChefMaster,
+        FoodLegend
     }
 }

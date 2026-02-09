@@ -2,7 +2,7 @@
 
 namespace Recepttar.Server.Models
 {
-    public class RecipeSteps
+    public class RecipeStep
     {
         [Key]
         public int Id { get; set; }

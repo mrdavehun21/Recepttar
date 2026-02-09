@@ -52,7 +52,7 @@ namespace Recepttar.Server.Controllers
                 PasswordHash = Hashedpwd,
                 Bio = "",
                 ProfilePicture = new byte[] { },
-                Rank = Enums.UserRanksEnum.Hobbi_szakács
+                Rank = Enums.UserRanksEnum.HomeCook
             };
 
             // Add new user to database
@@ -297,9 +297,9 @@ namespace Recepttar.Server.Controllers
 
             var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
 
-            var count = _context.Favorites.Count(f => f.UserId == UserId);
+            var count = _context.Favorite.Count(f => f.UserId == UserId);
 
-            var favorites = _context.Favorites
+            var favorites = _context.Favorite
                 .Where(f => f.UserId == UserId)
                 .Select(f => new FavoriteRecipe()
                 {
@@ -337,14 +337,14 @@ namespace Recepttar.Server.Controllers
                 return NotFound(new { error = "Recipe not found" });
             }
 
-            var existingFavorite = _context.Favorites.FirstOrDefault(f => f.UserId == UserId && f.RecipeId == recipeId);
+            var existingFavorite = _context.Favorite.FirstOrDefault(f => f.UserId == UserId && f.RecipeId == recipeId);
 
             if (existingFavorite != null)
             {
                 return Conflict(new { error = "Recipe already in favorites" });
             }
 
-            _context.Favorites.Add(new Favorite
+            _context.Favorite.Add(new Favorite
             {
                 UserId = UserId.Value,
                 RecipeId = recipeId
@@ -369,7 +369,7 @@ namespace Recepttar.Server.Controllers
 
             var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
 
-            var favorite = _context.Favorites.FirstOrDefault(f => f.UserId == UserId && f.RecipeId == recipeId);
+            var favorite = _context.Favorite.FirstOrDefault(f => f.UserId == UserId && f.RecipeId == recipeId);
 
             // If recipe not found (Status code 404)
             if (favorite == null)
@@ -377,7 +377,7 @@ namespace Recepttar.Server.Controllers
                 return NotFound(new { error = "Recipe not in favorites" });
             }
 
-            _context.Favorites.Remove(favorite);
+            _context.Favorite.Remove(favorite);
 
             _context.SaveChanges();
 
