@@ -92,10 +92,10 @@
 
 7. `/user/profile/{userId}`
 
-    | Method | Status Code | Description                 | Response Body                        | Path Parameter     |
-    |--------|-------------|-----------------------------|--------------------------------------|--------------------|
-    | GET    | 200         | Gets another user's profile | JSON object                          | `userId` (user ID) |
-    | GET    | 404         | User not found              | JSON: `{ "error": "User not found" }`| `userId` (user ID) |
+    | Method | Status Code | Description                | Response Body                        | Path Parameter     |
+    |--------|-------------|----------------------------|--------------------------------------|--------------------|
+    | GET    | 200         | Got another user's profile | JSON object                          | `userId` (user ID) |
+    | GET    | 404         | User not found             | JSON: `{ "error": "User not found" }`| `userId` (user ID) |
 
     **Response Body**
 
@@ -129,10 +129,10 @@
 
 1. `/user/favorites`
 
-    | Method | Status Code | Description                        | Response Body                       |
-    |--------|-------------|------------------------------------|-------------------------------------|
-    | GET    | 200         | Gets all favorite recipes for user | Array of Recipe objects             |
-    | GET    | 401         | Unauthorized                       | JSON: `{ "error": "Unauthorized" }` |
+    | Method | Status Code | Description                       | Response Body                       |
+    |--------|-------------|-----------------------------------|-------------------------------------|
+    | GET    | 200         | Got all favorite recipes for user | Array of Recipe objects             |
+    | GET    | 401         | Unauthorized                      | JSON: `{ "error": "Unauthorized" }` |
 
     **Response Body**
 
@@ -177,9 +177,9 @@
 
 1. `/recipes`
 
-    | Method | Status Code | Description      | Response Body           |
-    |--------|-------------|------------------|-------------------------|
-    | GET    | 200         | Gets all recipes | Array of Recipe objects |
+    | Method | Status Code | Description     | Response Body           |
+    |--------|-------------|-----------------|-------------------------|
+    | GET    | 200         | Got all recipes | Array of Recipe objects |
 
     **Response Body**
 
@@ -209,11 +209,11 @@
 
 2. `/recipes/create`
 
-    | Method | Status Code | Description                       | Response Body                               |
-    |--------|-------------|-----------------------------------|---------------------------------------------|
-    | POST   | 201         | Created a new recipe              | JSON: `{ "message": "Recipe created" }`     |
-    | POST   | 400         | Missing or invalid fields         | JSON: `{ "error": "Invalid request body" }` |
-    | POST   | 401         | Unauthorized                      | JSON: `{ "error": "Unauthorized" }`         |
+    | Method | Status Code | Description               | Response Body                               |
+    |--------|-------------|---------------------------|---------------------------------------------|
+    | POST   | 201         | Created a new recipe      | JSON: `{ "message": "Recipe created" }`     |
+    | POST   | 400         | Missing or invalid fields | JSON: `{ "error": "Invalid request body" }` |
+    | POST   | 401         | Unauthorized              | JSON: `{ "error": "Unauthorized" }`         |
 
     **Request Body**
 

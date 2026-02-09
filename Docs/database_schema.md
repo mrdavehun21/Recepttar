@@ -4,15 +4,15 @@
 
 ### User
 
-| Field            | Type    | Database Type (MySQL) |  Description                                                                 |
-|------------------|---------|-----------------------|------------------------------------------------------------------------------|
-| `Id`             | integer | INT AUTO_INCREMENT PK | Unique identifier                                                            |
-| `Name`           | string  | VARCHAR(255)          | Display name of the user                                                     |
-| `Email`          | string  | VARCHAR(255) UNIQUE   | Used for login (unique)                                                      |
-| `PasswordHash`   | string  | VARCHAR(128)          | Hashed password                                                              |
-| `Bio`            | string  | TEXT                  | Short user description                                                       |
-| `ProfilePicture` | byte[]  | MEDIUMBLOB            | A chooseable profile img                                                     |
-| `Rank`           | enum    | ENUM                  | User level based on activity: 'Hobbi szakács','Konyhamester', 'Receptbajnok' |
+| Field            | Type    | Database Type (MySQL) |  Description                                                         |
+|------------------|---------|-----------------------|----------------------------------------------------------------------|
+| `Id`             | integer | INT AUTO_INCREMENT PK | Unique identifier                                                    |
+| `Name`           | string  | VARCHAR(255)          | Display name of the user                                             |
+| `Email`          | string  | VARCHAR(255) UNIQUE   | Used for login (unique)                                              |
+| `PasswordHash`   | string  | VARCHAR(128)          | Hashed password                                                      |
+| `Bio`            | string  | TEXT                  | Short user description                                               |
+| `ProfilePicture` | byte[]  | MEDIUMBLOB            | A chooseable profile img                                             |
+| `Rank`           | enum    | ENUM                  | User level based on activity: 'HomeCook', 'ChefMaster', 'FoodLegend' |
 
 ### Recipe
 
@@ -29,6 +29,15 @@
 | `Type`          | enum    | ENUM                  | “Appetizer”, “MainDish”, “Dessert” |
 | `DishPicture`   | byte[]  | MEDUIMBLOB            | A chooseable dish img              |
 | `AuthorId`      | integer | INT (FK -> `User.Id`) | References `User.Id`               |
+
+### RecipeStep
+
+| Field             | Type    | Database Type (MySQL)   | Description             |
+|-------------------|---------|-------------------------|-------------------------|
+| `Id`              | integer | INT AUTO_INCREMENT PK   | Unique identifier       |
+| `RecipeId`        | integer | INT (FK -> `Recipe.Id`) | References `Recipe.Id`  |
+| `StepNumber`      | integer | INT                     | Order of the step       |
+| `StepDescription` | string  | TEXT                    | Description of the step |
 
 ### Poll
 
