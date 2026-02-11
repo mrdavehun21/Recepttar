@@ -142,20 +142,7 @@
             "recipeId": "integer",
             "title": "string",
             "description": "string",
-            "difficulty": "string",
-            "timeMinutes": "integer",
-            "servings": "integer",
-            "isExpensive": "bool",
-            "isVegan": "bool",
-            "type": "string",
-            "dishPicture": "string URL",
-            "authorId": "integer",
-            "ingredients": [
-                {"id": "integer", "ingredientName": "string", "Quantity": "float", "MeasurementUnit": "string" }
-            ],
-            "steps": [
-                {"recipeStepNumber": "integer", "RecipeStepDescription": "string" }
-            ]
+            "dishPicture": "string URL"
         }
     ]
     ```
@@ -457,3 +444,4 @@
         "string"
     ]
     ```
+
