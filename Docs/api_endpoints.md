@@ -162,7 +162,7 @@
 
 ### Recipe Management
 
-1. `/recipes`
+1. `/recipe/all`
 
     | Method | Status Code | Description     | Response Body           |
     |--------|-------------|-----------------|-------------------------|
@@ -194,7 +194,7 @@
     ]
     ```
 
-2. `/recipes/create`
+2. `/recipe/create`
 
     | Method | Status Code | Description               | Response Body                               |
     |--------|-------------|---------------------------|---------------------------------------------|
@@ -226,7 +226,7 @@
     }
     ```
 
-3. `recipes/{recipeId}/image`
+3. `recipe/{recipeId}/image`
 
     | Method | Status Code | Description           | Response Body                                 | Path Parameter          |
     |--------|-------------|-----------------------|-----------------------------------------------|------------------------ |
@@ -234,7 +234,7 @@
     | GET    | 404         | Recipe not found      | JSON: `{ "error": "Recipe not found" }`       | `recipeId` (recipe ID)  |
     | GET    | 404         | DishPicture not found | JSON: `{ "error": "Dish picture not found" }` | `recipeId` (recipe ID)  |
 
-4. `/recipes/{recipeId}`
+4. `/recipe/{recipeId}`
 
     | Method | Status Code | Description               | Response Body                                                    | Path Parameter         |
     |--------|-------------|---------------------------|------------------------------------------------------------------|------------------------|
@@ -255,7 +255,7 @@
 
 ### Recipe Search
 
-1. `/recipes/search`
+1. `/recipe/search`
 
     | Method | Status Code | Description               | Response Body                                    |
     |--------|-------------|---------------------------|--------------------------------------------------|
@@ -275,11 +275,11 @@
 
     **Example Request**
 
-    `GET /recipes/search?type=dessert&difficulty=easy&isVegan=true&isExpensive=true&search=chocolate&ingredients=1,2`
+    `GET /recipe/search?type=dessert&difficulty=easy&isVegan=true&isExpensive=true&search=chocolate&ingredients=1,2`
 
 ### Recipe Reviews & Ratings
 
-1. `/recipes/{recipeId}/reviews`
+1. `/recipe/{recipeId}/reviews`
 
     | Method | Status Code | Description                     | Response Body                                      | Path Parameter         |
     |--------|-------------|---------------------------------|----------------------------------------------------|------------------------|
@@ -444,4 +444,5 @@
         "string"
     ]
     ```
+
 
