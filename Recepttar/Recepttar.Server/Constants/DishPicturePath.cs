@@ -4,7 +4,7 @@ namespace Recepttar.Server.Constants
     {
         public static string GetPath(int recipeId)
         {
-            return $"recipes/{recipeId}/image";
+            return $"recipe/{recipeId}/image";
         }
     }
 }

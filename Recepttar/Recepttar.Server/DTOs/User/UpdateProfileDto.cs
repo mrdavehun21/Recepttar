@@ -1,6 +1,6 @@
-﻿namespace Recepttar.Server.DTO
+﻿namespace Recepttar.Server.DTOs.User
 {
-    public class UpdateProfileData
+    public class UpdateProfileDto
     {
         public string? Name { get; set; }
         public string? Email { get; set; }

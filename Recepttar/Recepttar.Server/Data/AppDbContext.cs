@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Recepttar.Server.Models;
 
-namespace Recepttar.Server.Models
+namespace Recepttar.Server.Data
 {
     public class AppDbContext : DbContext
     {

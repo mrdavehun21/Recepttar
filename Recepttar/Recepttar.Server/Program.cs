@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Recepttar.Server.Models;
+using Recepttar.Server.Data;
+using Recepttar.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,17 @@ builder.Services.AddCors(options =>
 
 // Add services to the container.
 
-//builder.Services.AddControllers();
+builder.Services.AddScoped<FavoriteService>();
+builder.Services.AddScoped<IngredientService>();
+builder.Services.AddScoped<PollService>();
+builder.Services.AddScoped<RecipeService>();
+builder.Services.AddScoped<ReviewService>();
+builder.Services.AddScoped<UserService>();
+
+builder.Services.AddRouting(options =>
+{
+    options.LowercaseUrls = true;
+});
 
 // This helps accepting enum names in queries instead of numbers. (Instead of 0, now we can use Enum_Name)
 builder.Services.AddControllers()
