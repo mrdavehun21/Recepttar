@@ -35,56 +35,64 @@ function NavbarComponent() {
 
 
     return (
-        <Navbar bg="success" expand="sm" className="px-2">
-            <Navbar.Brand href="/">
-                <img src={Logo} alt="Logo" className="Logo" />
-            </Navbar.Brand>
+        <Navbar variant="dark" expand="sm" className="px-3 justify-content-between main-green Titlebar">
+            <div className="d-flex align-items-center">
+                <Navbar.Brand href="/home" className="d-none d-sm-block">
+                    <img src={Logo} alt="Logo" className="Logo" />
+                </Navbar.Brand>
 
-            <Nav className="ms-auto">
-                <Dropdown align="end">
-                    <Dropdown.Toggle
-                        variant="success"
-                        id="profile-dropdown"
-                        className="d-flex align-items-center gap-2"
-                    >
-                        {isLoggedIn ? (
-                            <>
-                                <Image
-                                    src={`https://localhost:7035${profileData.profilePicture}`}
-                                    roundedCircle
-                                    width={36}
-                                    height={36}
-                                    style={{ objectFit: 'cover' }}
-                                />
-                                <span className="fw-semibold text-light">{profileData.name}</span>
-                            </>
-                        ) : (
-                            <>
-                                <div
-                                    className="bg-secondary rounded-circle"
-                                    style={{ width: 36, height: 36 }}
-                                />
-                                <span className="fw-semibold text-light">Profile</span>
-                            </>
-                        )}
-                    </Dropdown.Toggle>
+                <Nav className="gap-3 d-flex flex-row">
+                    <Nav.Link href="/myRecipes" className="fs-4 navbar-link">My recipes</Nav.Link>
+                    <Nav.Link href="/polls" className="fs-4 navbar-link">Polls</Nav.Link>
+                </Nav>
+            </div>
 
-                    <Dropdown.Menu>
-                        {isLoggedIn ? (
-                            <>
-                                <Dropdown.Item href="/profile">Profile</Dropdown.Item>
-                                <Dropdown.Divider />
-                                <Dropdown.Item onClick={handleLogout} className="text-danger">
-                                    Logout
-                                </Dropdown.Item>
-                            </>
-                        ) : (
-                            <Dropdown.Item href="/login">Login</Dropdown.Item>
-                        )}
-                    </Dropdown.Menu>
-                </Dropdown>
-            </Nav>
+            <Dropdown align="end">
+                <Dropdown.Toggle
+                    as={Nav.Link}
+                    id="profile-dropdown"
+                    className="d-flex align-items-center gap-2"
+                >
+                    {isLoggedIn ? (
+                        <>
+                            <Image
+                                src={`https://localhost:7035${profileData.profilePicture}`}
+                                roundedCircle
+                                width={36}
+                                height={36}
+                                style={{ objectFit: 'cover' }}
+                            />
+                            <span className="fw-semibold d-none d-sm-block">
+                                {profileData.name}
+                            </span>
+                        </>
+                    ) : (
+                        <>
+                            <div
+                                className="bg-secondary rounded-circle"
+                                style={{ width: 36, height: 36 }}
+                            />
+                            <span className="fw-semibold d-none d-sm-block">Profile</span>
+                        </>
+                    )}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu className="mt-1">
+                    {isLoggedIn ? (
+                        <>
+                            <Dropdown.Item href="/profile">Profile</Dropdown.Item>
+                            <Dropdown.Divider />
+                            <Dropdown.Item onClick={handleLogout} className="text-danger">
+                                Logout
+                            </Dropdown.Item>
+                        </>
+                    ) : (
+                        <Dropdown.Item href="/login">Login</Dropdown.Item>
+                    )}
+                </Dropdown.Menu>
+            </Dropdown>
         </Navbar>
+
     );
 }
 

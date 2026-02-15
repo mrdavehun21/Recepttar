@@ -15,7 +15,7 @@ function Card({ data, allowFavorites = false }) {
                 {[...Array(maxStars)].map((_, index) => (
                     <i
                         key={index}
-                        className={`bi ${index < roundedRating ? "bi-star-fill" : "bi-star"
+                        className={`me-1 bi ${index < roundedRating ? "bi-star-fill filled-star-color" : "bi-star-fill empty-star-color"
                             }`}
                     ></i>
                 ))}
@@ -25,7 +25,7 @@ function Card({ data, allowFavorites = false }) {
 
 
     return (
-        <div className="card shadow MainCard">
+        <div className="card border-0 shadow MainCard">
             {
                 allowFavorites ? (
                     <div
@@ -41,24 +41,30 @@ function Card({ data, allowFavorites = false }) {
 
             <Link
                 to={`/recipe/${data.id}`} className="CardLink">
-                <div className="card h-100">
+                <div className="card border-0 h-100">
                     <img
                         className="card-img-top img-fluid CardImage"
                         src={`https://localhost:7035/${data.dishPicture}`}
                         alt={data.title}
                     />
                     <div className="card-body">
-                        <h4 className="card-title">{data.title}</h4>
+                        <h4 className="card-title text-decoration-underline color-neutral-100 fw-bold">{data.title}</h4>
+                        <p className="color-neutral-100 mt-4 fw-bold">{
+                            (data.description.length > 150) ? (data.description.substring(0, 150) + "...") :
+                                (data.description)
+                        }</p>
                     </div>
-                    <div className="list-group list-group-flush list-unstyled">
+                    <div className="border-top border-dark list-group list-group-flush list-unstyled">
                         <div className="d-flex justify-content-between p-3">
                             <div>
                                 <StarRating rating={data.averageRating} />
                                 <span className="ms-2">
-                                    ({Math.ceil(data.averageRating)} star{Math.ceil(data.averageRating) !== 1 && "s"})
+                                    {Math.round(data.averageRating * 10) / 10}
                                 </span>
                             </div>
-                            <div>{data.reviewCount} review(s)</div>
+                            <div>{data.reviewCount} Review{
+                                (data.reviewCount > 1) ? "s" : ""
+                            }</div>
                         </div>
                     </div>
                 </div>

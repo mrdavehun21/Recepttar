@@ -1,7 +1,7 @@
 import { usePollCard } from '../../hooks/usePollVote';
-import { useIsLoggedIn } from '../../../../GlobalHooks/useLoginState'
+import './PollCard.css';
 
-function PollCard({ data }) {
+function PollCard({ data, loginStatus }) {
     const {
         question,
         options,
@@ -14,17 +14,12 @@ function PollCard({ data }) {
         submitVote
     } = usePollCard(data);
 
-    const { isLoggedIn, profileData } = useIsLoggedIn();
-
     return (
-        <div
-            className="card overflow-hidden shadow m-3"
-            style={{ minWidth: '300px', width: '30%', maxWidth: '320px', height: '-webkit-fill-available' }}
-        >
-            <div className="card-body">
-                <h4 className="card-title">{question}</h4>
+        <div className="card overflow-hidden shadow m-3 rounded-3 vote-card">
+            <div className="card-body mb-0 p-2 fw-bold">
+                <p className="card-title fs-5 text-center mb-0 border-0 border-bottom border-black w-100 p-2">{question}</p>
                 {
-                    (isLoggedIn) ? <></> : <p className="text-danger">{error.errorMessage == null ? "Sign in to vote!" : error.errorMessage }</p>
+                    //(loginStatus) ? <></> : <p className="text-danger">{error.errorMessage == null ? "Sign in to vote!" : error.errorMessage }</p>
                 }
             </div>
 
@@ -36,13 +31,15 @@ function PollCard({ data }) {
                         key={option.id}
                         disabled={hasVoted}
                         onClick={() => selectOption(option.id)}
-                        className={`
-              m-2 p-2 rounded-2 d-flex justify-content-between align-items-center
-              ${isSelected ? 'border border-primary border-2 bg-info' : 'border-0'}
-            `}
+                        className={"vote-btn d-flex align-items-center p-0 m-2 border border-dark " + ((isSelected == true) ? ("selected-poll-option") : (""))}
                     >
-                        <span>{option.optionText}</span>
-                        <span className="badge bg-secondary">
+                        <span className="vote-text flex-grow-1 px-4 fs-6">
+                            {option.optionText}
+                        </span>
+
+                        <div className="vote-divider" />
+
+                        <span className="vote-count d-flex align-items-center justify-content-center">
                             {option.voteCount}
                         </span>
                     </button>
@@ -50,8 +47,8 @@ function PollCard({ data }) {
             })}
 
             <button
-                className="w-100 text-light fw-bold border-0 bg-primary p-2"
-                disabled={hasVoted || submitting || !selectedOptionId || !isLoggedIn}
+                className={"w-100 text-light fw-bold border-0 bg-additional-7 p-2 " + ((hasVoted) ? "bg-submitted" : "")}
+                disabled={hasVoted || submitting || !selectedOptionId || !loginStatus}
                 onClick={submitVote}
             >
                 {hasVoted ? 'Already voted' : submitting ? 'Submitting...' : 'Submit'}

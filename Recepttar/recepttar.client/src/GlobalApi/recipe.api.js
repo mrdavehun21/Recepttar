@@ -65,3 +65,10 @@ export async function getLoginStatus() {
 export async function submitLogoutRequest() {
     return await axios.post('https://localhost:7035/user/logout');
 }
+
+export async function searchIngredients(search) {
+    const params = new URLSearchParams();
+    if (search) params.append('search', search);
+
+    return await axios.get('https://localhost:7035/ingredients/search', { params });
+}

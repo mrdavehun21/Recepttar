@@ -1,6 +1,5 @@
 .Titlebar{
-    background-color: rgb(43, 133, 51);
-    color: white;
+    height: 100px;
 }
 
 .Logo{
@@ -20,4 +19,15 @@ li:hover{
 
 .ProfileBoxImage{
     max-height: 50px;
+}
+
+.main-green {
+    background-color: #6F9D48;
+}
+
+.navbar-link {
+    color: #1F3D2B !important;
+    text-decoration: underline;
+    text-transform: uppercase;
+    font-weight: bold;
 }

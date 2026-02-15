@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { submitVote } from '../api/recipe.api';
+import { submitVote } from '../api/main.api';
 
 export function usePollVote(initialSelected = null) {
     const [selectedOptionId, setSelectedOptionId] = useState(initialSelected);

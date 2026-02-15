@@ -3,9 +3,9 @@ import './Footer.css'
 
 function Footer() {
     return (
-        <div className="w-100 bg-success d-flex align-items-center gap-2 text-light">
+        <div className="w-100 d-flex align-items-center gap-2 text-light main-green">
             <img src={Logo} className="Logo" />
-            <h2>Recepttar</h2>
+            <h2>Recepttár</h2>
         </div>
   );
 }

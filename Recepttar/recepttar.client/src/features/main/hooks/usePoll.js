@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { fetchActivePolls } from '../api/recipe.api';
+import { fetchActivePolls } from '../api/main.api';
 
 export function usePolls() {
     const [polls, setPolls] = useState([]);

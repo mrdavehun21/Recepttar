@@ -1,0 +1,9 @@
+.OptionButtonIngredient {
+    background-color: #E6F4EC;
+    border: 0;
+    border-radius: 21px;
+}
+
+.OptionButtonIngredientSelected {
+    background-color: #8FC3A6;
+}

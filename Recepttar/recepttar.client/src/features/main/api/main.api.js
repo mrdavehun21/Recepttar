@@ -2,18 +2,54 @@ import axios from 'axios'
 
 axios.defaults.withCredentials = true;
 
-export async function searchRecipes(query = '', type = '') {
-    const params = new URLSearchParams();
-    if (query) params.append('search', query);
-    if (type) params.append('type', type);
+function buildSearchParams([tags, ingredients, search]) {
+    const params = {};
 
-    const res = await axios.get('https://localhost:7035/recipes/search', { params });
+    if (search) {
+        params.search = search;
+    }
+
+    const TAG_MAP = {
+        Dessert: { type: "dessert" },
+        "Main dish": { type: "mainDish" },
+        Appetizer: { type: "appetizer" },
+
+        Easy: { difficulty: "easy" },
+        Medium: { difficulty: "medium" },
+        Hard: { difficulty: "hard" },
+
+        Vegan: { isVegan: true },
+
+        Expensive: { isExpensive: true },
+        Cheap: { isExpensive: false },
+    };
+
+    tags.forEach(tag => {
+        const mapping = TAG_MAP[tag];
+        if (!mapping) return;
+
+        Object.assign(params, mapping);
+    });
+
+    if (ingredients.length) {
+        params.ingredients = ingredients.map(i => i.id).join(",");
+    }
+
+    return params;
+}
+
+export async function searchRecipes(query = []) {
+    const params = buildSearchParams(query);
+
+    const res = await axios.get(
+        "https://localhost:7035/recipes/search",
+        { params }
+    );
 
     const recipes = res.data;
 
     try {
-        const favRes = await axios.get('https://localhost:7035/user/favorites');
-
+        const favRes = await axios.get("https://localhost:7035/user/favorites");
         const favoriteIds = favRes.data.map(fav => fav.id);
 
         return recipes.map(recipe => ({
@@ -24,7 +60,6 @@ export async function searchRecipes(query = '', type = '') {
         if (err.response?.status === 401) {
             return recipes;
         }
-
         throw err;
     }
 }

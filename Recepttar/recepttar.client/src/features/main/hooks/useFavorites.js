@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { updateFavoriteState } from '../api/recipe.api';
+import { updateFavoriteState } from '../api/main.api';
 
 export function useFavorites(initialState = false) {
     const [isFavorite, setIsFavorite] = useState(initialState);

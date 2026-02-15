@@ -1,0 +1,55 @@
+.poll-card {
+    border: 2px solid #E3D6C8;
+}
+
+.bg-additional-7 {
+    background-color: #C98A5A;
+}
+
+.bg-submitted {
+    background-color: #8C5A32;
+}
+
+.color-red {
+    color: #FF3333;
+}
+
+.vote-card {
+    min-width: 280px !important;
+}
+
+.vote-btn {
+    max-width: 600px;
+    height: 48px;
+    border-radius: 15px;
+    background-color: #F2E8DE;
+    font-weight: 600;
+    overflow: hidden;
+}
+
+.vote-btn:hover {
+    background-color: #EADCCD
+}
+
+.selected-poll-option {
+    background-color: #D9C3A5;
+}
+
+.vote-text {
+    font-size: 1.1rem;
+    text-align: center;
+    width: 100%;
+}
+
+.vote-divider {
+    width: 1px;
+    height: 100%;
+}
+
+.vote-count {
+    width: 70px;
+    height: 100%;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-left: 2px solid black;
+}
