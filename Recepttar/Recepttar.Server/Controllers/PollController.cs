@@ -1,189 +1,137 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Recepttar.Server.Constants;
-using Recepttar.Server.HelperMethods;
-using Recepttar.Server.Models;
+using Recepttar.Server.DTOs.Poll;
+using Recepttar.Server.Services;
 
 namespace Recepttar.Server.Controllers
 {
-    [ApiController()]
-    [Route("polls/")]
-    public class PollController : Controller
+    [ApiController]
+    [Route("[controller]")]
+    public class PollController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly PollService _pollService;
 
-        public PollController(AppDbContext context)
+        public PollController(PollService pollService)
         {
-            _context = context;
+            _pollService = pollService;
         }
 
         [HttpGet("active")]
-        public IActionResult ActivePolls()
+        public async Task<IActionResult> GetActivePolls()
         {
-            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
 
-            if(UserId == null)
-            {
-                UserId = -1;
-            }
-
-            // Return found active polls (Status code 200)
-            var FoundActivePolls = _context.Poll.Join(_context.PollOption, pollTable => pollTable.Id, pollOptionTable => pollOptionTable.PollId, (pollTable, pollOptionTable) => new {pollTable, pollOptionTable})
-                .GroupBy(d => new { d.pollTable.Id, d.pollTable.Question })
-                .Select(g => new
-                {
-                    id = g.Key.Id,
-                    authorId = _context.Poll.First(d => d.Id == g.Key.Id).AuthorId,
-                    question = g.Key.Question,
-                    options = g.Select(x => new
-                    {
-                        id = x.pollOptionTable.Id,
-                        optionText = x.pollOptionTable.OptionText,
-                        voteCount = _context.Vote.Count(d => d.OptionId == x.pollOptionTable.Id && d.PollId == x.pollOptionTable.PollId),
-                    }).ToList(),
-                    votedOn = _context.Vote.Where(v => v.UserId == UserId && v.PollId == g.Key.Id).Select(v => (int?)v.OptionId).FirstOrDefault()
-                });
-
-            if(FoundActivePolls == null)
-            {
-                // If no active poll found (Status code 404)
-                return NotFound(new { error = "No active poll" });
-            }
-
-            return Ok(FoundActivePolls);
-        }
-
-        [HttpPost("{pollId}/vote")]
-        public IActionResult AddVote([FromForm] DTO.PollDTO.VotedOption voted, int pollId) // Id is the unique id of the question
-        {
-            // Unauthorized access (Status 401)
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            if (userId == null)
             {
                 return Unauthorized(new { error = "Unauthorized" });
             }
 
-            // Get userId
-            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+            var polls = await _pollService.GetActivePollsAsync(userId.Value);
 
-            // Don't add if it's already there
-            var findVote = _context.Vote.FirstOrDefault(d => d.UserId == UserId.Value && d.PollId == pollId);
+            return Ok(polls);
+        }
 
-            if (findVote != null)
+        [HttpPost("{pollId}/vote")]
+        public async Task<IActionResult> Vote(int pollId, [FromForm] PollOptionDto voted)
+        {
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            if (userId == null)
             {
-                return Conflict(new { error = "User already voted" });
+                return Unauthorized(new { error = "Unauthorized" });
             }
 
-            var findPoll = _context.Poll.FirstOrDefault(d => d.Id == pollId);
+            var result = await _pollService.AddVoteAsync(userId.Value, pollId, voted.OptionId);
 
-            // If poll not found (Status code 404)
-            if(findPoll == null)
+            if (!result.success)
             {
-                return NotFound(new { error = "Poll not found" });
+                if (result.error == "User already voted")
+                {
+                    return Conflict(new { error = result.error });
+                }
+
+                if (result.error == "Poll not found")
+                {
+                    return NotFound(new { error = result.error });
+                }
+
+                if (result.error == "Invalid option")
+                {
+                    return BadRequest(new { error = result.error });
+                }
             }
 
-            var pollOptions = _context.PollOption.Where(d => d.PollId == pollId).Select(d => d.Id).ToList();
-
-            // If user chooses an invalid option (Status code 400)
-            if(!pollOptions.Contains(voted.OptionId))
-            {
-                return BadRequest(new { error = "Invalid option" });
-            }
-
-            Vote vote = new Vote()
-            {
-                UserId = UserId.Value,
-                PollId = pollId,
-                OptionId = voted.OptionId
-            };
-
-            _context.Add(vote);
-
-            _context.SaveChanges();
-
-            // After successful vote (Status code 200)
             return Ok(new { message = "Vote recorded" });
         }
 
         [HttpPost("create")]
-        public IActionResult CreatePoll([FromForm] DTO.PollDTO.ActivePoll poll)
+        public async Task<IActionResult> CreatePoll([FromForm] PollDto poll)
         {
-            // Check if user is logged in and has the necessary rank to create a poll
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            if (userId == null)
             {
                 return Unauthorized(new { error = "Unauthorized" });
             }
 
-            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+            var result = await _pollService.CreatePollAsync(userId.Value, poll);
 
-            var UserDetails = _context.User.FirstOrDefault(d => d.Id == UserId);
-
-            if(UserDetails == null)
+            if (!result.success)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return BadRequest(new { error = result.error });
             }
 
-            if(UserDetails.Rank == Enums.UserRanksEnum.HomeCook)
-            {
-                return BadRequest(new { error = "Rank level too low" });
-            }
-
-            if(poll.Options.Count < 2 || poll.Question.Length < 15)
-            {
-                return BadRequest(new { error = "Missing or incomplete field(s)" });
-            }
-
-            // Upload poll to poll table
-            Poll newPoll = new Poll()
-            {
-                AuthorId = UserDetails.Id,
-                Question = poll.Question
-            };
-
-            _context.Poll.Add(newPoll);
-
-            _context.SaveChanges();
-
-            foreach (var item in poll.Options)
-            {
-                Models.PollOption pollOption = new PollOption()
-                {
-                    OptionText = item.OptionText,
-                    PollId = newPoll.Id
-                };
-                _context.PollOption.Add(pollOption);
-            }
-
-            _context.SaveChanges();
-            return Ok(new { message = "Poll posted successfuly" });
+            return Created(String.Empty, new { message = "Poll created" });
         }
 
-        [HttpDelete("/{pollId}")]
-        public IActionResult DeletePoll(int pollId)
+        [HttpPatch("{pollId}")]
+        public async Task<IActionResult> UpdatePoll(int pollId, [FromForm] PollDto updates)
         {
-            // Check if user is logged in and has the necessary rank to create a poll
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            if (userId == null)
             {
                 return Unauthorized(new { error = "Unauthorized" });
             }
 
-            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+            var result = await _pollService.UpdatePollAsync(userId.Value, pollId, updates);
 
-            var UserDetails = _context.User.FirstOrDefault(d => d.Id == UserId);
-
-            var PollDetail = _context.Poll.FirstOrDefault(d => d.Id == pollId);
-
-            if (PollDetail == null)
+            if (!result.success)
             {
-                return NotFound(new { error = "Poll not found" });
+                return BadRequest(new { error = result.error });
             }
 
-            if (UserDetails == null || UserDetails.Id != PollDetail.AuthorId)
+            if (!result.wasUpdated)
             {
-                return StatusCode(StatusCodes.Status403Forbidden, new { error = "You are not allowed to delete this poll" });
+                return Ok(new { message = "No changes were made to the poll" });
             }
 
-            _context.Poll.Remove(PollDetail);
+            return Ok(new { message = "Poll updated successfully" });
+        }
 
-            _context.SaveChanges();
+
+        [HttpDelete("{pollId}")]
+        public async Task<IActionResult> DeletePoll(int pollId)
+        {
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            if (userId == null)
+            {
+                return Unauthorized(new { error = "Unauthorized" });
+            }
+
+            var result = await _pollService.DeletePollAsync(userId.Value, pollId);
+
+            if (!result.success)
+            {
+                if (result.error == "Poll not found")
+                {
+                    return NotFound(new { error = result.error });
+                }
+
+                return StatusCode(403, new { error = result.error });
+            }
+
             return NoContent();
         }
     }

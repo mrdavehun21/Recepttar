@@ -2,8 +2,8 @@
 {
     public enum UserRanksEnum
     {
-        HomeCook,
-        ChefMaster,
-        FoodLegend
+        HomeCook = 1,
+        ChefMaster = 2,
+        FoodLegend = 3
     }
 }

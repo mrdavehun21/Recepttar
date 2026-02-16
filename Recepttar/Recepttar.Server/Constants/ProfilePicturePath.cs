@@ -2,6 +2,9 @@
 {
     public class ProfilePicturePath
     {
-        public static string Path = "profile/profilepicture";
+        public static string GetPath(int userId)
+        {
+            return $"user/profile/profilepicture/{userId}";
+        }
     }
 }

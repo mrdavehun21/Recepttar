@@ -1,8 +1,6 @@
-﻿namespace Recepttar.Server.DTO
+﻿namespace Recepttar.Server.DTOs.Recipe
 {
-    // DTO stands for Data Transfer Object
-    // Also, make them nullable (? mark) will make them not required
-    public class SearchQueries
+    public class SearchQueryDto
     {
         public Enums.RecipeTypeEnum? Type { get; set; }
         public Enums.RecipeDiffEnum? Difficulty { get; set; }
