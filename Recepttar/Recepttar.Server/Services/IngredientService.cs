@@ -17,10 +17,10 @@ namespace Recepttar.Server.Services
         {
             if (string.IsNullOrWhiteSpace(search))
             {
-                return await _context.Ingredient.Take(4).ToListAsync();
+                return await _context.Ingredients.Take(4).ToListAsync();
             }
 
-            return await _context.Ingredient.Where(i => i.Name.Contains(search)).Take(4).ToListAsync();
+            return await _context.Ingredients.Where(i => i.Name.Contains(search)).Take(4).ToListAsync();
         }
 
         public List<string> GetUnits()

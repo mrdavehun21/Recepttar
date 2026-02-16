@@ -16,14 +16,14 @@ namespace Recepttar.Server.Services
 
         public async Task<List<ReviewDto>?> GetRecipeReviewsAsync(int recipeId)
         {
-            var recipe = await _context.Recipe.FirstOrDefaultAsync(r => r.Id == recipeId);
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId);
 
             if (recipe == null)
             {
                 return null;
             }
 
-            var reviews = await _context.Review
+            var reviews = await _context.Reviews
                 .Where(r => r.RecipeId == recipeId)
                 .OrderByDescending(r => r.CreatedAt)
                 .Select(r => new ReviewDto
@@ -41,7 +41,7 @@ namespace Recepttar.Server.Services
 
         public async Task<(bool success, string? error)> AddReviewAsync(int userId, int recipeId, AddReviewDto reviewDto)
         {
-            var recipe = await _context.Recipe.FirstOrDefaultAsync(r => r.Id == recipeId);
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId);
 
             if (recipe == null)
             {
@@ -62,7 +62,7 @@ namespace Recepttar.Server.Services
                 CreatedAt = DateTime.Now
             };
 
-            await _context.Review.AddAsync(reviewEntity);
+            await _context.Reviews.AddAsync(reviewEntity);
             await _context.SaveChangesAsync();
 
             return (true, null);
@@ -70,7 +70,7 @@ namespace Recepttar.Server.Services
 
         public async Task<(bool success, bool wasUpdated, string? error)> UpdateReviewAsync(int userId, int reviewId, UpdateReviewDto updateDto)
         {
-            var review = await _context.Review.FirstOrDefaultAsync(r => r.Id == reviewId);
+            var review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == reviewId);
 
             if (review == null)
             {
@@ -108,7 +108,7 @@ namespace Recepttar.Server.Services
 
         public async Task<(bool success, string? error, bool forbidden)> DeleteReviewAsync(int userId, int reviewId)
         {
-            var review = await _context.Review.FirstOrDefaultAsync(r => r.Id == reviewId);
+            var review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == reviewId);
 
             if (review == null)
             {
@@ -120,7 +120,7 @@ namespace Recepttar.Server.Services
                 return (false, "You are not allowed to delete this review", true);
             }
 
-            _context.Review.Remove(review);
+            _context.Reviews.Remove(review);
             await _context.SaveChangesAsync();
 
             return (true, null, false);

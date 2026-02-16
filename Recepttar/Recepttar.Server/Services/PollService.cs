@@ -17,9 +17,9 @@ namespace Recepttar.Server.Services
 
         public async Task<List<PollDto>> GetActivePollsAsync(int userId)
         {
-            var polls = await _context.Poll.ToListAsync();
-            var options = await _context.PollOption.ToListAsync();
-            var votes = await _context.Vote.ToListAsync();
+            var polls = await _context.Polls.ToListAsync();
+            var options = await _context.PollOptions.ToListAsync();
+            var votes = await _context.Votes.ToListAsync();
 
             var result = polls.Select(p => new PollDto
             {
@@ -46,7 +46,7 @@ namespace Recepttar.Server.Services
 
         public async Task<(bool success, string? error)> CreatePollAsync(int userId, PollDto pollDto)
         {
-            var user = await _context.User.FindAsync(userId);
+            var user = await _context.Users.FindAsync(userId);
 
             if (user.Rank == UserRanksEnum.HomeCook || user.Rank == UserRanksEnum.ChefMaster)
             {
@@ -64,12 +64,12 @@ namespace Recepttar.Server.Services
                 Question = pollDto.Question
             };
 
-            _context.Poll.Add(poll);
+            _context.Polls.Add(poll);
             await _context.SaveChangesAsync();
 
             foreach (var optionDto in pollDto.Options)
             {
-                _context.PollOption.Add(new PollOption
+                _context.PollOptions.Add(new PollOption
                 {
                     PollId = poll.Id,
                     OptionText = optionDto.OptionText
@@ -82,21 +82,21 @@ namespace Recepttar.Server.Services
 
         public async Task<(bool success, string? error)> AddVoteAsync(int userId, int pollId, int optionId)
         {
-            var existingVote = await _context.Vote.FirstOrDefaultAsync(v => v.UserId == userId && v.PollId == pollId);
+            var existingVote = await _context.Votes.FirstOrDefaultAsync(v => v.UserId == userId && v.PollId == pollId);
 
             if (existingVote != null)
             {
                 return (false, "User already voted");
             }
 
-            var poll = await _context.Poll.FindAsync(pollId);
+            var poll = await _context.Polls.FindAsync(pollId);
 
             if (poll == null)
             {
                 return (false, "Poll not found");
             }
 
-            var pollOptions = await _context.PollOption
+            var pollOptions = await _context.PollOptions
                 .Where(po => po.PollId == pollId)
                 .Select(po => po.Id)
                 .ToListAsync();
@@ -106,7 +106,7 @@ namespace Recepttar.Server.Services
                 return (false, "Invalid option");
             }
 
-            _context.Vote.Add(new Vote
+            _context.Votes.Add(new Vote
             {
                 UserId = userId,
                 PollId = pollId,
@@ -120,7 +120,7 @@ namespace Recepttar.Server.Services
 
         public async Task<(bool success, string? error, bool forbidden)> DeletePollAsync(int userId, int pollId)
         {
-            var poll = await _context.Poll.FindAsync(pollId);
+            var poll = await _context.Polls.FindAsync(pollId);
 
             if (poll == null)
             {
@@ -132,7 +132,7 @@ namespace Recepttar.Server.Services
                 return (false, "You are not allowed to delete this poll", true);
             }
 
-            _context.Poll.Remove(poll);
+            _context.Polls.Remove(poll);
             await _context.SaveChangesAsync();
 
             return (true, null, false);
@@ -140,7 +140,7 @@ namespace Recepttar.Server.Services
 
         public async Task<(bool success, bool wasUpdated, string? error)> UpdatePollAsync(int userId, int pollId, PollDto updateDto)
         {
-            var poll = await _context.Poll.FirstOrDefaultAsync(p => p.Id == pollId);
+            var poll = await _context.Polls.FirstOrDefaultAsync(p => p.Id == pollId);
 
             if (poll == null)
             {
@@ -164,13 +164,13 @@ namespace Recepttar.Server.Services
             // Update options
             if (updateDto.Options != null && updateDto.Options.Count > 0)
             {
-                var existingOptions = _context.PollOption.Where(o => o.PollId == pollId);
+                var existingOptions = _context.PollOptions.Where(o => o.PollId == pollId);
 
-                _context.PollOption.RemoveRange(existingOptions);
+                _context.PollOptions.RemoveRange(existingOptions);
 
                 foreach (var optionDto in updateDto.Options)
                 {
-                    _context.PollOption.Add(new PollOption
+                    _context.PollOptions.Add(new PollOption
                     {
                         PollId = pollId,
                         OptionText = optionDto.OptionText

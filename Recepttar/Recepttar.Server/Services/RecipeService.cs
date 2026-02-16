@@ -17,7 +17,7 @@ namespace Recepttar.Server.Services
 
         public async Task<List<RecipeDto>> GetRecipesAsync()
         {
-            return await _context.Recipe
+            return await _context.Recipes
                 .Select(recipe => new RecipeDto
                 {
                     RecipeId = recipe.Id,
@@ -83,12 +83,12 @@ namespace Recepttar.Server.Services
                 recipe.DishPicture = stream.ToArray();
             }
 
-            await _context.Recipe.AddAsync(recipe);
+            await _context.Recipes.AddAsync(recipe);
             await _context.SaveChangesAsync();
 
             foreach (var item in createDto.Ingredients)
             {
-                await _context.RecipeIngredient.AddAsync(new RecipeIngredient
+                await _context.RecipeIngredients.AddAsync(new RecipeIngredient
                 {
                     RecipeId = recipe.Id,
                     IngredientId = item.Id,
@@ -99,7 +99,7 @@ namespace Recepttar.Server.Services
 
             foreach (var step in createDto.Steps)
             {
-                await _context.RecipeStep.AddAsync(new RecipeStep
+                await _context.RecipeSteps.AddAsync(new RecipeStep
                 {
                     RecipeId = recipe.Id,
                     StepNumber = step.RecipeStepNumber,
@@ -129,7 +129,7 @@ namespace Recepttar.Server.Services
 
         public async Task<List<RecipeDto>> GetMyRecipesAsync(int userId)
         {
-            return await _context.Recipe
+            return await _context.Recipes
                 .Where(recipe => recipe.AuthorId == userId)
                 .Select(recipe => new RecipeDto
                 {
@@ -145,7 +145,7 @@ namespace Recepttar.Server.Services
                     DishPicture = DishPicturePath.GetPath(recipe.Id),
                     AuthorId = recipe.AuthorId,
 
-                    Ingredients = _context.RecipeIngredient
+                    Ingredients = _context.RecipeIngredients
                         .Where(ri => ri.RecipeId == recipe.Id)
                         .Select(ri => new IngredientDto
                         {
@@ -155,7 +155,7 @@ namespace Recepttar.Server.Services
                             MeasurementUnit = ri.MeasurementUnit
                         }).ToList(),
 
-                    Steps = _context.RecipeStep
+                    Steps = _context.RecipeSteps
                         .Where(rs => rs.RecipeId == recipe.Id)
                         .OrderBy(rs => rs.StepNumber)
                         .Select(rs => new StepDto
@@ -168,14 +168,14 @@ namespace Recepttar.Server.Services
 
         public async Task<RecipeDto?> GetRecipeByIdAsync(int recipeId)
         {
-            var recipe = await _context.Recipe.FirstOrDefaultAsync(r => r.Id == recipeId);
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId);
 
             if (recipe == null)
             {
                 return null;
             }
 
-            var recipeSteps = await _context.RecipeStep
+            var recipeSteps = await _context.RecipeSteps
                 .Where(rs => rs.RecipeId == recipeId)
                 .OrderBy(rs => rs.StepNumber)
                 .Select(rs => new StepDto
@@ -185,7 +185,7 @@ namespace Recepttar.Server.Services
                 })
                 .ToListAsync();
 
-            var ingredients = await _context.RecipeIngredient
+            var ingredients = await _context.RecipeIngredients
                 .Where(ri => ri.RecipeId == recipeId)
                 .Select(ri => new IngredientDto
                 {
@@ -215,7 +215,7 @@ namespace Recepttar.Server.Services
 
         public async Task<byte[]?> GetRecipeImageAsync(int recipeId)
         {
-            var recipe = await _context.Recipe.FirstOrDefaultAsync(r => r.Id == recipeId);
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId);
 
             if (recipe == null || recipe.DishPicture.Length == 0)
             {
@@ -228,7 +228,7 @@ namespace Recepttar.Server.Services
 
         public async Task<(bool success, bool wasUpdated, string? error)> UpdateRecipeAsync(int recipeId, int userId, UpdateRecipeDto updateDto)
         {
-            var recipe = await _context.Recipe.FirstOrDefaultAsync(r => r.Id == recipeId);
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId);
 
             if (recipe == null)
             {
@@ -302,11 +302,11 @@ namespace Recepttar.Server.Services
             // Update Ingredients if provided
             if (updateDto.Ingredients != null)
             {
-                await _context.RecipeIngredient.Where(ri => ri.RecipeId == recipeId).ExecuteDeleteAsync();
+                await _context.RecipeIngredients.Where(ri => ri.RecipeId == recipeId).ExecuteDeleteAsync();
 
                 foreach (var item in updateDto.Ingredients)
                 {
-                    _context.RecipeIngredient.Add(new RecipeIngredient
+                    _context.RecipeIngredients.Add(new RecipeIngredient
                     {
                         RecipeId = recipeId,
                         IngredientId = item.Id,
@@ -321,11 +321,11 @@ namespace Recepttar.Server.Services
             // Update Steps if provided
             if (updateDto.RecipeSteps != null)
             {
-                await _context.RecipeStep.Where(rs => rs.RecipeId == recipeId).ExecuteDeleteAsync();
+                await _context.RecipeSteps.Where(rs => rs.RecipeId == recipeId).ExecuteDeleteAsync();
 
                 foreach (var item in updateDto.RecipeSteps)
                 {
-                    _context.RecipeStep.Add(new RecipeStep
+                    _context.RecipeSteps.Add(new RecipeStep
                     {
                         RecipeId = recipeId,
                         StepNumber = item.RecipeStepNumber,
@@ -346,7 +346,7 @@ namespace Recepttar.Server.Services
 
         public async Task<(bool success, string? error)> RemoveRecipeByIdAsync(int userId, int recipeId)
         {
-            var recipe = await _context.Recipe.FirstOrDefaultAsync(r => r.Id == recipeId);
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId);
 
             if (recipe == null)
             {
@@ -358,7 +358,7 @@ namespace Recepttar.Server.Services
                 return (false, "You are not allowed to delete this recipe");
             }
 
-            _context.Recipe.Remove(recipe);
+            _context.Recipes.Remove(recipe);
             await _context.SaveChangesAsync();
 
             return (true, null);
@@ -366,7 +366,7 @@ namespace Recepttar.Server.Services
 
         public async Task<List<RecipeDto>> SearchRecipesAsync(SearchQueryDto queryDto)
         {
-            IQueryable<Recipe> recipeQuery = _context.Recipe.AsQueryable();
+            IQueryable<Recipe> recipeQuery = _context.Recipes.AsQueryable();
 
             var results = await recipeQuery.ToListAsync();
 
@@ -374,7 +374,7 @@ namespace Recepttar.Server.Services
 
             foreach (var r in results)
             {
-                var ingredients = await _context.RecipeIngredient
+                var ingredients = await _context.RecipeIngredients
                     .Where(ri => ri.RecipeId == r.Id)
                     .Select(ri => new IngredientDto
                     {
@@ -384,7 +384,7 @@ namespace Recepttar.Server.Services
                         MeasurementUnit = ri.MeasurementUnit
                     }).ToListAsync();
 
-                var steps = await _context.RecipeStep
+                var steps = await _context.RecipeSteps
                     .Where(rs => rs.RecipeId == r.Id)
                     .OrderBy(rs => rs.StepNumber)
                     .Select(rs => new StepDto

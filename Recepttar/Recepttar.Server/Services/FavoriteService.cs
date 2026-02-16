@@ -17,7 +17,7 @@ namespace Recepttar.Server.Services
 
         public async Task<List<FavoriteRecipeDto>> GetUserFavoritesAsync(int userId)
         {
-            return await _context.Favorite
+            return await _context.Favorites
                 .Where(f => f.UserId == userId)
                 .Select(f => new FavoriteRecipeDto
                 {
@@ -30,21 +30,21 @@ namespace Recepttar.Server.Services
 
         public async Task<(bool success, string message)> AddFavoriteAsync(CreateFavoriteRecipeDto favoriteRecipeDto)
         {
-            var recipe = await _context.Recipe.FirstOrDefaultAsync(r => r.Id == favoriteRecipeDto.RecipeId);
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == favoriteRecipeDto.RecipeId);
 
             if (recipe == null)
             {
                 return (false, "Recipe not found");
             }
 
-            var existingFavorite = await _context.Favorite.FirstOrDefaultAsync(f => f.UserId == favoriteRecipeDto.UserId && f.RecipeId == favoriteRecipeDto.RecipeId);
+            var existingFavorite = await _context.Favorites.FirstOrDefaultAsync(f => f.UserId == favoriteRecipeDto.UserId && f.RecipeId == favoriteRecipeDto.RecipeId);
 
             if (existingFavorite != null)
             {
                 return (false, "Recipe already in favorites");
             }
 
-            await _context.Favorite.AddAsync(new Favorite
+            await _context.Favorites.AddAsync(new Favorite
             {
                 UserId = favoriteRecipeDto.UserId,
                 RecipeId = favoriteRecipeDto.RecipeId
@@ -57,14 +57,14 @@ namespace Recepttar.Server.Services
 
         public async Task<(bool success, string message)> RemoveFavoriteAsync(int userId, int recipeId)
         {
-            var favorite = await _context.Favorite.FirstOrDefaultAsync(f => f.UserId == userId && f.RecipeId == recipeId);
+            var favorite = await _context.Favorites.FirstOrDefaultAsync(f => f.UserId == userId && f.RecipeId == recipeId);
 
             if (favorite == null)
             {
                 return (false, "Recipe not in favorites");
             }
 
-            _context.Favorite.Remove(favorite);
+            _context.Favorites.Remove(favorite);
             await _context.SaveChangesAsync();
 
             return (true, "Removed from favorites");

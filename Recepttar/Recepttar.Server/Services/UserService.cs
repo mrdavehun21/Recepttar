@@ -19,7 +19,7 @@ namespace Recepttar.Server.Services
 
         public async Task<UserDto?> RegisterUserAsync(RegisterUserDto registerDto)
         {
-            var userExists = await _context.User.AnyAsync(u => u.Email == registerDto.Email);
+            var userExists = await _context.Users.AnyAsync(u => u.Email == registerDto.Email);
 
             if (userExists)
             {
@@ -38,7 +38,7 @@ namespace Recepttar.Server.Services
                 Rank = UserRanksEnum.HomeCook
             };
 
-            _context.User.Add(user);
+            _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
             return new UserDto
@@ -53,7 +53,7 @@ namespace Recepttar.Server.Services
 
         public async Task<UserDto?> LoginUserAsync(LogInUserDto loginDto)
         {
-            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
             string hashedPassword = PasswordHash.PasswordHasher(loginDto.Password);
 
             if (user == null)
@@ -78,12 +78,12 @@ namespace Recepttar.Server.Services
 
         public async Task<bool> EmailExistsAsync(string email)
         {
-            return await _context.User.AnyAsync(u => u.Email == email);
+            return await _context.Users.AnyAsync(u => u.Email == email);
         }
 
         public async Task<(bool success, bool wasUpdated, string? error)> UpdateUserProfileAsync(int userId, UpdateProfileDto updateDto)
         {
-            var user = await _context.User.FindAsync(userId);
+            var user = await _context.Users.FindAsync(userId);
 
             if (user == null)
             {
@@ -102,7 +102,7 @@ namespace Recepttar.Server.Services
             // Update Email
             if (!string.IsNullOrWhiteSpace(updateDto.Email))
             {
-                var emailExists = await _context.User.AnyAsync(u => u.Email == updateDto.Email && u.Id != userId);
+                var emailExists = await _context.Users.AnyAsync(u => u.Email == updateDto.Email && u.Id != userId);
 
                 if (emailExists)
                 {
@@ -148,7 +148,7 @@ namespace Recepttar.Server.Services
 
         public async Task<ProfileDto?> GetUserByIdAsync(int userId)
         {
-            var user = await _context.User.FindAsync(userId);
+            var user = await _context.Users.FindAsync(userId);
 
             if (user == null)
             {
@@ -166,7 +166,7 @@ namespace Recepttar.Server.Services
 
         public async Task<byte[]?> GetUserProfilePictureAsync(int userId)
         {
-            var user = await _context.User.FindAsync(userId);
+            var user = await _context.Users.FindAsync(userId);
 
             if (user == null || user.ProfilePicture.Length == 0)
             {
