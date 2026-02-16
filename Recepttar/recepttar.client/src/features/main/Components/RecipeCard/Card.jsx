@@ -15,7 +15,7 @@ function Card({ data, allowFavorites = false }) {
                 {[...Array(maxStars)].map((_, index) => (
                     <i
                         key={index}
-                        className={`me-1 bi ${index < roundedRating ? "bi-star-fill filled-star-color" : "bi-star-fill empty-star-color"
+                        className={`me-1 bi ${index < roundedRating ? "bi-star-fill star-additional-9" : "bi-star-fill star-additional-10"
                             }`}
                     ></i>
                 ))}
@@ -48,8 +48,8 @@ function Card({ data, allowFavorites = false }) {
                         alt={data.title}
                     />
                     <div className="card-body">
-                        <h4 className="card-title text-decoration-underline color-neutral-100 fw-bold">{data.title}</h4>
-                        <p className="color-neutral-100 mt-4 fw-bold">{
+                        <h4 className="card-title text-decoration-underline font-neutral-100 fw-bold">{data.title}</h4>
+                        <p className=".font-neutral-100 mt-4 fw-bold">{
                             (data.description.length > 150) ? (data.description.substring(0, 150) + "...") :
                                 (data.description)
                         }</p>

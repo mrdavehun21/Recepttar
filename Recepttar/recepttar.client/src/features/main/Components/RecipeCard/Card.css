@@ -29,15 +29,3 @@
     height: 200px;
     object-fit: cover;
 }
-
-.color-neutral-100 {
-    color: #1F3D2B;
-}
-
-.filled-star-color {
-    color: #C05050;
-}
-
-.empty-star-color {
-    color: rgba(192, 80, 80, 0.3);
-}

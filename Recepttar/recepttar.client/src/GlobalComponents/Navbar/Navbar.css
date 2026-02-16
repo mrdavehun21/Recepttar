@@ -26,7 +26,6 @@ li:hover{
 }
 
 .navbar-link {
-    color: #1F3D2B !important;
     text-decoration: underline;
     text-transform: uppercase;
     font-weight: bold;

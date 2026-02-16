@@ -31,7 +31,7 @@ function PollCard({ data, loginStatus }) {
                         key={option.id}
                         disabled={hasVoted}
                         onClick={() => selectOption(option.id)}
-                        className={"vote-btn d-flex align-items-center p-0 m-2 border border-dark " + ((isSelected == true) ? ("selected-poll-option") : (""))}
+                        className={"vote-btn polls-bg-hover-additional-5 polls-bg-additional-4 d-flex align-items-center p-0 m-2 border border-dark " + ((isSelected == true) ? ("polls-bg-additional-6") : (""))}
                     >
                         <span className="vote-text flex-grow-1 px-4 fs-6">
                             {option.optionText}
@@ -47,7 +47,7 @@ function PollCard({ data, loginStatus }) {
             })}
 
             <button
-                className={"w-100 text-light fw-bold border-0 bg-additional-7 p-2 " + ((hasVoted) ? "bg-submitted" : "")}
+                className={"w-100 text-light fw-bold border-0 polls-bg-additional-7 p-2 " + ((hasVoted) ? "polls-bg-additional-8" : "")}
                 disabled={hasVoted || submitting || !selectedOptionId || !loginStatus}
                 onClick={submitVote}
             >

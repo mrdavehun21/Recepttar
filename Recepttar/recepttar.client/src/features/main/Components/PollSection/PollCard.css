@@ -2,18 +2,6 @@
     border: 2px solid #E3D6C8;
 }
 
-.bg-additional-7 {
-    background-color: #C98A5A;
-}
-
-.bg-submitted {
-    background-color: #8C5A32;
-}
-
-.color-red {
-    color: #FF3333;
-}
-
 .vote-card {
     min-width: 280px !important;
 }
@@ -22,17 +10,8 @@
     max-width: 600px;
     height: 48px;
     border-radius: 15px;
-    background-color: #F2E8DE;
     font-weight: 600;
     overflow: hidden;
-}
-
-.vote-btn:hover {
-    background-color: #EADCCD
-}
-
-.selected-poll-option {
-    background-color: #D9C3A5;
 }
 
 .vote-text {

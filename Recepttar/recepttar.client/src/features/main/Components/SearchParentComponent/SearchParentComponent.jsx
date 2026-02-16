@@ -34,8 +34,8 @@ function SearchApp({
                             <button
                                 key={tag}
                                 onClick={() => toggleTag(tag)}
-                                className={`OptionButton ${selectedTags.includes(tag)
-                                        ? "OptionButtonIngredientSelected"
+                                className={`OptionButton tag-bg-additional-1 tag-bg-additional-2-hover ${selectedTags.includes(tag)
+                                    ? "tag-bg-additional-3"
                                         : ""
                                     }`}
                             >

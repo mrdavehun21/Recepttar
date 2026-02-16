@@ -42,8 +42,8 @@ function NavbarComponent() {
                 </Navbar.Brand>
 
                 <Nav className="gap-3 d-flex flex-row">
-                    <Nav.Link href="/myRecipes" className="fs-4 navbar-link">My recipes</Nav.Link>
-                    <Nav.Link href="/polls" className="fs-4 navbar-link">Polls</Nav.Link>
+                    <Nav.Link href="/myRecipes" className="fs-4 navbar-link font-neutral-100">My recipes</Nav.Link>
+                    <Nav.Link href="/polls" className="fs-4 navbar-link font-neutral-100">Polls</Nav.Link>
                 </Nav>
             </div>
 

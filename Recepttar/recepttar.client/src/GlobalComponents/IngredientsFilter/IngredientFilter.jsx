@@ -58,7 +58,7 @@ function IngredientFilter({ selectedIngredients, setSelectedIngredients }) {
                     <div
                         key={ingredient.id}
                         onClick={() => toggleIngredient(ingredient)}
-                        className="text-center p-2 OptionButtonIngredient OptionButtonIngredientSelected"
+                        className="text-center p-2 OptionButtonIngredient tag-bg-additional-1 tag-bg-additional-2-hover tag-bg-additional-3"
                     >
                         {ingredient.name}
                     </div>
@@ -68,7 +68,7 @@ function IngredientFilter({ selectedIngredients, setSelectedIngredients }) {
                     <div
                         key={ingredient.id}
                         onClick={() => toggleIngredient(ingredient)}
-                        className="text-center p-2 OptionButtonIngredient"
+                        className="text-center p-2 OptionButtonIngredient tag-bg-additional-1 tag-bg-additional-2-hover"
                     >
                         {ingredient.name}
                     </div>
