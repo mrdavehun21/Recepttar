@@ -17,7 +17,7 @@ function Reicpes({ recipes }) {
                 visibleCount < recipes.length && (
                     <div className="text-center pb-4">
                         <button
-                            className="bg-submitted p-2 rounded-2 text-light ms-auto me-auto mt-3 nav-link"
+                            className="polls-bg-additional-8 p-2 rounded-2 text-light ms-auto me-auto mt-3 nav-link"
                             onClick={() => setVisibleCount(prev => prev + 6)}
                         >
                             Show More

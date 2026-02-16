@@ -35,7 +35,7 @@ function PollApp({ loginStatus }) {
                                     <PollCard key={index} data={item} loginStatus={loginStatus} />
                                 ))
                                 }
-                                <Nav.Link href="/polls" className="bg-submitted p-2 rounded-2 text-light ms-auto me-auto mb-3" style={{width: "fit-content"} }>View all</Nav.Link>
+                                <Nav.Link href="/polls" className="polls-bg-additional-8 p-2 rounded-2 text-light ms-auto me-auto mb-3" style={{width: "fit-content"} }>View all</Nav.Link>
                         </div>
                     )
                 }
