@@ -4,7 +4,7 @@
     {
         public static string GetPath(int userId)
         {
-            return $"profile/profilepicture/{userId}";
+            return $"user/profile/profilepicture/{userId}";
         }
     }
 }
