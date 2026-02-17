@@ -7,7 +7,7 @@ using Recepttar.Server.Services;
 namespace Recepttar.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class RecipeController : ControllerBase
     {
         private readonly RecipeService _recipeService;

@@ -6,7 +6,7 @@ using Recepttar.Server.Services;
 namespace Recepttar.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ReviewController : ControllerBase
     {
         private readonly ReviewService _reviewService;

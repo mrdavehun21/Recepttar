@@ -6,7 +6,7 @@ using Recepttar.Server.Services;
 namespace Recepttar.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class PollController : ControllerBase
     {
         private readonly PollService _pollService;
