@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Recepttar.Server.Data;
-using Recepttar.Server.Services;
+using Recepttar.Server.Interfaces;
 
 namespace Recepttar.Server.Controllers
 {
@@ -8,9 +7,9 @@ namespace Recepttar.Server.Controllers
     [Route("api/[controller]")]
     public class IngredientController : ControllerBase
     {
-        private readonly IngredientService _ingredientService;
+        private readonly IIngredientService _ingredientService;
 
-        public IngredientController(IngredientService ingredientService)
+        public IngredientController(IIngredientService ingredientService)
         {
             _ingredientService = ingredientService;
         }
@@ -18,9 +17,9 @@ namespace Recepttar.Server.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> SearchTags([FromQuery] string? search)
         {
-            var res = await _ingredientService.SearchTagsAsync(search);
+            var foundTags = await _ingredientService.SearchTagsAsync(search);
 
-            return Ok(res);
+            return Ok(foundTags);
         }
 
         [HttpGet("units")]

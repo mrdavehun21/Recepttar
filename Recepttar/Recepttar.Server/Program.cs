@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Recepttar.Server.Data;
 using Recepttar.Server.Services;
+using Recepttar.Server.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,13 +20,12 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.
-
-builder.Services.AddScoped<FavoriteService>();
-builder.Services.AddScoped<IngredientService>();
-builder.Services.AddScoped<PollService>();
-builder.Services.AddScoped<RecipeService>();
-builder.Services.AddScoped<ReviewService>();
-builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IFavoriteService, FavoriteService>();
+builder.Services.AddScoped<IIngredientService, IngredientService>();
+builder.Services.AddScoped<IPollService, PollService>();
+builder.Services.AddScoped<IRecipeService, RecipeService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddRouting(options =>
 {

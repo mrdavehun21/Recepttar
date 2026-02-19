@@ -4,11 +4,12 @@ using Recepttar.Server.Data;
 using Recepttar.Server.DTOs.User;
 using Recepttar.Server.Enums;
 using Recepttar.Server.HelperMethods;
+using Recepttar.Server.Interfaces;
 using Recepttar.Server.Models;
 
 namespace Recepttar.Server.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly AppDbContext _context;
 
@@ -30,7 +31,7 @@ namespace Recepttar.Server.Services
 
             var user = new User
             {
-                Name = registerDto.Name,
+                FullName = registerDto.FullName,
                 Email = registerDto.Email,
                 PasswordHash = hashedPassword,
                 Bio = string.Empty,
@@ -44,7 +45,7 @@ namespace Recepttar.Server.Services
             return new UserDto
             {
                 Id = user.Id,
-                Name = user.Name,
+                FullName = user.FullName,
                 Email = user.Email,
                 Bio = user.Bio,
                 Rank = user.Rank
@@ -69,7 +70,7 @@ namespace Recepttar.Server.Services
             return new UserDto
             {
                 Id = user.Id,
-                Name = user.Name,
+                FullName = user.FullName,
                 Email = user.Email,
                 Bio = user.Bio,
                 Rank = user.Rank
@@ -87,7 +88,7 @@ namespace Recepttar.Server.Services
 
             if (user == null)
             {
-                return (false, false, "User not found");
+                return (false, false, Messages.Auth.UserNotFound);
             }
 
             bool wasUpdated = false;
@@ -95,7 +96,7 @@ namespace Recepttar.Server.Services
             // Update Name
             if (!string.IsNullOrWhiteSpace(updateDto.Name))
             {
-                user.Name = updateDto.Name;
+                user.FullName = updateDto.Name;
                 wasUpdated = true;
             }
 
@@ -106,7 +107,7 @@ namespace Recepttar.Server.Services
 
                 if (emailExists)
                 {
-                    return (false, false, "Email already exists");
+                    return (false, false, Messages.Auth.EmailExists);
                 }
 
                 user.Email = updateDto.Email;
@@ -157,23 +158,28 @@ namespace Recepttar.Server.Services
 
             return new ProfileDto
             {
-                Name = user.Name,
+                FullName = user.FullName,
                 Bio = user.Bio,
                 ProfilePicture = ProfilePicturePath.GetPath(user.Id),
                 Rank = user.Rank
             };
         }
 
-        public async Task<byte[]?> GetUserProfilePictureAsync(int userId)
+        public async Task<(byte[]?, string? error)> GetUserProfilePictureAsync(int userId)
         {
             var user = await _context.Users.FindAsync(userId);
 
-            if (user == null || user.ProfilePicture.Length == 0)
+            if (user == null)
             {
-                return null;
+                return (null, Messages.Auth.UserNotFound);
             }
 
-            return user.ProfilePicture;
+            if(user.ProfilePicture == null)
+            {
+                return (null, Messages.Auth.NoPicture);
+            }
+
+            return (user.ProfilePicture, null);
         }
     }
 }

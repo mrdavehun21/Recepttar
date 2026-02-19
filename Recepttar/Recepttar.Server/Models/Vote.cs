@@ -8,13 +8,14 @@ namespace Recepttar.Server.Models
         [Key]
         public int Id { get; set; }
 
+        [ForeignKey(nameof(User))]
         public int UserId { get; set; }
-        public User User { get; set; }
 
-        public int PollId { get; set; }
-        public Poll Poll { get; set; }
-
+        [ForeignKey(nameof(Option))]
         public int OptionId { get; set; }
-        public PollOption Option { get; set; }
+
+        // Navigation
+        public User User { get; set; } = null!;
+        public PollOption Option { get; set; } = null!;
     }
 }

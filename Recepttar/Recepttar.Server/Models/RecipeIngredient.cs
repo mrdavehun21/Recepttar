@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Recepttar.Server.Enums;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Recepttar.Server.Models
 {
@@ -7,13 +9,18 @@ namespace Recepttar.Server.Models
         [Key]
         public int Id { get; set; }
 
+        [ForeignKey(nameof(Recipe))]
         public int RecipeId { get; set; }
-        public Recipe Recipe { get; set; }
 
+        [ForeignKey(nameof(Ingredient))]
         public int IngredientId { get; set; }
-        public Ingredient Ingredient { get; set; }
 
         public float Quantity { get; set; }
-        public Enums.MeasurementUnitEnum MeasurementUnit { get; set; }
+
+        public MeasurementUnitEnum MeasurementUnit { get; set; }
+
+        // Navigation
+        public Recipe Recipe { get; set; } = null!;
+        public Ingredient Ingredient { get; set; } = null!;
     }
 }

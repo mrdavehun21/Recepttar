@@ -2,7 +2,7 @@
 using Recepttar.Server.Constants;
 using Recepttar.Server.DTOs.Recipe;
 using Recepttar.Server.DTOs.Review;
-using Recepttar.Server.Services;
+using Recepttar.Server.Interfaces;
 
 namespace Recepttar.Server.Controllers
 {
@@ -10,10 +10,10 @@ namespace Recepttar.Server.Controllers
     [Route("api/[controller]")]
     public class RecipeController : ControllerBase
     {
-        private readonly RecipeService _recipeService;
-        private readonly ReviewService _reviewService;
+        private readonly IRecipeService _recipeService;
+        private readonly IReviewService _reviewService;
 
-        public RecipeController(RecipeService recipeService, ReviewService reviewService)
+        public RecipeController(IRecipeService recipeService, IReviewService reviewService)
         {
             _recipeService = recipeService;
             _reviewService = reviewService;
@@ -34,7 +34,7 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
             var recipes = await _recipeService.GetMyRecipesAsync(userId.Value);
@@ -49,50 +49,50 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var recipeDto = await _recipeService.AddRecipeAsync(userId.Value, createDto);
+            var (dto, error) = await _recipeService.AddRecipeAsync(userId.Value, createDto);
 
-            if (recipeDto == null)
+            if (dto == null)
             {
-                return BadRequest(new { error = "Invalid request body" });
+                return BadRequest(error);
             }
 
-            return Created(string.Empty, new { message = "Recipe created" });
+            return Created(string.Empty, Messages.Recipe.Created);
         }
 
         [HttpGet("{recipeId}/image")]
         public async Task<IActionResult> GetRecipeImage(int recipeId)
         {
-            var recipe = await _recipeService.GetRecipeByIdAsync(recipeId);
+            var (dto, error) = await _recipeService.GetRecipeByIdAsync(recipeId);
 
-            if (recipe == null)
+            if (dto == null)
             {
-                return NotFound(new { error = "Recipe not found" });
+                return NotFound(error);
             }
 
-            var image = await _recipeService.GetRecipeImageAsync(recipeId);
+            var (picture, imgError) = await _recipeService.GetRecipeImageAsync(recipeId);
 
-            if (image == null)
+            if (picture == null)
             {
-                return NotFound(new { error = "Dish picture not found" });
+                return NotFound(imgError);
             }
 
-            return File(image, "image/jpg");
+            return File(picture, "image/jpg");
         }
 
         [HttpGet("{recipeId}")]
         public async Task<IActionResult> GetRecipe(int recipeId)
         {
-            var recipe = await _recipeService.GetRecipeByIdAsync(recipeId);
+            var (dto, error) = await _recipeService.GetRecipeByIdAsync(recipeId);
 
-            if (recipe == null)
+            if (dto == null)
             {
-                return NotFound(new { error = "Recipe not found" });
+                return NotFound(error);
             }
 
-            return Ok(recipe);
+            return Ok(dto);
         }
         
         [HttpPatch("{recipeId}")]
@@ -102,22 +102,22 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var result = await _recipeService.UpdateRecipeAsync(recipeId, userId.Value, updateDto);
+            var (success, wasUpdated, error) = await _recipeService.UpdateRecipeAsync(recipeId, userId.Value, updateDto);
 
-            if(!result.success)
+            if(!success)
             {
-                return BadRequest(new { error = result.error });
+                return BadRequest(error);
             }
 
-            if(!result.wasUpdated)
+            if(!wasUpdated)
             {
-                return Ok(new { message = "No changes were made to the recipe" });
+                return Ok(Messages.Recipe.NoChanges);
             }
 
-            return Ok(new { message = "Recipe updated" });
+            return Ok(Messages.Recipe.Updated);
         }
 
         [HttpDelete("{recipeId}")]
@@ -127,19 +127,19 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var result = await _recipeService.RemoveRecipeByIdAsync(userId.Value, recipeId);
+            var (success, error) = await _recipeService.RemoveRecipeByIdAsync(userId.Value, recipeId);
 
-            if (!result.success)
+            if (!success)
             {
-                if (result.error == "You are not allowed to edit this recipe")
+                if (error == Messages.Recipe.NotOwner)
                 {
-                    return StatusCode(403, new { error = result.error });
+                    return StatusCode(403, error);
                 }
 
-                return NotFound(new { error = result.error });
+                return NotFound(error);
             }
 
             return NoContent();
@@ -162,7 +162,7 @@ namespace Recepttar.Server.Controllers
 
             if (reviews == null)
             {
-                return NotFound(new { error = "Recipe not found" });
+                return NotFound(Messages.Recipe.NotFound);
             }
 
             return Ok(reviews);
@@ -175,17 +175,30 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var result = await _reviewService.AddReviewAsync(userId.Value, recipeId, createDto);
+            var (success, error) = await _reviewService.AddReviewAsync(userId.Value, recipeId, createDto);
 
-            if (!result.success)
+            if (success)
             {
-                return BadRequest(new { error = result.error });
+                return Created(string.Empty, Messages.Review.Created);
             }
 
-            return Created(string.Empty, new { message = "Review added successfully" });
+            switch (error)
+            {
+                case Messages.Review.AlreadyReviewed:
+                    return Conflict(error);
+
+                case Messages.Review.NotFound:
+                    return NotFound(error);
+
+                case Messages.Review.InvalidStars:
+                    return BadRequest(error);
+
+                default:
+                    return StatusCode(500, Messages.Server.Error);
+            }
         }
 
         #endregion Reviews

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Recepttar.Server.Models
 {
@@ -7,10 +8,15 @@ namespace Recepttar.Server.Models
         [Key]
         public int Id { get; set; }
 
+        [ForeignKey(nameof(Recipe))]
         public int RecipeId { get; set; }
-        public Recipe Recipe { get; set; }
 
         public int StepNumber { get; set; }
-        public string StepDescription { get; set; }
+
+        [Required]
+        public string StepDescription { get; set; } = string.Empty;
+
+        // Navigation
+        public Recipe Recipe { get; set; } = null!;
     }
 }

@@ -2,8 +2,7 @@
 using Recepttar.Server.Constants;
 using Recepttar.Server.DTOs.Recipe;
 using Recepttar.Server.DTOs.User;
-using Recepttar.Server.Models;
-using Recepttar.Server.Services;
+using Recepttar.Server.Interfaces;
 
 namespace Recepttar.Server.Controllers
 {
@@ -11,10 +10,10 @@ namespace Recepttar.Server.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly UserService _userService;
-        private readonly FavoriteService _favoriteService;
+        private readonly IUserService _userService;
+        private readonly IFavoriteService _favoriteService;
 
-        public UserController(UserService userService, FavoriteService favoriteService)
+        public UserController(IUserService userService, IFavoriteService favoriteService)
         {
             _userService = userService;
             _favoriteService = favoriteService;
@@ -23,19 +22,14 @@ namespace Recepttar.Server.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromForm] RegisterUserDto registerDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var user = await _userService.RegisterUserAsync(registerDto);
 
             if(user == null)
             {
-                return BadRequest(new { error = "User already exists with this email" });
+                return BadRequest(Messages.Auth.UserAlreadyExists);
             }
 
-            return Created(String.Empty, new { message = "User created" });
+            return Created(String.Empty, Messages.Auth.Created);
         }
 
         [HttpGet("checkEmail")]
@@ -43,17 +37,17 @@ namespace Recepttar.Server.Controllers
         {
             if (string.IsNullOrEmpty(email))
             {
-                return BadRequest(new { error = "Email is required" });
+                return BadRequest(Messages.Auth.EmailRequired);
             }
 
             var exists = await _userService.EmailExistsAsync(email);
 
             if (exists)
             {
-                return Ok(new { message = "Email exists" });
+                return Ok(Messages.Auth.EmailExists);
             }
 
-            return NotFound(new { error = "Email not found" });
+            return NotFound(Messages.Auth.EmailNotFound);
         }
         
         [HttpGet("isLoggedIn")]
@@ -63,30 +57,25 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            return Ok(new { message = "User is logged in" });
+            return Ok(Messages.Auth.UserLoggedIn);
         }
         
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromForm] LogInUserDto loginDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var user = await _userService.LoginUserAsync(loginDto);
 
             if (user == null)
             {
-                return Unauthorized(new { error = "Invalid email or password" });
+                return Unauthorized(Messages.Auth.InvalidCredentials);
             }
 
             HttpContext.Session.SetInt32(SessionKeys.UserId, user.Id);
 
-            return Ok(new { message = "Successfully logged in" });
+            return Ok(Messages.Auth.UserLoggedIn);
         }
         
         [HttpPost("logout")]
@@ -96,7 +85,7 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
             // Clears every session paramaters
@@ -105,8 +94,7 @@ namespace Recepttar.Server.Controllers
             // Clearing browser-side cookies
             Response.Cookies.Delete(".AspNetCore.Session");
 
-            // Successful logout (Status code 200)
-            return Ok(new { message = "Successfully logged out" });
+            return Ok(Messages.Auth.UserLoggedOut);
         }
 
         #region Profile
@@ -118,14 +106,14 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
             var profile = await _userService.GetUserByIdAsync(userId.Value);
 
             if (profile == null)
             {
-                return NotFound(new { error = "User not found" });
+                return NotFound(Messages.Auth.UserNotFound);
             }
 
             return Ok(profile);
@@ -138,23 +126,23 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var result = await _userService.UpdateUserProfileAsync(userId.Value, updateDto);
+            var (success, wasUpdated, error) = await _userService.UpdateUserProfileAsync(userId.Value, updateDto);
 
-            if (!result.success)
+            if (!success)
             {
-                return BadRequest(new { error = result.error });
+                return BadRequest(error);
             }
 
-            if (result.wasUpdated)
+            if (wasUpdated)
             {
-                return Ok(new { message = "User updated" });
+                return Ok(Messages.Auth.Updated);
             }
             else
             {
-                return Ok(new { message = "No changes were made to the user" });
+                return Ok(Messages.Auth.NoChanges);
             }
         }
         
@@ -165,7 +153,7 @@ namespace Recepttar.Server.Controllers
 
             if (profile == null)
             {
-                return NotFound(new { error = "User not found" });
+                return NotFound(Messages.Auth.UserNotFound);
             }
 
             return Ok(profile);
@@ -178,30 +166,50 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var image = await _userService.GetUserProfilePictureAsync(userId.Value);
+            var (picture, error) = await _userService.GetUserProfilePictureAsync(userId.Value);
 
-            if (image == null)
+            if(error == null)
             {
-                return NotFound(new { error = "Profile picture not found" });
+                return File(picture!, "image/jpeg");
             }
 
-            return File(image, "image/jpeg");
+            switch (error)
+            {
+                case Messages.Auth.UserNotFound:
+                    return NotFound(error);
+
+                case Messages.Auth.NoPicture:
+                    return NotFound(error);
+                    
+                default:
+                    return StatusCode(500, Messages.Server.Error);
+            }
         }
         
         [HttpGet("profile/profilepicture/{userId}")]
         public async Task<IActionResult> ReturnProfilePic(int userId)
         {
-            var image = await _userService.GetUserProfilePictureAsync(userId);
+            var (picture, error) = await _userService.GetUserProfilePictureAsync(userId);
 
-            if (image == null)
+            if (error == null)
             {
-                return NotFound(new { error = "User or profile piture not found" });
+                return File(picture!, "image/jpeg");
             }
 
-            return File(image, "image/jpeg");
+            switch (error)
+            {
+                case Messages.Auth.UserNotFound:
+                    return NotFound(error);
+
+                case Messages.Auth.NoPicture:
+                    return NotFound(error);
+
+                default:
+                    return StatusCode(500, Messages.Server.Error);
+            }
         }
 
         #endregion Profile
@@ -215,15 +223,10 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
             var favorites = await _favoriteService.GetUserFavoritesAsync(userId.Value);
-
-            if (favorites == null)
-            {
-                return NotFound("No favorites found");
-            }
 
             return Ok(favorites);
         }
@@ -235,7 +238,7 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
             var dto = new CreateFavoriteRecipeDto
@@ -244,16 +247,24 @@ namespace Recepttar.Server.Controllers
                 RecipeId = recipeId
             };
 
-            var result = await _favoriteService.AddFavoriteAsync(dto);
+            var (success, message) = await _favoriteService.AddFavoriteAsync(dto);
 
-            if (!result.success)
+            if (success)
             {
-                return result.message == "Recipe not found" 
-                    ? NotFound(new { error = result.message }) 
-                    : Conflict(new { error = result.message });
+                return Ok(message);
             }
 
-            return Ok(new { result.message });
+            switch (message)
+            {
+                case Messages.Recipe.NotFound:
+                    return NotFound(message);
+                
+                case Messages.Recipe.AlreadyInFavorites:
+                    return Conflict(message);
+
+                default:
+                    return StatusCode(500, Messages.Server.Error);
+            }
         }
         
         [HttpDelete("favorites/{recipeId}")]
@@ -263,14 +274,14 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var result = await _favoriteService.RemoveFavoriteAsync(userId.Value, recipeId);
+            var (success, message) = await _favoriteService.RemoveFavoriteAsync(userId.Value, recipeId);
 
-            if (!result.success)
+            if (!success)
             {
-                return NotFound(new { error = result.message });
+                return NotFound(message);
             }
 
             return NoContent();

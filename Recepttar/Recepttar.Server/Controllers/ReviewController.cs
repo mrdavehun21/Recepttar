@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Recepttar.Server.Constants;
 using Recepttar.Server.DTOs.Review;
-using Recepttar.Server.Services;
+using Recepttar.Server.Interfaces;
 
 namespace Recepttar.Server.Controllers
 {
@@ -9,9 +9,9 @@ namespace Recepttar.Server.Controllers
     [Route("api/[controller]")]
     public class ReviewController : ControllerBase
     {
-        private readonly ReviewService _reviewService;
+        private readonly IReviewService _reviewService;
 
-        public ReviewController(ReviewService reviewService)
+        public ReviewController(IReviewService reviewService)
         {
             _reviewService = reviewService;
         }
@@ -23,22 +23,22 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var result = await _reviewService.UpdateReviewAsync(userId.Value, reviewId, updateDto);
+            var (success, wasUpdated, error) = await _reviewService.UpdateReviewAsync(userId.Value, reviewId, updateDto);
 
-            if (!result.success)
+            if (!success)
             {
-                return BadRequest(new { error = result.error });
+                return BadRequest(error);
             }
 
-            if (!result.wasUpdated)
+            if (!wasUpdated)
             {
-                return Ok(new { message = "No changes were made to the review" });
+                return Ok(Messages.Review.NoChanges);
             }
 
-            return Ok(new { message = "Review updated successfully" });
+            return Ok(Messages.Review.Updated);
         }
 
         [HttpDelete("{reviewId}")]
@@ -48,19 +48,19 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var result = await _reviewService.DeleteReviewAsync(userId.Value, reviewId);
+            var (success, error, forbidden) = await _reviewService.DeleteReviewAsync(userId.Value, reviewId);
 
-            if (!result.success)
+            if (!success)
             {
-                if (result.forbidden)
+                if (forbidden)
                 {
-                    return StatusCode(403, new { error = result.error });
+                    return StatusCode(403, error);
                 }
 
-                return NotFound(new { error = result.error });
+                return NotFound(error);
             }
 
             return NoContent();

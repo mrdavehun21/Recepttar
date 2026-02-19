@@ -1,12 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Recepttar.Server.Constants;
 using Recepttar.Server.Data;
 using Recepttar.Server.DTOs.Poll;
 using Recepttar.Server.Enums;
+using Recepttar.Server.Interfaces;
 using Recepttar.Server.Models;
 
 namespace Recepttar.Server.Services
 {
-    public class PollService
+    public class PollService : IPollService
     {
         private readonly AppDbContext _context;
 
@@ -32,11 +34,11 @@ namespace Recepttar.Server.Services
                     {
                         OptionId = o.Id,
                         OptionText = o.OptionText,
-                        VoteCount = votes.Count(v => v.OptionId == o.Id && v.PollId == p.Id)
+                        VoteCount = votes.Count(v => v.OptionId == o.Id)
                     }).ToList(),
 
                 VotedOn = votes
-                    .Where(v => v.UserId == userId && v.PollId == p.Id)
+                    .Where(v => v.UserId == userId)
                     .Select(v => (int?)v.OptionId)
                     .FirstOrDefault()
             }).ToList();
@@ -48,14 +50,24 @@ namespace Recepttar.Server.Services
         {
             var user = await _context.Users.FindAsync(userId);
 
-            if (user.Rank == UserRanksEnum.HomeCook || user.Rank == UserRanksEnum.ChefMaster)
+            if(user == null)
             {
-                return (false, "Rank level too low");
+                return (false, Messages.Auth.UserNotFound);
             }
 
-            if (pollDto.Options.Count < 2 || string.IsNullOrWhiteSpace(pollDto.Question))
+            if (user.Rank == UserRanksEnum.HomeCook || user.Rank == UserRanksEnum.ChefMaster)
             {
-                return (false, "Missing or incomplete field(s)");
+                return (false, Messages.Poll.LowRank);
+            }
+
+            if(string.IsNullOrWhiteSpace(pollDto.Question))
+            {
+                return (false, Messages.Poll.NoQuestion);
+            }
+
+            if (pollDto.Options.Count < 2)
+            {
+                return (false, Messages.Poll.LowOptions);
             }
 
             var poll = new Poll
@@ -82,18 +94,18 @@ namespace Recepttar.Server.Services
 
         public async Task<(bool success, string? error)> AddVoteAsync(int userId, int pollId, int optionId)
         {
-            var existingVote = await _context.Votes.FirstOrDefaultAsync(v => v.UserId == userId && v.PollId == pollId);
+            var existingVote = await _context.Votes.FirstOrDefaultAsync(v => v.UserId == userId);
 
             if (existingVote != null)
             {
-                return (false, "User already voted");
+                return (false, Messages.Poll.Voted);
             }
 
             var poll = await _context.Polls.FindAsync(pollId);
 
             if (poll == null)
             {
-                return (false, "Poll not found");
+                return (false, Messages.Poll.NotFound);
             }
 
             var pollOptions = await _context.PollOptions
@@ -103,13 +115,12 @@ namespace Recepttar.Server.Services
 
             if (!pollOptions.Contains(optionId))
             {
-                return (false, "Invalid option");
+                return (false, Messages.Poll.InvalidOption);
             }
 
             _context.Votes.Add(new Vote
             {
                 UserId = userId,
-                PollId = pollId,
                 OptionId = optionId
             });
 
@@ -118,24 +129,24 @@ namespace Recepttar.Server.Services
             return (true, null);
         }
 
-        public async Task<(bool success, string? error, bool forbidden)> DeletePollAsync(int userId, int pollId)
+        public async Task<(bool success, string? error)> DeletePollAsync(int userId, int pollId)
         {
             var poll = await _context.Polls.FindAsync(pollId);
 
             if (poll == null)
             {
-                return (false, "Poll not found", false);
+                return (false, Messages.Poll.NotFound);
             }
 
             if (poll.AuthorId != userId)
             {
-                return (false, "You are not allowed to delete this poll", true);
+                return (false, Messages.Poll.NotOwnerDelete);
             }
 
             _context.Polls.Remove(poll);
             await _context.SaveChangesAsync();
 
-            return (true, null, false);
+            return (true, null);
         }
 
         public async Task<(bool success, bool wasUpdated, string? error)> UpdatePollAsync(int userId, int pollId, PollDto updateDto)
@@ -144,12 +155,12 @@ namespace Recepttar.Server.Services
 
             if (poll == null)
             {
-                return (false, false, "Poll not found");
+                return (false, false, Messages.Poll.NotFound);
             }
 
             if (poll.AuthorId != userId)
             {
-                return (false, false, "You are not allowed to update this poll");
+                return (false, false, Messages.Poll.NotOwner);
             }
 
             bool wasUpdated = false;

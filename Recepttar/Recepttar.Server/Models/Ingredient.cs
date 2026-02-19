@@ -6,6 +6,11 @@ namespace Recepttar.Server.Models
     {
         [Key]
         public int Id { get; set; }
-        public string Name { get; set; }
+
+        [Required, MaxLength(255)]
+        public string Name { get; set; } = string.Empty;
+
+        // Navigation
+        public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
     }
 }

@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Recepttar.Server.Constants;
 using Recepttar.Server.DTOs.Poll;
-using Recepttar.Server.Services;
+using Recepttar.Server.Interfaces;
 
 namespace Recepttar.Server.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class PollController : ControllerBase
     {
-        private readonly PollService _pollService;
+        private readonly IPollService _pollService;
 
-        public PollController(PollService pollService)
+        public PollController(IPollService pollService)
         {
             _pollService = pollService;
         }
@@ -23,7 +23,7 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
             var polls = await _pollService.GetActivePollsAsync(userId.Value);
@@ -38,30 +38,30 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var result = await _pollService.AddVoteAsync(userId.Value, pollId, voted.OptionId);
+            var (success, error) = await _pollService.AddVoteAsync(userId.Value, pollId, voted.OptionId);
 
-            if (!result.success)
+            if (success)
             {
-                if (result.error == "User already voted")
-                {
-                    return Conflict(new { error = result.error });
-                }
-
-                if (result.error == "Poll not found")
-                {
-                    return NotFound(new { error = result.error });
-                }
-
-                if (result.error == "Invalid option")
-                {
-                    return BadRequest(new { error = result.error });
-                }
+                return Ok(Messages.Poll.Recorded);
             }
 
-            return Ok(new { message = "Vote recorded" });
+            switch (error)
+            {
+                case Messages.Poll.Voted:
+                    return Conflict(error);
+
+                case Messages.Poll.NotFound:
+                    return NotFound(error);
+
+                case Messages.Poll.InvalidOption:
+                    return BadRequest(error);
+
+                default:
+                    return StatusCode(500, Messages.Server.Error);
+            }
         }
 
         [HttpPost("create")]
@@ -71,17 +71,17 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var result = await _pollService.CreatePollAsync(userId.Value, poll);
+            var (success, error) = await _pollService.CreatePollAsync(userId.Value, poll);
 
-            if (!result.success)
+            if (!success)
             {
-                return BadRequest(new { error = result.error });
+                return BadRequest(error);
             }
 
-            return Created(String.Empty, new { message = "Poll created" });
+            return Created(String.Empty, Messages.Poll.Created);
         }
 
         [HttpPatch("{pollId}")]
@@ -91,22 +91,22 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var result = await _pollService.UpdatePollAsync(userId.Value, pollId, updates);
+            var (success, wasUpdated, error) = await _pollService.UpdatePollAsync(userId.Value, pollId, updates);
 
-            if (!result.success)
+            if (!success)
             {
-                return BadRequest(new { error = result.error });
+                return BadRequest(error);
             }
 
-            if (!result.wasUpdated)
+            if (!wasUpdated)
             {
-                return Ok(new { message = "No changes were made to the poll" });
+                return Ok(Messages.Poll.NoChanges);
             }
 
-            return Ok(new { message = "Poll updated successfully" });
+            return Ok(Messages.Poll.Updated);
         }
 
 
@@ -117,22 +117,27 @@ namespace Recepttar.Server.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var result = await _pollService.DeletePollAsync(userId.Value, pollId);
+            var (success, error) = await _pollService.DeletePollAsync(userId.Value, pollId);
 
-            if (!result.success)
+            if (success)
             {
-                if (result.error == "Poll not found")
-                {
-                    return NotFound(new { error = result.error });
-                }
-
-                return StatusCode(403, new { error = result.error });
+                return NoContent();
             }
+            
+            switch(error)
+            {
+                case Messages.Poll.NotFound:
+                    return NotFound(error);
 
-            return NoContent();
+                case Messages.Poll.NotOwnerDelete:
+                    return StatusCode(403, error);
+
+                default:
+                    return StatusCode(500, Messages.Server.Error);
+            }
         }
     }
 }

@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Recepttar.Server.Data;
 using Recepttar.Server.Enums;
+using Recepttar.Server.Interfaces;
 using Recepttar.Server.Models;
 
 namespace Recepttar.Server.Services
 {
-    public class IngredientService
+    public class IngredientService : IIngredientService
     {
         private readonly AppDbContext _context;
         public IngredientService(AppDbContext context)

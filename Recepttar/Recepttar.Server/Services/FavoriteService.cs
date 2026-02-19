@@ -2,11 +2,12 @@
 using Recepttar.Server.Constants;
 using Recepttar.Server.Data;
 using Recepttar.Server.DTOs.Recipe;
+using Recepttar.Server.Interfaces;
 using Recepttar.Server.Models;
 
 namespace Recepttar.Server.Services
 {
-    public class FavoriteService
+    public class FavoriteService : IFavoriteService
     {
         private readonly AppDbContext _context;
 
@@ -34,14 +35,14 @@ namespace Recepttar.Server.Services
 
             if (recipe == null)
             {
-                return (false, "Recipe not found");
+                return (false, Messages.Recipe.NotFound);
             }
 
             var existingFavorite = await _context.Favorites.FirstOrDefaultAsync(f => f.UserId == favoriteRecipeDto.UserId && f.RecipeId == favoriteRecipeDto.RecipeId);
 
             if (existingFavorite != null)
             {
-                return (false, "Recipe already in favorites");
+                return (false, Messages.Recipe.AlreadyInFavorites);
             }
 
             await _context.Favorites.AddAsync(new Favorite
@@ -52,7 +53,7 @@ namespace Recepttar.Server.Services
 
             await _context.SaveChangesAsync();
 
-            return (true, "Recipe added to favorites");
+            return (true, Messages.Recipe.AddToFavorites);
         }
 
         public async Task<(bool success, string message)> RemoveFavoriteAsync(int userId, int recipeId)
@@ -61,13 +62,13 @@ namespace Recepttar.Server.Services
 
             if (favorite == null)
             {
-                return (false, "Recipe not in favorites");
+                return (false, Messages.Recipe.NotInFavorites);
             }
 
             _context.Favorites.Remove(favorite);
             await _context.SaveChangesAsync();
 
-            return (true, "Removed from favorites");
+            return (true, Messages.Recipe.RemovedFavorite);
         }
 
     }

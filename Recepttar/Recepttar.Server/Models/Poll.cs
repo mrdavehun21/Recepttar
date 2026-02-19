@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Recepttar.Server.Models
 {
@@ -6,8 +7,15 @@ namespace Recepttar.Server.Models
     {
         [Key]
         public int Id { get; set; }
-        public string Question { get; set; }
+
+        [ForeignKey(nameof(Author))]
         public int AuthorId { get; set; }
-        public User Author { get; set; }
+
+        [Required, MaxLength(255)]
+        public string Question { get; set; } = string.Empty;
+
+        // Navigation
+        public User Author { get; set; } = null!;
+        public ICollection<PollOption> Options { get; set; } = new List<PollOption>();
     }
 }

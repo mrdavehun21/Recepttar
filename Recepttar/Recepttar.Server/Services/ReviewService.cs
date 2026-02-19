@@ -2,10 +2,12 @@
 using Recepttar.Server.DTOs.Review;
 using Recepttar.Server.Models;
 using Microsoft.EntityFrameworkCore;
+using Recepttar.Server.Interfaces;
+using Recepttar.Server.Constants;
 
 namespace Recepttar.Server.Services
 {
-    public class ReviewService
+    public class ReviewService : IReviewService
     {
         private readonly AppDbContext _context;
 
@@ -45,12 +47,19 @@ namespace Recepttar.Server.Services
 
             if (recipe == null)
             {
-                return (false, "Recipe not found");
+                return (false, Messages.Recipe.NotFound);
+            }
+
+            var alreadyReviewed = await _context.Reviews.AnyAsync(r => r.UserId == userId && r.RecipeId == recipeId);
+
+            if (alreadyReviewed)
+            {
+                return (false, Messages.Review.AlreadyReviewed);
             }
 
             if (reviewDto.Stars < 1 || reviewDto.Stars > 5)
             {
-                return (false, "Invalid stars value (1-5)");
+                return (false, Messages.Review.InvalidStars);
             }
 
             var reviewEntity = new Review
@@ -74,12 +83,12 @@ namespace Recepttar.Server.Services
 
             if (review == null)
             {
-                return (false, false, "Review not found");
+                return (false, false, Messages.Review.NotFound);
             }
 
             if (review.UserId != userId)
             {
-                return (false, false, "You are not allowed to edit this review");
+                return (false, false, Messages.Review.NotOwner);
             }
 
             bool wasUpdated = false;
@@ -112,12 +121,12 @@ namespace Recepttar.Server.Services
 
             if (review == null)
             {
-                return (false, "Review not found", false);
+                return (false, Messages.Review.NotFound, false);
             }
 
             if (review.UserId != userId)
             {
-                return (false, "You are not allowed to delete this review", true);
+                return (false, Messages.Review.NotOwnerDelete, true);
             }
 
             _context.Reviews.Remove(review);
