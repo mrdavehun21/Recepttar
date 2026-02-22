@@ -2,8 +2,8 @@
 {
     public class StepDto
     {
-        public int RecipeStepNumber { get; set; }
-        public string RecipeStepDescription { get; set; } = string.Empty;
+        public int StepNumber { get; set; }
+        public string StepDescription { get; set; } = string.Empty;
     }
 
 }
