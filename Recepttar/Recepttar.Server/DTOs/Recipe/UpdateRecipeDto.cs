@@ -15,6 +15,6 @@ namespace Recepttar.Server.DTOs.Recipe
         public IFormFile? DishPicture { get; set; }
 
         public List<IngredientDto>? Ingredients { get; set; }
-        public List<StepDto>? RecipeSteps { get; set; }
+        public List<StepDto>? Steps { get; set; }
     }
 }
