@@ -33,14 +33,14 @@
             public const string NotOwner = "You are not allowed to edit this recipe";
             public const string NotOwnerDelete = "You are not allowed to delete this recipe";
             public const string NoChanges = "No changes were made to the recipe";
-            public const string Updated = "Review updated";
+            public const string Updated = "Recipe updated";
             public const string InvalidData = "Invalid recipe data";
 
             // Favorite
             public const string AlreadyInFavorites = "Recipe already in favorites";
             public const string AddToFavorites = "Recipe added to favorites";
             public const string NotInFavorites = "Recipe not in favorites";
-            public const string RemovedFavorite = "Removed from favorites";
+            public const string RemovedFavorite = "Recipe removed from favorites";
 
             // AddRecipe
             public const string InvalidTime = "Time must be greater than 0";
