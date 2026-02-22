@@ -26,6 +26,7 @@ namespace Recepttar.Server.Services
             var result = polls.Select(p => new PollDto
             {
                 Id = p.Id,
+                AuthorId = p.AuthorId,
                 Question = p.Question,
 
                 Options = options
@@ -38,7 +39,7 @@ namespace Recepttar.Server.Services
                     }).ToList(),
 
                 VotedOn = votes
-                    .Where(v => v.UserId == userId)
+                    .Where(v => v.UserId == userId && options.Any(o => o.PollId == p.Id && o.Id == v.OptionId))
                     .Select(v => (int?)v.OptionId)
                     .FirstOrDefault()
             }).ToList();
@@ -94,38 +95,33 @@ namespace Recepttar.Server.Services
 
         public async Task<(bool success, string? error)> AddVoteAsync(int userId, int pollId, int optionId)
         {
-            var existingVote = await _context.Votes.FirstOrDefaultAsync(v => v.UserId == userId);
-
-            if (existingVote != null)
-            {
-                return (false, Messages.Poll.Voted);
-            }
-
             var poll = await _context.Polls.FindAsync(pollId);
 
             if (poll == null)
             {
                 return (false, Messages.Poll.NotFound);
             }
-
+            
             var pollOptions = await _context.PollOptions
                 .Where(po => po.PollId == pollId)
                 .Select(po => po.Id)
                 .ToListAsync();
-
+            
             if (!pollOptions.Contains(optionId))
             {
                 return (false, Messages.Poll.InvalidOption);
             }
-
-            _context.Votes.Add(new Vote
+            
+            var existingVote = await _context.Votes.FirstOrDefaultAsync(v => v.UserId == userId && pollOptions.Contains(v.OptionId));
+            
+            if (existingVote != null)
             {
-                UserId = userId,
-                OptionId = optionId
-            });
-
+                return (false, Messages.Poll.Voted);
+            }
+            
+            _context.Votes.Add(new Vote { UserId = userId, OptionId = optionId });
             await _context.SaveChangesAsync();
-
+            
             return (true, null);
         }
 
