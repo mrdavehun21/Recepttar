@@ -49,8 +49,8 @@ namespace Recepttar.Server.Services
                         .OrderBy(rs => rs.StepNumber)
                         .Select(rs => new StepDto
                         {
-                            RecipeStepNumber = rs.StepNumber,
-                            RecipeStepDescription = rs.StepDescription
+                            StepNumber = rs.StepNumber,
+                            StepDescription = rs.StepDescription
                         }).ToList()
                 }).ToListAsync();
         }
@@ -122,8 +122,8 @@ namespace Recepttar.Server.Services
                 await _context.RecipeSteps.AddAsync(new RecipeStep
                 {
                     RecipeId = recipe.Id,
-                    StepNumber = step.RecipeStepNumber,
-                    StepDescription = step.RecipeStepDescription
+                    StepNumber = step.StepNumber,
+                    StepDescription = step.StepDescription
                 });
             }
 
@@ -180,8 +180,8 @@ namespace Recepttar.Server.Services
                         .OrderBy(rs => rs.StepNumber)
                         .Select(rs => new StepDto
                         {
-                            RecipeStepNumber = rs.StepNumber,
-                            RecipeStepDescription = rs.StepDescription
+                            StepNumber = rs.StepNumber,
+                            StepDescription = rs.StepDescription
                         }).ToList()
                 }).ToListAsync();
         }
@@ -200,8 +200,8 @@ namespace Recepttar.Server.Services
                 .OrderBy(rs => rs.StepNumber)
                 .Select(rs => new StepDto
                 {
-                    RecipeStepNumber = rs.StepNumber,
-                    RecipeStepDescription = rs.StepDescription
+                    StepNumber = rs.StepNumber,
+                    StepDescription = rs.StepDescription
                 })
                 .ToListAsync();
 
@@ -343,11 +343,11 @@ namespace Recepttar.Server.Services
             }
 
             // Update Steps if provided
-            if (updateDto.RecipeSteps != null)
+            if (updateDto.Steps != null)
             {
                 await _context.RecipeSteps.Where(rs => rs.RecipeId == recipeId).ExecuteDeleteAsync();
 
-                foreach (var item in updateDto.RecipeSteps)
+                foreach (var item in updateDto.Steps)
                 {
                     _context.RecipeSteps.Add(new RecipeStep
                     {
@@ -468,8 +468,8 @@ namespace Recepttar.Server.Services
                         .OrderBy(rs => rs.StepNumber)
                         .Select(rs => new StepDto
                         {
-                            RecipeStepNumber = rs.StepNumber,
-                            RecipeStepDescription = rs.StepDescription
+                            StepNumber = rs.StepNumber,
+                            StepDescription = rs.StepDescription
                         }).ToList()
                 })
                 .ToListAsync();
