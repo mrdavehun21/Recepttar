@@ -30,6 +30,7 @@ namespace Recepttar.Server.Services
                     IsExpensive = recipe.IsExpensive,
                     IsVegan = recipe.IsVegan,
                     Type = recipe.Type,
+                    CreatedAt = recipe.CreatedAt,
                     DishPicture = DishPicturePath.GetPath(recipe.Id),
                     AuthorId = recipe.AuthorId,
 
@@ -91,7 +92,8 @@ namespace Recepttar.Server.Services
                 Servings = createDto.Servings,
                 IsExpensive = createDto.IsExpensive,
                 IsVegan = createDto.IsVegan,
-                Type = createDto.Type
+                Type = createDto.Type,
+                CreatedAt = DateTime.Now
             };
 
             if (createDto.DishPicture != null)
