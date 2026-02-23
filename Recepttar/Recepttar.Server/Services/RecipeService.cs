@@ -352,8 +352,8 @@ namespace Recepttar.Server.Services
                     _context.RecipeSteps.Add(new RecipeStep
                     {
                         RecipeId = recipeId,
-                        StepNumber = item.RecipeStepNumber,
-                        StepDescription = item.RecipeStepDescription
+                        StepNumber = item.StepNumber,
+                        StepDescription = item.StepDescription
                     });
                 }
 
