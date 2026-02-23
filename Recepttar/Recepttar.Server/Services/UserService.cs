@@ -158,6 +158,7 @@ namespace Recepttar.Server.Services
 
             return new ProfileDto
             {
+                Id = user.Id,
                 FullName = user.FullName,
                 Bio = user.Bio,
                 ProfilePicture = ProfilePicturePath.GetPath(user.Id),
