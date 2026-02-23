@@ -4,6 +4,7 @@ namespace Recepttar.Server.DTOs.User
 {
     public class ProfileDto
     {
+        public int Id { get; set; }
         public string FullName { get; set; } = string.Empty;
         public string Bio { get; set; } = string.Empty;
         public string ProfilePicture { get; set; } = string.Empty;
