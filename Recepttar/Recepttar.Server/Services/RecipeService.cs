@@ -392,19 +392,6 @@ namespace Recepttar.Server.Services
         {
             IQueryable<Recipe> recipeQuery = _context.Recipes.AsQueryable();
 
-            List<int> ingredientIds = new();
-
-            if (!string.IsNullOrWhiteSpace(queryDto.Ingredients))
-            {
-                ingredientIds = queryDto.Ingredients
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(id => int.TryParse(id, out var parsed) ? parsed : (int?)null)
-                    .Where(id => id.HasValue)
-                    .Select(id => id.Value)
-                    .Take(4)
-                    .ToList();
-            }
-
             if (queryDto.Type.HasValue)
             {
                 recipeQuery = recipeQuery.Where(r => r.Type == queryDto.Type.Value);
@@ -430,14 +417,21 @@ namespace Recepttar.Server.Services
                 recipeQuery = recipeQuery.Where(r => r.Title.Contains(queryDto.Search));
             }
 
-            if (ingredientIds.Any())
+            if (!string.IsNullOrWhiteSpace(queryDto.Ingredients))
             {
+                var ingredientIds = queryDto.Ingredients
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(int.Parse)
+                    .ToList();
+            
                 recipeQuery = recipeQuery
-                    .Where(r => _context.RecipeIngredients
-                        .Where(ri => ri.RecipeId == r.Id)
-                        .Select(ri => ri.IngredientId)
-                        .Intersect(ingredientIds)
-                        .Count() == ingredientIds.Count);
+                    .Join(_context.RecipeIngredients,
+                        r => r.Id,
+                        ri => ri.RecipeId,
+                        (r, ri) => new { r, ri })
+                    .Where(x => ingredientIds.Contains(x.ri.IngredientId))
+                    .Select(x => x.r)
+                    .Distinct();
             }
 
             var resultsDto = await recipeQuery
