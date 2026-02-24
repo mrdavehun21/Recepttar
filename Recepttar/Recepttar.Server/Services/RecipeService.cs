@@ -374,7 +374,7 @@ namespace Recepttar.Server.Services
 
             if (recipe.AuthorId != userId)
             {
-                return (false, Messages.Recipe.NotOwner);
+                return (false, Messages.Recipe.NotOwnerDelete);
             }
 
             _context.Recipes.Remove(recipe);
