@@ -68,7 +68,7 @@ namespace Recepttar.Server.Services
             _context.Favorites.Remove(favorite);
             await _context.SaveChangesAsync();
 
-            return (true, Messages.Recipe.RemovedFavorite);
+            return (true, null);
         }
 
     }
