@@ -242,11 +242,6 @@ namespace Recepttar.Server.Services
                 return (null, Messages.Recipe.NotFound);
             }
 
-            if (recipe.DishPicture == null)
-            {
-                return (null, Messages.Recipe.NoPicture);
-            }
-
             return (recipe.DishPicture, null);
         }
 
