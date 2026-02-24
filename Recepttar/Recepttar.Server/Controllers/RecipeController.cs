@@ -65,18 +65,11 @@ namespace Recepttar.Server.Controllers
         [HttpGet("{recipeId}/image")]
         public async Task<IActionResult> GetRecipeImage(int recipeId)
         {
-            var (dto, error) = await _recipeService.GetRecipeByIdAsync(recipeId);
-
-            if (dto == null)
-            {
-                return NotFound(error);
-            }
-
-            var (picture, imgError) = await _recipeService.GetRecipeImageAsync(recipeId);
+            var (picture, error) = await _recipeService.GetRecipeImageAsync(recipeId);
 
             if (picture == null)
             {
-                return NotFound(imgError);
+                return NotFound(error);
             }
 
             return File(picture, "image/jpg");
