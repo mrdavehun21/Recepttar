@@ -183,7 +183,7 @@ namespace Recepttar.Server.Controllers
                 case Messages.Review.AlreadyReviewed:
                     return Conflict(error);
 
-                case Messages.Review.NotFound:
+                case Messages.Recipe.NotFound:
                     return NotFound(error);
 
                 case Messages.Review.InvalidStars:
