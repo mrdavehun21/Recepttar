@@ -127,7 +127,7 @@ namespace Recepttar.Server.Controllers
 
             if (!success)
             {
-                if (error == Messages.Recipe.NotOwner)
+                if (error == Messages.Recipe.NotOwnerDelete)
                 {
                     return StatusCode(403, error);
                 }
