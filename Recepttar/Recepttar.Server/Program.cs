@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Recepttar.Server.Data;
 using Recepttar.Server.Services;
-using Recepttar.Server.Interfaces;
+using Recepttar.Server.Interfaces.Repositories;
+using Recepttar.Server.Repositories;
+using Recepttar.Server.Mappings;
+using Recepttar.Server.Interfaces.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +29,22 @@ builder.Services.AddScoped<IPollService, PollService>();
 builder.Services.AddScoped<IRecipeService, RecipeService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.AddProfile<IngredientMappingProfile>();
+    cfg.AddProfile<PollMappingProfile>();
+    cfg.AddProfile<RecipeMappingProfile>();
+    cfg.AddProfile<UserMappingProfile>();
+    cfg.AddProfile<ReviewMappingProfile>();
+});
+
+builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
+builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
+builder.Services.AddScoped<IPollRepository, PollRepository>();
+builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddRouting(options =>
 {

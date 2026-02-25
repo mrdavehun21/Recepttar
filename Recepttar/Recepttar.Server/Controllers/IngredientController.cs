@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Recepttar.Server.Interfaces;
+using Recepttar.Server.Interfaces.Services;
 
 namespace Recepttar.Server.Controllers
 {

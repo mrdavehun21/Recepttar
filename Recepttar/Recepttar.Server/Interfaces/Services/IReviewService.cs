@@ -1,6 +1,6 @@
 ﻿using Recepttar.Server.DTOs.Review;
 
-namespace Recepttar.Server.Interfaces
+namespace Recepttar.Server.Interfaces.Services
 {
     public interface IReviewService
     {

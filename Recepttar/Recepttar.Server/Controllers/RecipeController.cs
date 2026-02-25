@@ -2,7 +2,7 @@
 using Recepttar.Server.Constants;
 using Recepttar.Server.DTOs.Recipe;
 using Recepttar.Server.DTOs.Review;
-using Recepttar.Server.Interfaces;
+using Recepttar.Server.Interfaces.Services;
 
 namespace Recepttar.Server.Controllers
 {
@@ -37,11 +37,19 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var recipes = await _recipeService.GetMyRecipesAsync(userId.Value);
+            var recipes = await _recipeService.GetRecipesByIdAsync(userId.Value);
 
             return Ok(recipes);
         }
-        
+
+        [HttpGet("{userId}/recipes")]
+        public async Task<IActionResult> GetRecipesByUserId(int userId)
+        {
+            var recipes = await _recipeService.GetRecipesByIdAsync(userId);
+
+            return Ok(recipes);
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> CreateRecipe([FromForm] CreateRecipeDto createDto)
         {

@@ -40,6 +40,7 @@
             public const string AlreadyInFavorites = "Recipe already in favorites";
             public const string AddToFavorites = "Recipe added to favorites";
             public const string NotInFavorites = "Recipe not in favorites";
+            public const string RemovedFavorite = "Removed from favorites";
 
             // AddRecipe
             public const string InvalidTime = "Time must be greater than 0";

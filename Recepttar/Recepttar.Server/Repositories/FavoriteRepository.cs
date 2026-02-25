@@ -1,0 +1,76 @@
+﻿using Recepttar.Server.Constants;
+using Recepttar.Server.Data;
+using Recepttar.Server.DTOs.Recipe;
+using Recepttar.Server.Interfaces.Repositories;
+using Recepttar.Server.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace Recepttar.Server.Repositories
+{
+    public class FavoriteRepository : IFavoriteRepository
+    {
+        private readonly AppDbContext _context;
+
+        public FavoriteRepository(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<List<RecipeCardDto>> GetUserFavoritesAsync(int userId)
+        {
+            return await _context.Favorites
+                .Where(f => f.UserId == userId)
+                .Select(f => new RecipeCardDto
+                {
+                    RecipeId = f.RecipeId,
+                    Title = f.Recipe.Title,
+                    Description = f.Recipe.Description,
+                    DishPicture = DishPicturePath.GetPath(f.RecipeId),
+                    AverageRating = _context.Reviews.Where(rv => rv.RecipeId == f.RecipeId).Any()
+                        ? (float)Math.Round(_context.Reviews.Where(rv => rv.RecipeId == f.RecipeId).Average(rv => rv.Stars), 1)
+                        : 0f,
+                    ReviewCount = _context.Reviews.Count(rv => rv.RecipeId == f.RecipeId)
+                }).ToListAsync();
+        }
+
+        public async Task<(bool success, string message)> AddFavoriteAsync(CreateFavoriteRecipeDto favoriteRecipeDto)
+        {
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == favoriteRecipeDto.RecipeId);
+            if (recipe == null)
+            {
+                return (false, Messages.Recipe.NotFound);
+            }
+
+            var existingFavorite = await _context.Favorites
+                .FirstOrDefaultAsync(f => f.UserId == favoriteRecipeDto.UserId && f.RecipeId == favoriteRecipeDto.RecipeId);
+            if (existingFavorite != null)
+            {
+                return (false, Messages.Recipe.AlreadyInFavorites);
+            }
+
+            await _context.Favorites.AddAsync(new Favorite
+            {
+                UserId = favoriteRecipeDto.UserId,
+                RecipeId = favoriteRecipeDto.RecipeId
+            });
+            await _context.SaveChangesAsync();
+
+            return (true, Messages.Recipe.AddToFavorites);
+        }
+
+        public async Task<(bool success, string message)> RemoveFavoriteAsync(int userId, int recipeId)
+        {
+            var favorite = await _context.Favorites.FirstOrDefaultAsync(f => f.UserId == userId && f.RecipeId == recipeId);
+            if (favorite == null)
+            {
+                return (false, Messages.Recipe.NotInFavorites);
+            }
+
+            _context.Favorites.Remove(favorite);
+            await _context.SaveChangesAsync();
+
+            return (true, null);
+        }
+    }
+
+}

@@ -1,6 +1,6 @@
 ﻿using Recepttar.Server.DTOs.User;
 
-namespace Recepttar.Server.Interfaces
+namespace Recepttar.Server.Interfaces.Services
 {
     public interface IUserService
     {

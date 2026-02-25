@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Recepttar.Server.DTOs.Recipe;
-using Recepttar.Server.Enums;
+﻿using Recepttar.Server.Enums;
 
 namespace Recepttar.Server.DTOs.Recipe
 {
     public class CreateRecipeDto
     {
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public RecipeDiffEnum Difficulty { get; set; }
         public int TimeMinutes { get; set; }
         public int Servings { get; set; }
@@ -15,9 +13,9 @@ namespace Recepttar.Server.DTOs.Recipe
         public bool IsVegan { get; set; }
         public RecipeTypeEnum Type { get; set; }
         public DateTime CreatedAt { get; set; }
-        public IFormFile? DishPicture { get; set; }
+        public IFormFile DishPicture { get; set; } = null!;
 
-        public List<IngredientDto> Ingredients { get; set; }
-        public List<StepDto> Steps { get; set; }
+        public List<IngredientDto> Ingredients { get; set; } = new();
+        public List<StepDto> Steps { get; set; } = new();
     }
 }

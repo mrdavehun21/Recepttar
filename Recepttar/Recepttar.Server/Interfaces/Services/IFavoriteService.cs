@@ -1,10 +1,10 @@
 ﻿using Recepttar.Server.DTOs.Recipe;
 
-namespace Recepttar.Server.Interfaces
+namespace Recepttar.Server.Interfaces.Services
 {
     public interface IFavoriteService
     {
-        public Task<List<FavoriteRecipeDto>> GetUserFavoritesAsync(int userId);
+        public Task<List<RecipeCardDto>> GetUserFavoritesAsync(int userId);
 
         public Task<(bool success, string message)> AddFavoriteAsync(CreateFavoriteRecipeDto favoriteRecipeDto);
 

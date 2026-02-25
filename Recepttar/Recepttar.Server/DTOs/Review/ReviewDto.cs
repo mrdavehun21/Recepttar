@@ -2,10 +2,10 @@
 {
     public class ReviewDto
     {
-        public int RecipeId { get; set; }
-        public int UserId { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string ProfilePicture { get; set; } = string.Empty;
         public int Stars { get; set; }
-        public string? Comment { get; set; }
+        public string Comment { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }

@@ -1,10 +1,10 @@
 ﻿using Recepttar.Server.DTOs.Poll;
 
-namespace Recepttar.Server.Interfaces
+namespace Recepttar.Server.Interfaces.Services
 {
     public interface IPollService
     {
-        public Task<List<PollDto>> GetActivePollsAsync(int userId);
+        public Task<List<PollCardDto>> GetActivePollsAsync(int userId);
 
         public Task<(bool success, string? error)> CreatePollAsync(int userId, PollDto pollDto);
 

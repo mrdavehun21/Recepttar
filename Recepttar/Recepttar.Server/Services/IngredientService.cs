@@ -1,27 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Recepttar.Server.Data;
+﻿using Recepttar.Server.DTOs.Recipe;
 using Recepttar.Server.Enums;
-using Recepttar.Server.Interfaces;
-using Recepttar.Server.Models;
+using Recepttar.Server.Interfaces.Repositories;
+using Recepttar.Server.Interfaces.Services;
 
 namespace Recepttar.Server.Services
 {
     public class IngredientService : IIngredientService
     {
-        private readonly AppDbContext _context;
-        public IngredientService(AppDbContext context)
+        private readonly IIngredientRepository _ingredientRepository;
+
+        public IngredientService(IIngredientRepository ingredientRepository)
         {
-            _context = context;
+            _ingredientRepository = ingredientRepository;
         }
 
-        public async Task<List<Ingredient>> SearchTagsAsync(string? search)
+        public async Task<List<IngredientSearchDto>> SearchTagsAsync(string? search)
         {
-            if (string.IsNullOrWhiteSpace(search))
-            {
-                return await _context.Ingredients.Take(4).ToListAsync();
-            }
-
-            return await _context.Ingredients.Where(i => i.Name.Contains(search)).Take(4).ToListAsync();
+            return await _ingredientRepository.SearchTagsAsync(search);
         }
 
         public List<string> GetUnits()
