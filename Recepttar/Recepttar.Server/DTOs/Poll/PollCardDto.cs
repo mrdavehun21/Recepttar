@@ -3,6 +3,7 @@
     public class PollCardDto
     {
         public int Id { get; set; }
+        public int AuthorId { get; set; }
         public string FullName { get; set; } = string.Empty;
         public string ProfilePicture { get; set; } = string.Empty;
         public string Question { get; set; } = string.Empty;
