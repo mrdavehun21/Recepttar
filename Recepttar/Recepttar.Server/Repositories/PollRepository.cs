@@ -34,6 +34,7 @@ namespace Recepttar.Server.Repositories
                 return new PollCardDto
                 {
                     Id = p.Id,
+                    AuthorId = author.Id,
                     FullName = author.FullName,
                     ProfilePicture = ProfilePicturePath.GetPath(author.Id),
                     Question = p.Question,
