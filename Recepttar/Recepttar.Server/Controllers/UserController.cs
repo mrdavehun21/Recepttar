@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Recepttar.Server.Constants;
-using Recepttar.Server.DTOs.Recipe;
-using Recepttar.Server.DTOs.User;
-using Recepttar.Server.Interfaces.Services;
+using Recepttar.Server.BLL.DTOs.User;
+using Recepttar.Server.BLL.DTOs.Recipe;
+using Recepttar.Server.BLL.Interfaces;
+using Recepttar.Server.BLL.Constants;
 
 namespace Recepttar.Server.Controllers
 {
@@ -109,7 +109,7 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var profile = await _userService.GetUserByIdAsync(userId.Value);
+            var profile = await _userService.GetProfileByIdAsync(userId.Value);
 
             if (profile == null)
             {
@@ -149,7 +149,7 @@ namespace Recepttar.Server.Controllers
         [HttpGet("profile/{userId}")]
         public async Task<IActionResult> GetOthersProfile(int userId)
         {
-            var profile = await _userService.GetUserByIdAsync(userId);
+            var profile = await _userService.GetProfileByIdAsync(userId);
 
             if (profile == null)
             {

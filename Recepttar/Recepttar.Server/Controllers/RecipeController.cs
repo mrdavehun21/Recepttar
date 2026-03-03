@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Recepttar.Server.Constants;
-using Recepttar.Server.DTOs.Recipe;
-using Recepttar.Server.DTOs.Review;
-using Recepttar.Server.Interfaces.Services;
+using Recepttar.Server.BLL.DTOs.Recipe;
+using Recepttar.Server.BLL.DTOs.Review;
+using Recepttar.Server.BLL.Interfaces;
+using Recepttar.Server.BLL.Constants;
 
 namespace Recepttar.Server.Controllers
 {
@@ -37,7 +37,7 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var recipes = await _recipeService.GetRecipesByIdAsync(userId.Value);
+            var recipes = await _recipeService.GetRecipesByUserIdAsync(userId.Value);
 
             return Ok(recipes);
         }
@@ -45,7 +45,7 @@ namespace Recepttar.Server.Controllers
         [HttpGet("{userId}/recipes")]
         public async Task<IActionResult> GetRecipesByUserId(int userId)
         {
-            var recipes = await _recipeService.GetRecipesByIdAsync(userId);
+            var recipes = await _recipeService.GetRecipesByUserIdAsync(userId);
 
             return Ok(recipes);
         }
@@ -137,7 +137,7 @@ namespace Recepttar.Server.Controllers
             {
                 if (error == Messages.Recipe.NotOwnerDelete)
                 {
-                    return StatusCode(403, error);
+                    return StatusCode(StatusCodes.Status403Forbidden, new { Message = error });
                 }
 
                 return NotFound(error);

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Recepttar.Server.Constants;
-using Recepttar.Server.DTOs.Review;
-using Recepttar.Server.Interfaces.Services;
+using Recepttar.Server.BLL.DTOs.Review;
+using Recepttar.Server.BLL.Interfaces;
+using Recepttar.Server.BLL.Constants;
 
 namespace Recepttar.Server.Controllers
 {
@@ -57,7 +57,7 @@ namespace Recepttar.Server.Controllers
             {
                 if (forbidden)
                 {
-                    return StatusCode(403, error);
+                    return StatusCode(StatusCodes.Status403Forbidden, new { Message = error });
                 }
 
                 return NotFound(error);

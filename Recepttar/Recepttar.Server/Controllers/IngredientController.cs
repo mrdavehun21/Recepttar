@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Recepttar.Server.Interfaces.Services;
+using Recepttar.Server.BLL.Interfaces;
 
 namespace Recepttar.Server.Controllers
 {
@@ -7,9 +7,9 @@ namespace Recepttar.Server.Controllers
     [Route("api/[controller]")]
     public class IngredientController : ControllerBase
     {
-        private readonly IIngredientService _ingredientService;
+        private readonly IReferenceDataService _ingredientService;
 
-        public IngredientController(IIngredientService ingredientService)
+        public IngredientController(IReferenceDataService ingredientService)
         {
             _ingredientService = ingredientService;
         }
