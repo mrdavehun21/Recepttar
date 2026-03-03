@@ -1,0 +1,38 @@
+.poll-card {
+    border: 2px solid #E3D6C8;
+}
+
+.vote-card {
+    min-width: 280px;
+    max-width: min-content;
+    min-height: fit-content;
+}
+
+.vote-btn {
+    max-width: 600px;
+    height: 48px;
+    border-radius: 15px;
+    font-weight: 600;
+    overflow: hidden;
+    height: auto;
+    min-height: 60px;
+}
+
+.vote-text {
+    font-size: 1.1rem;
+    text-align: center;
+    width: 100%;
+}
+
+.vote-divider {
+    width: 1px;
+    height: 100%;
+}
+
+.vote-count {
+    width: 70px;
+    height: 100%;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-left: 2px solid black;
+}

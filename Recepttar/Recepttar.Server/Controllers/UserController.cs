@@ -1,124 +1,91 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Recepttar.Server.Constants;
-using Recepttar.Server.DTO.RecipeDTO;
-using Recepttar.Server.HelperMethods;
-using Recepttar.Server.Models;
-using System.Security.Cryptography;
-using System.Text;
+using Recepttar.Server.BLL.DTOs.User;
+using Recepttar.Server.BLL.DTOs.Recipe;
+using Recepttar.Server.BLL.Interfaces;
+using Recepttar.Server.BLL.Constants;
 
 namespace Recepttar.Server.Controllers
 {
-    [ApiController()]
-    [Route("user/")]
-    public class UserController : Controller // ALWAYS INHERIT IF CONTROLLER
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UserController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUserService _userService;
+        private readonly IFavoriteService _favoriteService;
 
-        public UserController(AppDbContext context)
+        public UserController(IUserService userService, IFavoriteService favoriteService)
         {
-            _context = context;
+            _userService = userService;
+            _favoriteService = favoriteService;
         }
 
         [HttpPost("register")]
-        public IActionResult RegisterUser([FromForm] DTO.RegisterUser newUser)
+        public async Task<IActionResult> RegisterUser([FromForm] RegisterUserDto registerDto)
         {
-            // Don't forget that the data from dto might be null!!!
-            if (string.IsNullOrEmpty(newUser.Email) ||
-                string.IsNullOrEmpty(newUser.Password) ||
-                string.IsNullOrEmpty(newUser.Name))
+            var user = await _userService.RegisterUserAsync(registerDto);
+
+            if(user == null)
             {
-                // if something goes wrong (Status code 400)
-                return BadRequest(new { error = "Bad request" });
+                return BadRequest(Messages.Auth.UserAlreadyExists);
             }
 
-            // Check, if the user already exists
-            var FindUser = _context.User.Where(d => d.Email == newUser.Email).Count();
-
-            if (FindUser != 0)
-            {
-                // Return with error code that user already exists (??? error code)
-                return BadRequest(new { error = "User already exists with this email" });
-            }
-
-            // Create a hashed password
-            string Hashedpwd = PasswordHash.PasswordHasher(newUser.Password);
-
-            var user = new User()
-            {
-                Name = newUser.Name,
-                Email = newUser.Email,
-                PasswordHash = Hashedpwd,
-                Bio = "",
-                ProfilePicture = new byte[] { },
-                Rank = Enums.UserRanksEnum.Hobbi_szakács
-            };
-
-            // Add new user to database
-            _context.User.Add(user);
-
-            // Save changes
-            _context.SaveChanges();
-
-            // If all goes well (Status code 201)
-            return Created(string.Empty, new { message = "User created" });
+            return Created(String.Empty, Messages.Auth.Created);
         }
 
         [HttpGet("checkEmail")]
-        public IActionResult CheckEmail([FromQuery] string email)
+        public async Task<IActionResult> CheckEmail([FromQuery] string email)
         {
-            // Validate input
             if (string.IsNullOrEmpty(email))
-                return BadRequest(new { error = "Bad request" });
+            {
+                return BadRequest(Messages.Auth.EmailRequired);
+            }
 
-            // Check if the email exists
-            var exists = _context.User.Any(u => u.Email == email);
+            var exists = await _userService.EmailExistsAsync(email);
 
             if (exists)
             {
-                // Email exists (Status code 200)
-                return Ok(new { message = "Email exists" });
+                return Ok(Messages.Auth.EmailExists);
             }
 
-            // Email does not exist (Status code 404)
-            return NotFound(new { error = "Email not found" });
+            return NotFound(Messages.Auth.EmailNotFound);
         }
-
-        [HttpPost("login")]
-        public IActionResult LoginUser([FromForm] DTO.LogInUser user)
+        
+        [HttpGet("isLoggedIn")]
+        public IActionResult IsLoggedIn()
         {
-            // Don't forget that the data from dto might be null!!!
-            if (string.IsNullOrEmpty(user.Email) ||
-                string.IsNullOrEmpty(user.Password))
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            if (userId == null)
             {
-                // Missing username/password (Status code 400)
-                return BadRequest(new { error = "Email and password are required" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            // Check if user exists and if their password is matching
-            var FindUser = _context.User.FirstOrDefault(d => d.Email == user.Email);
-            if(FindUser == null || 
-                FindUser.PasswordHash != PasswordHash.PasswordHasher(user.Password))
-            {
-                // Invalid credentials (Status code 401)
-                return Unauthorized(new { error = "Invalid email or password" });
-            }
-
-            // Create a sessionID
-            HttpContext.Session.SetInt32(SessionKeys.UserId, FindUser.Id);
-
-            // Successful loggin (Status code 200)
-            return Ok(new { message = "Successfully logged in" });
+            return Ok(Messages.Auth.UserLoggedIn);
         }
+        
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUser([FromForm] LogInUserDto loginDto)
+        {
+            var user = await _userService.LoginUserAsync(loginDto);
 
+            if (user == null)
+            {
+                return Unauthorized(Messages.Auth.InvalidCredentials);
+            }
+
+            HttpContext.Session.SetInt32(SessionKeys.UserId, user.Id);
+
+            return Ok(Messages.Auth.UserLoggedIn);
+        }
+        
         [HttpPost("logout")]
         public IActionResult Logout()
         {
-            // If already logged out (Status code 401)
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
             // Clears every session paramaters
@@ -127,242 +94,199 @@ namespace Recepttar.Server.Controllers
             // Clearing browser-side cookies
             Response.Cookies.Delete(".AspNetCore.Session");
 
-            // Successful logout (Status code 200)
-            return Ok(new { message = "Successfully logged out" });
+            return Ok(Messages.Auth.UserLoggedOut);
         }
 
+        #region Profile
+
         [HttpGet("profile")]
-        public IActionResult GetProfile()
+        public async Task<IActionResult> GetProfile()
         {
-            // Prevent user from requesting profile data if not logged in
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+            var profile = await _userService.GetProfileByIdAsync(userId.Value);
 
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
-
-            var UserData = new DTO.RequestProfileData()
+            if (profile == null)
             {
-                Name = FindUser.Name,
-                Bio = FindUser.Bio,
-                ProfilePicture = "/user/" + ProfilePicturePath.Path,
-                Rank = FindUser.Rank
-            };
-            // Successful request (Status code 200)
-            return Ok(UserData);
+                return NotFound(Messages.Auth.UserNotFound);
+            }
+
+            return Ok(profile);
         }
 
         [HttpPatch("profile")]
-        public IActionResult UpdateProfile([FromForm] DTO.UpdateProfileData userUpdates)
+        public async Task<IActionResult> UpdateProfile([FromForm] UpdateProfileDto updateDto)
         {
-            // Unauthorized access (Status 401)
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+            var (success, wasUpdated, error) = await _userService.UpdateUserProfileAsync(userId.Value, updateDto);
 
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
-
-            // Track if anything was updated
-            bool wasUpdated = false;
-
-            if(!string.IsNullOrWhiteSpace(userUpdates.Name))
+            if (!success)
             {
-                FindUser.Name = userUpdates.Name;
-                wasUpdated = true;
+                return BadRequest(error);
             }
 
-            if(!string.IsNullOrWhiteSpace(userUpdates.Email))
-            {
-                FindUser.Email = userUpdates.Email;
-                wasUpdated = true;
-            }
-
-            if(!string.IsNullOrWhiteSpace(userUpdates.Password))
-            {
-                FindUser.PasswordHash = PasswordHash.PasswordHasher(userUpdates.Password);
-                wasUpdated = true;
-            }
-
-            if(!string.IsNullOrWhiteSpace(userUpdates.Bio))
-            {
-                FindUser.Bio = userUpdates.Bio;
-            }
-
-            if (userUpdates.ProfilePicture != null)
-            {
-                using (var stream = new MemoryStream())
-                {
-                    userUpdates.ProfilePicture.CopyTo(stream);
-                    FindUser.ProfilePicture = stream.ToArray();
-                    wasUpdated = true;
-                }
-            }
-
-            // Only save if something was actually updated
             if (wasUpdated)
             {
-                _context.SaveChanges();
-
-                return Ok(new { message = "User updated" });
+                return Ok(Messages.Auth.Updated);
             }
             else
             {
-                // No changes were made
-                return Ok(new { message = "No changes were made to the user" });
+                return Ok(Messages.Auth.NoChanges);
             }
         }
-
+        
         [HttpGet("profile/{userId}")]
-        public IActionResult GetOthersProfile(int userId)
+        public async Task<IActionResult> GetOthersProfile(int userId)
         {
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == userId);
+            var profile = await _userService.GetProfileByIdAsync(userId);
 
-            // If found user, return profile data (Status code 200)
-            var UserData = new DTO.RequestProfileData
+            if (profile == null)
             {
-                Name = FindUser.Name,
-                Bio = FindUser.Bio,
-                ProfilePicture = "/user/" + ProfilePicturePath.Path + "/" + userId,
-                Rank = FindUser.Rank
-            };
-            return Ok(UserData);
-        }
+                return NotFound(Messages.Auth.UserNotFound);
+            }
 
+            return Ok(profile);
+        }
+        
         [HttpGet("profile/profilepicture")]
-        public IActionResult ReturnProfilePic()
+        public async Task<IActionResult> ReturnProfilePic()
         {
-            // Unauthorized access (Status code 401)
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+            var (picture, error) = await _userService.GetUserProfilePictureAsync(userId.Value);
 
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
+            if(error == null)
+            {
+                return File(picture!, "image/jpeg");
+            }
 
-            // If all goes well, return with image (Status code 200)
-            byte[] Image = FindUser.ProfilePicture;
-            return File(Image, "image/jpg");
+            switch (error)
+            {
+                case Messages.Auth.UserNotFound:
+                    return NotFound(error);
+
+                case Messages.Auth.NoPicture:
+                    return NotFound(error);
+                    
+                default:
+                    return StatusCode(500, Messages.Server.Error);
+            }
         }
-
-
-        [HttpGet("profile/profilepicture/{userID}")]
-        public IActionResult ReturnProfilePic(int userId)
+        
+        [HttpGet("profile/profilepicture/{userId}")]
+        public async Task<IActionResult> ReturnProfilePic(int userId)
         {
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == userId);
+            var (picture, error) = await _userService.GetUserProfilePictureAsync(userId);
 
-            // If all goes well, return with image (Status code 200)
-            byte[] Image = FindUser.ProfilePicture;
-            return File(Image, "image/jpg");
+            if (error == null)
+            {
+                return File(picture!, "image/jpeg");
+            }
+
+            switch (error)
+            {
+                case Messages.Auth.UserNotFound:
+                    return NotFound(error);
+
+                case Messages.Auth.NoPicture:
+                    return NotFound(error);
+
+                default:
+                    return StatusCode(500, Messages.Server.Error);
+            }
         }
 
-        #region User favorite
+        #endregion Profile
+
+        #region Favorites
+
         [HttpGet("favorites")]
-        public IActionResult GetUserFavorites()
+        public async Task<IActionResult> GetUserFavorites()
         {
-            // Unauthorized access (Status code 401)
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+            var favorites = await _favoriteService.GetUserFavoritesAsync(userId.Value);
 
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
-
-            var count = _context.Favorites.Count(f => f.UserId == UserId);
-
-            var favorites = _context.Favorites
-                .Where(f => f.UserId == UserId)
-                .Select(f => new FavoriteRecipe()
-                {
-                    Title = f.Recipe.Title,
-                    Difficulty = f.Recipe.Difficulty,
-                    TimeMinutes = f.Recipe.TimeMinutes,
-                    Servings = f.Recipe.Servings,
-                    DishPicture = "recipes/" + f.RecipeId
-                })
-                .ToList();
-
-            // Return with all the favorites (Status code 200)
             return Ok(favorites);
         }
-
+        
         [HttpPost("favorites/{recipeId}")]
-        public IActionResult AddToUserFavorites(int recipeId)
+        public async Task<IActionResult> AddToUserFavorites(int recipeId)
         {
-            // Unauthorized access (Status code 401)
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
-
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
-
-            var Recipe = _context.Recipe.FirstOrDefault(f => f.Id == recipeId);
-
-            // If recipe not found (Status code 404)
-            if(Recipe == null)
+            var dto = new CreateFavoriteRecipeDto
             {
-                return NotFound(new { error = "Recipe not found" });
-            }
-
-            var existingFavorite = _context.Favorites.FirstOrDefault(f => f.UserId == UserId && f.RecipeId == recipeId);
-
-            if (existingFavorite != null)
-            {
-                return Conflict(new { error = "Recipe already in favorites" });
-            }
-
-            _context.Favorites.Add(new Favorite
-            {
-                UserId = UserId.Value,
+                UserId = userId.Value,
                 RecipeId = recipeId
-            });
+            };
 
-            _context.SaveChanges();
+            var (success, message) = await _favoriteService.AddFavoriteAsync(dto);
 
-            // Recipe successfully added to favorites (Status code 200)
-            return Ok(new { message = "Recipe added to favorites" });
+            if (success)
+            {
+                return Ok(message);
+            }
+
+            switch (message)
+            {
+                case Messages.Recipe.NotFound:
+                    return NotFound(message);
+                
+                case Messages.Recipe.AlreadyInFavorites:
+                    return Conflict(message);
+
+                default:
+                    return StatusCode(500, Messages.Server.Error);
+            }
         }
-
+        
         [HttpDelete("favorites/{recipeId}")]
-        public IActionResult RemoveFromFavorites(int recipeId)
+        public async Task<IActionResult> RemoveFromFavorites(int recipeId)
         {
-            // Unauthorized access (Status code 401)
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
+            int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+
+            if (userId == null)
             {
-                return Unauthorized(new { error = "Unauthorized" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            int? UserId = HttpContext.Session.GetInt32(SessionKeys.UserId);
+            var (success, message) = await _favoriteService.RemoveFavoriteAsync(userId.Value, recipeId);
 
-            var FindUser = _context.User.FirstOrDefault(d => d.Id == UserId);
-
-            var favorite = _context.Favorites.FirstOrDefault(f => f.UserId == UserId && f.RecipeId == recipeId);
-
-            // If recipe not found (Status code 404)
-            if (favorite == null)
+            if (!success)
             {
-                return NotFound(new { error = "Recipe not in favorites" });
+                return NotFound(message);
             }
 
-            _context.Favorites.Remove(favorite);
-
-            _context.SaveChanges();
-
-            // Successful deletion (Status code 204)
             return NoContent();
         }
-        #endregion User favorite
+
+        #endregion Favorites
     }
 }

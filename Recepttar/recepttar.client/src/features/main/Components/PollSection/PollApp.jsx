@@ -1,22 +1,44 @@
 import PollCard from './PollCard';
 import { usePolls } from '../../hooks/usePoll';
+import './PollApp.css';
 
-function PollApp() {
-    const { polls, loading, error } = usePolls();
+import Nav from 'react-bootstrap/Nav';
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error}</p>;
+function PollApp({ loginStatus, profileID }) {
+    const { polls } = usePolls();
 
     return (
-        <div className="mt-5">
-            <h1 className="m-2 ms-md-4">Polls</h1>
+        <div className="position-relative mt-4 bg-poll rounded-3 ms-auto me-auto mb-3 h-100">
+            {
+                (!loginStatus) ? (
+                    <div className="position-absolute w-100 h-100 backdrop-blur d-flex align-items-center justify-content-center">
+                        <h3 className="color-red">Sign in to vote!</h3>
+                    </div>
+                ) : (
+                    <div className="d-none"></div>
+                )
+            }
+            <h2 className="m-2 mt-2 mb-4 ms-2 text-decoration-underline color-neutral-100 fs-3">Polls</h2>
             <div
-                className="d-flex m-2 ms-md-4 flex-column flex-sm-row align-items-center overflow-auto"
+                className="d-block d-md-flex m-1 flex-column align-items-center overflow-auto"
                 style={{ scrollBehavior: 'smooth' }}
             >
-                {polls.map((item, index) => (
-                    <PollCard key={index} data={item} />
-                ))}
+                {
+                    (!loginStatus) ? (
+                        polls.slice(0, 1).map((item, index) => (
+                            <PollCard key={index} data={item} loginStatus={loginStatus} profileID={profileID} />
+                        ))
+                    ) : (
+                        <div>
+                            {
+                                polls.slice(0, 4).map((item, index) => (
+                                    <PollCard key={index} data={item} loginStatus={loginStatus} profileID={profileID} />
+                                ))
+                            }
+                            <Nav.Link href="/polls" className="polls-bg-additional-8 p-2 rounded-2 text-light ms-auto me-auto mb-3" style={{width: "fit-content"} }>View all</Nav.Link>
+                        </div>
+                    )
+                }
             </div>
         </div>
     );

@@ -1,5 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using Recepttar.Server.Models;
+using Recepttar.Server.DAL.Data;
+using Recepttar.Server.DAL.Repositories;
+using Recepttar.Server.BLL.Services;
+using Recepttar.Server.BLL.Mappings;
+using Recepttar.Server.BLL.Interfaces;
+using Recepttar.Server.DAL.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,8 +23,33 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.
+builder.Services.AddScoped<IFavoriteService, FavoriteService>();
+builder.Services.AddScoped<IReferenceDataService, ReferenceDataService>();
+builder.Services.AddScoped<IPollService, PollService>();
+builder.Services.AddScoped<IRecipeService, RecipeService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
-//builder.Services.AddControllers();
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.AddProfile<IngredientMappingProfile>();
+    cfg.AddProfile<PollMappingProfile>();
+    cfg.AddProfile<RecipeMappingProfile>();
+    cfg.AddProfile<UserMappingProfile>();
+    cfg.AddProfile<ReviewMappingProfile>();
+});
+
+builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
+builder.Services.AddScoped<IReferenceDataRepository, ReferenceDataRepository>();
+builder.Services.AddScoped<IPollRepository, PollRepository>();
+builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddRouting(options =>
+{
+    options.LowercaseUrls = true;
+});
 
 // This helps accepting enum names in queries instead of numbers. (Instead of 0, now we can use Enum_Name)
 builder.Services.AddControllers()

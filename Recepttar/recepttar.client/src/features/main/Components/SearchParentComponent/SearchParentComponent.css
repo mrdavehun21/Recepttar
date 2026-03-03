@@ -1,0 +1,34 @@
+.OptionButton {
+    border: 0;
+    padding: 5px;
+    width: 80px;
+    border-radius: 21px;
+    display: block;
+}
+
+@media screen and (max-width: 575px) {
+    .LeftSegment{
+        width: 100% !important;
+        margin-bottom: 20px;
+    }
+    .RightSegment{
+        width: 100% !important;
+        padding: 0 !important;
+    }
+    .ContentBox{
+        width: 75% !important;
+    }
+}
+
+.search-container {
+    background-color: #5F8F76;
+    height: fit-content;
+}
+
+.OptionButtonContainer {
+    display: flex;
+    width: 290px;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}

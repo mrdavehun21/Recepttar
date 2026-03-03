@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { fetchActivePolls } from '../api/recipe.api';
+import { fetchActivePolls, getAuthorProfile, deletePoll } from '../api/main.api';
 
 export function usePolls() {
     const [polls, setPolls] = useState([]);
@@ -11,7 +11,13 @@ export function usePolls() {
         setError(null);
 
         try {
-            const data = await fetchActivePolls();
+            let data = await fetchActivePolls();
+
+            if (data[0].id == 0) {
+                setPolls(data);
+                return;
+            }
+
             setPolls(data);
         } catch (err) {
             setError(err.message);
@@ -19,6 +25,14 @@ export function usePolls() {
             setLoading(false);
         }
     }, []);
+
+    const handleDeletePoll = async (pollId) => {
+        try {
+            await deletePoll(pollId)
+
+            setPolls(prev => prev.filter(poll => poll.id !== pollId));
+        } catch (error) { }
+    }
 
     useEffect(() => {
         fetchPollData();
@@ -28,6 +42,7 @@ export function usePolls() {
         polls,
         loading,
         error,
-        refetch: fetchPollData
+        refetch: fetchPollData,
+        deletePoll: handleDeletePoll
     };
 }

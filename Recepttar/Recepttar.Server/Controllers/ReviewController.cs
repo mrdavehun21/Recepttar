@@ -1,118 +1,68 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Recepttar.Server.Constants;
-using Recepttar.Server.HelperMethods;
-using Recepttar.Server.Models;
+using Recepttar.Server.BLL.DTOs.Review;
+using Recepttar.Server.BLL.Interfaces;
+using Recepttar.Server.BLL.Constants;
 
 namespace Recepttar.Server.Controllers
 {
-    [ApiController()]
-    [Route("reviews/")]
-    public class ReviewController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ReviewController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        public ReviewController(AppDbContext context)
+        private readonly IReviewService _reviewService;
+
+        public ReviewController(IReviewService reviewService)
         {
-            _context = context;
+            _reviewService = reviewService;
         }
 
         [HttpPatch("{reviewId}")]
-        public IActionResult UpdateReview([FromForm] DTO.ReviewsDTO.PatchReview updates, int reviewId)
+        public async Task<IActionResult> UpdateReview(int reviewId, [FromForm] UpdateReviewDto updateDto)
         {
-            // Unauthorized access (Status code 401)
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
-            {
-                return Unauthorized(new { error = "Unauthorized" });
-            }
-
             int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
 
-            var review = _context.Review.FirstOrDefault(d => d.Id == reviewId);
-
-            // If review not found (Status code 404)
-            if (review == null)
+            if (userId == null)
             {
-                return NotFound(new { error = "Review not found" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            // User is authenticated but not the owner of the review (Status code 403)
-            if (review.UserId != userId)
+            var (success, wasUpdated, error) = await _reviewService.UpdateReviewAsync(userId.Value, reviewId, updateDto);
+
+            if (!success)
             {
-                return StatusCode(StatusCodes.Status403Forbidden, new
-                {
-                    error = "You are not allowed to edit this review"
-                });
+                return BadRequest(error);
             }
 
-            // Track if anything was updated
-            bool wasUpdated = false;
-
-            if (updates.Stars.HasValue)
+            if (!wasUpdated)
             {
-
-                if (updates.Stars.Value < 1 || updates.Stars.Value > 5)
-                {
-                    return BadRequest(new { error = "Stars must be between 1 and 5" });
-                }
-
-                review.Stars = updates.Stars.Value;
-                wasUpdated = true;
+                return Ok(Messages.Review.NoChanges);
             }
 
-            if (!string.IsNullOrWhiteSpace(updates.Comment))
-            {
-                review.Comment = updates.Comment;
-                wasUpdated = true;
-            }
-
-            // Only save if something was actually updated
-            if (wasUpdated)
-            {
-                review.UpdatedAt = DateTime.Now;
-
-                _context.SaveChanges();
-
-                return Ok(new { message = "Review updated" });
-            }
-            else
-            {
-                // No changes were made
-                return Ok(new { message = "No changes were made to the review" });
-            }
+            return Ok(Messages.Review.Updated);
         }
 
         [HttpDelete("{reviewId}")]
-        public IActionResult DeleteReview(int reviewId) 
+        public async Task<IActionResult> DeleteReview(int reviewId)
         {
-            // Unauthorized access (Status code 401)
-            if (!IsUserAuthorized.IsAuthorized(HttpContext))
-            {
-                return Unauthorized(new { error = "Unauthorized" });
-            }
-
             int? userId = HttpContext.Session.GetInt32(SessionKeys.UserId);
 
-            var review = _context.Review.FirstOrDefault(d => d.Id == reviewId);
-
-            // If review not found (Status code 404)
-            if (review == null)
+            if (userId == null)
             {
-                return NotFound(new { error = "Review not found" });
+                return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            // User is authenticated but not the owner of the review (Status code 403)
-            if (review.UserId != userId)
+            var (success, error, forbidden) = await _reviewService.DeleteReviewAsync(userId.Value, reviewId);
+
+            if (!success)
             {
-                return StatusCode(StatusCodes.Status403Forbidden, new
+                if (forbidden)
                 {
-                    error = "You are not allowed to delete this review"
-                });
+                    return StatusCode(StatusCodes.Status403Forbidden, new { Message = error });
+                }
+
+                return NotFound(error);
             }
 
-            _context.Review.Remove(review);
-
-            _context.SaveChanges();
-
-            // If comment was successfully deleted (Status code 204)
             return NoContent();
         }
     }

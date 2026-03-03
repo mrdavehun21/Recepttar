@@ -1,36 +1,95 @@
 import { Link } from "react-router-dom";
+import { useFavorites } from "../../hooks/useFavorites";
 import EmptyHeart from "../../../../assets/emptyHeart.svg";
 import FilledHeart from "../../../../assets/fullHeart.svg";
+import { ImageAvailable } from '../../../../GlobalHooks/usePictureChecker';
+import { useEffect, useState } from "react";
+import './Card.css'
 
-function Card({ data }) {
-    function ChangeFavouriteState(e, recipeId) {
-        e.stopPropagation();
-        alert(recipeId)
-    }
+function Card({ data, allowFavorites = true }) {
+    const { isFavorite, toggleFavorite } = useFavorites(data.isFavorite);
+    const [imageExists, setImageExists] = useState(false);
+
+    const StarRating = ({ rating, maxStars = 5 }) => {
+        const roundedRating = Math.ceil(rating);
+
+        return (
+            <>
+                {[...Array(maxStars)].map((_, index) => (
+                    <i
+                        key={index}
+                        className={`me-1 bi ${index < roundedRating ? "bi-star-fill star-additional-9" : "bi-star-fill star-additional-10"
+                            }`}
+                    ></i>
+                ))}
+            </>
+        );
+    };
+
+    useEffect(() => {
+        async function checkImage() {
+            const exists = await ImageAvailable(
+                `https://localhost:7035/${data.dishPicture}`
+            );
+            setImageExists(exists);
+        }
+
+        checkImage();
+    }, [data.dishPicture]);
 
     return (
-        <Link to={`/recipe/${data.id}`} style={{ textDecoration: 'none', color: 'inherit', width: '30%', maxWidth: "320px", minWidth: "250px", cursor: 'pointer' }}>
-            <div className="card shadow">
-                <img
-                    className="card-img-top img-fluid"
-                    src={`https://localhost:7035/${data.dishPicture}`}
-                    alt={data.title}
-                    style={{ height: '200px', objectFit: 'cover' }}
-                />
-                <div className="position-absolute" style={{ width: "30px", height: "30px", right: "10px", top: "10px" }} onClick={() => ChangeFavouriteState(e, data.id)}>
-                    <img src={EmptyHeart} className="w-100"/>
-                </div>
-                <div className="card-body">
-                    <h4 className="card-title">{data.title}</h4>
-                </div>
-                <ul className="list-group list-group-flush list-unstyled">
-                    <div className="d-flex justify-content-between p-3">
-                        <li className="card-title">{data.averageRating} star(s)</li>
-                        <li className="card-title">{data.reviewCount} review(s)</li>
+        <div className="card border-0 shadow MainCard">
+            {
+                allowFavorites ? (
+                    <div
+                        className="position-absolute bg-light p-1 rounded-2 CardHeart"
+                        onClick={(e) => { e.stopPropagation(); toggleFavorite(data.recipeId); }}
+                    >
+                        <img src={isFavorite ? FilledHeart : EmptyHeart} className="w-100" />
                     </div>
-                </ul>
-            </div>
-        </Link>
+                ) : (
+                    <div></div>
+                )
+            }
+
+            <Link
+                to={`/recipe/${data.recipeId}`} className="CardLink">
+                <div className="card border-0 h-100 overflow-hidden">
+                    {
+                        (imageExists == true) ? (
+                            <img
+                                src={`https://localhost:7035/${data.dishPicture}`}
+                                style={{ height: "200px" }}
+                            />
+                        ) : (
+                            <div className="w-100 bg-secondary" style={{height: "200px"}}>
+
+                            </div>
+                        )
+                    }
+                    <div className="card-body">
+                        <h4 className="card-title text-decoration-underline font-neutral-100 fw-bold">{data.title}</h4>
+                        <p className=".font-neutral-100 mt-4 fw-bold">{
+                            (data.description.length > 150) ? (data.description.substring(0, 150) + "...") :
+                                (data.description)
+                        }</p>
+                    </div>
+                    <div className="border-top border-dark list-group list-group-flush list-unstyled">
+                        <div className="d-flex justify-content-between p-3">
+                            <div>
+                                <StarRating rating={data.averageRating} />
+                                <span className="ms-2">
+                                    {data.averageRating}
+                                </span>
+                            </div>
+                            <div>{data.reviewCount} Review{
+                                (data.reviewCount > 1) ? "s" : ""
+                            }</div>
+                        </div>
+                    </div>
+                </div>
+            </Link>
+        </div>
     );
 }
 

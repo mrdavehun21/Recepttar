@@ -1,33 +1,49 @@
-import Titlebar from '../Components/Titlebar/Titlebar';
-import Recipes from './App.jsx';
+import Recipes from '../Components/RecipeList/RecipeListComponent.jsx';
 import PollApp from '../Components/PollSection/PollApp';
-import SearchBottom from '../Components/SearchBottom/SearchApp';
-import Footer from '../Components/Footer/Footer';
+import SearchBottom from '../Components/SearchParentComponent/SearchParentComponent';
 import { useRecipes } from '../hooks/useRecipes';
+import { useState, useEffect } from 'react';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 
-function Home() {
-    const {
-        recipes,
-        loading,
-        error,
-        fetchRecipes
-    } = useRecipes();
+
+function Home({ isLoggedIn, profileID }) {
+    const { recipes, error, fetchRecipes } = useRecipes();
+
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [search, setSearch] = useState("");
+    const [selectedIngredients, setSelectedIngredients] = useState([]);
+
+    useEffect(() => {
+        const hasFilters = selectedTags.length > 0 || selectedIngredients.length > 0 || search.trim() !== "";
+
+        if (hasFilters) {
+            fetchRecipes([selectedTags, selectedIngredients, search]);
+        } else {
+            fetchRecipes();
+        }
+    }, [selectedTags, selectedIngredients, search]);
 
     return (
         <>
-            <Titlebar onSearch={fetchRecipes} />
+            <div className="d-flex flex-column flex-xxl-row align-items-start justify-content-between w-100 gap-2">
+                <div className="d-flex flex-column w-100 h-100 justify-content-center align-items-center">
+                    <SearchBottom
+                        selectedTags={selectedTags}
+                        setSelectedTags={setSelectedTags}
+                        selectedIngredients={selectedIngredients}
+                        setSelectedIngredients={setSelectedIngredients}
+                        setSearch={setSearch}
+                    />
 
-            {loading && <p className="text-center mt-4">Loading...</p>}
-            {error && <p className="text-danger text-center">{error}</p>}
+                    {!error.errorCode && (
+                        <Recipes recipes={recipes} />
+                    )}
+                </div>
 
-            {!loading && !error && <Recipes recipes={recipes} />}
-
-            <PollApp />
-            <SearchBottom />
-            <Footer />
+                <PollApp loginStatus={isLoggedIn} profileID={profileID}/>
+            </div>
         </>
     );
 }

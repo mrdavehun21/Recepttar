@@ -1,0 +1,131 @@
+/* ------ ~ Fonts ~ ------ */
+.font-neutral-0 {
+    color: #FFFFFF;
+}
+
+.font-neutral-1 {
+    color: #000000;
+}
+
+.font-neutral-100{
+    color: #1F3D2B;
+}
+
+/* ------ ~ Stars ~ ------ */
+.star-additional-9 {
+    color: #C05050;
+}
+
+.star-additional-10 {
+    color: #C050504C;
+}
+
+/* ------ ~ Tags ~ ------ */
+.tag-bg-additional-1 {
+    background-color: #E6F4EC;
+}
+
+.tag-bg-additional-2-hover:hover {
+    background-color: #CFE7D8;
+}
+
+.tag-bg-additional-3 {
+    background-color: #8FC3A6;
+}
+
+/* ------ ~ Polls-additional-4 ~ ------ */
+.polls-bg-additional-4 {
+    background-color: #F2E8DE;
+}
+
+.polls-text-additional-4 {
+    color: #F2E8DE;
+}
+
+.polls-border-additional-4 {
+    border-color: #F2E8DE;
+}
+
+/* ------ ~ Polls-additional-5 ~ ------ */
+.polls-bg-additional-5 {
+    background-color: #EADCCD;
+}
+
+.polls-bg-hover-additional-5:hover {
+    background-color: #EADCCD;
+}
+
+.polls-text-additional-5 {
+    color: #EADCCD;
+}
+
+.polls-border-additional-5 {
+    border-color: #EADCCD;
+}
+
+/* ------ ~ Polls-additional-6 ~ ------ */
+.polls-bg-additional-6 {
+    background-color: #D9C3A5;
+}
+
+.polls-text-additional-6 {
+    color: #D9C3A5;
+}
+
+.polls-border-additional-6 {
+    border-color: #D9C3A5;
+}
+
+/* ------ ~ Polls-additional-7 ~ ------ */
+.polls-bg-additional-7 {
+    background-color: #C98A5A;
+}
+
+.polls-text-additional-7 {
+    color: #C98A5A;
+}
+
+.polls-border-additional-7 {
+    border-color: #C98A5A;
+}
+
+/* ------ ~ Polls-additional-8 ~ ------ */
+.polls-bg-additional-8 {
+    background-color: #8C5A32;
+}
+
+.polls-text-additional-8 {
+    color: #8C5A32;
+}
+
+.polls-border-additional-7 {
+    border-color: #8C5A32;
+}
+
+/* ------ ~ Error ~ ------ */
+.error-bg {
+    background-color: #FF3333;
+}
+
+.error-text {
+    color: #FF3333;
+}
+
+.error-border {
+    border-color: #FF3333;
+}
+
+html, body, #root {
+    height: 100%;
+    margin: 0;
+}
+
+.app-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    flex: 1;
+}
