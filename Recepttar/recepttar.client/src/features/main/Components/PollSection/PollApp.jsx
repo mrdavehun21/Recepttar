@@ -4,7 +4,7 @@ import './PollApp.css';
 
 import Nav from 'react-bootstrap/Nav';
 
-function PollApp({ loginStatus }) {
+function PollApp({ loginStatus, profileID }) {
     const { polls } = usePolls();
 
     return (
@@ -26,16 +26,16 @@ function PollApp({ loginStatus }) {
                 {
                     (!loginStatus) ? (
                         polls.slice(0, 1).map((item, index) => (
-                            <PollCard key={index} data={item} loginStatus={loginStatus} />
+                            <PollCard key={index} data={item} loginStatus={loginStatus} profileID={profileID} />
                         ))
                     ) : (
                         <div>
                             {
                                 polls.slice(0, 4).map((item, index) => (
-                                    <PollCard key={index} data={item} loginStatus={loginStatus} />
+                                    <PollCard key={index} data={item} loginStatus={loginStatus} profileID={profileID} />
                                 ))
-                                }
-                                <Nav.Link href="/polls" className="polls-bg-additional-8 p-2 rounded-2 text-light ms-auto me-auto mb-3" style={{width: "fit-content"} }>View all</Nav.Link>
+                            }
+                            <Nav.Link href="/polls" className="polls-bg-additional-8 p-2 rounded-2 text-light ms-auto me-auto mb-3" style={{width: "fit-content"} }>View all</Nav.Link>
                         </div>
                     )
                 }

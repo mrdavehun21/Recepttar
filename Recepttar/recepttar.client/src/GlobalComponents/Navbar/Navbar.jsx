@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -7,9 +7,11 @@ import Logo from '../../assets/Logo.png';
 import './Navbar.css';
 import { useIsLoggedIn } from '../../GlobalHooks/useLoginState'
 import { submitLogoutRequest } from '../../GlobalApi/recipe.api';
+import { ImageAvailable } from '../../GlobalHooks/usePictureChecker';
 
 function NavbarComponent() {
     const { isLoggedIn, profileData } = useIsLoggedIn();
+    const [imageExists, setImageExists] = useState(false);
 
     async function handleLogout() {
         try {
@@ -25,14 +27,16 @@ function NavbarComponent() {
     }
 
     useEffect(() => {
-        const el = document.getElementById('profileDropdown');
-        if (!el) return;
-
-        const dropdown = new bootstrap.Dropdown(el);
-
-        return () => dropdown.dispose();
-    }, [isLoggedIn]);
-
+        async function checkImage() {
+            const exists = await ImageAvailable(
+                `https://localhost:7035/${profileData?.profilePicture}`
+            );
+            setImageExists(exists);
+        }
+        if (profileData?.profilePicture != undefined) {
+            checkImage();
+        }
+    }, [profileData?.profilePicture]);
 
     return (
         <Navbar variant="dark" expand="sm" className="px-3 justify-content-between main-green Titlebar">
@@ -53,10 +57,10 @@ function NavbarComponent() {
                     id="profile-dropdown"
                     className="d-flex align-items-center gap-2"
                 >
-                    {isLoggedIn ? (
+                    {isLoggedIn && imageExists ? (
                         <>
                             <Image
-                                src={`https://localhost:7035${profileData.profilePicture}`}
+                                src={`https://localhost:7035/${profileData.profilePicture}`}
                                 roundedCircle
                                 width={36}
                                 height={36}
@@ -68,10 +72,7 @@ function NavbarComponent() {
                         </>
                     ) : (
                         <>
-                            <div
-                                className="bg-secondary rounded-circle"
-                                style={{ width: 36, height: 36 }}
-                            />
+                            <i className="bi bi-person-circle fs-2"></i>
                             <span className="fw-semibold d-none d-sm-block">Profile</span>
                         </>
                     )}

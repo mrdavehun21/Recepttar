@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { getLoginStatus } from '../GlobalApi/recipe.api';
 
 export function useIsLoggedIn() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [profileData, setProfileData] = useState([]);
+    const [isLoggedIn, setIsLoggedIn] = useState(null);
+    const [profileData, setProfileData] = useState(null);
 
     const checkLoginStatus = useCallback(async () => {
         try {
@@ -13,8 +13,10 @@ export function useIsLoggedIn() {
         } catch (err) {
             if (err?.response?.status === 401) {
                 setIsLoggedIn(false);
+                setProfileData(null);
             } else {
                 setIsLoggedIn(false);
+                setProfileData(null);
             }
         } 
     }, []);

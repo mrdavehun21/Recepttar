@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { searchRecipes, getRecipeReviews } from '../api/main.api';
+import { searchRecipes, getRecipeReviews, getAllRecipes } from '../api/main.api';
 
 export function useRecipes() {
     const [recipes, setRecipes] = useState([]);
@@ -9,33 +9,19 @@ export function useRecipes() {
         setError({ errorCode: null, errorMessage: null });
 
         try {
-            const data = await searchRecipes(query);
+            let data = null;
+            if (query == '') {
+                data = await getAllRecipes();
+            }
+            else {
+                data = await searchRecipes(query);
+            }
 
-            const dataWithRatings = await Promise.all(
-                data.map(async (recipe) => {
-                    const reviews = await getRecipeReviews(recipe.id);
-                    const avg =
-                        reviews.length > 0
-                            ? reviews.reduce((a, b) => a + b.stars, 0) / reviews.length
-                            : 0;
-
-                    return {
-                        ...recipe,
-                        averageRating: avg,
-                        reviewCount: reviews.length
-                    };
-                })
-            );
-
-            setRecipes(dataWithRatings);
+            setRecipes(data);
         } catch (err) {
             setError({ errorCode: err.status, errorMessage: 'Something went wrong' });
         }
     }, []);
-
-    useEffect(() => {
-        fetchRecipes();
-    }, [fetchRecipes]);
 
     return {
         recipes,

@@ -10,5 +10,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\GlobalComponents\ErrorBox\" />
+    <Folder Include="src\GlobalComponents\IngredientsFilter\" />
+    <Folder Include="src\GlobalComponents\NewFolder\" />
+    <Folder Include="src\GlobalStyle\" />
   </ItemGroup>
 </Project>

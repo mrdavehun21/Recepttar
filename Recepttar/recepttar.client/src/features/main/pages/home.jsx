@@ -1,17 +1,14 @@
-import Navbar from '../../../GlobalComponents/Navbar/Navbar';
 import Recipes from '../Components/RecipeList/RecipeListComponent.jsx';
 import PollApp from '../Components/PollSection/PollApp';
 import SearchBottom from '../Components/SearchParentComponent/SearchParentComponent';
-import Footer from '../../../GlobalComponents/Footer/Footer';
 import { useRecipes } from '../hooks/useRecipes';
-import ErrorBox from '../../../GlobalComponents/ErrorBox/ErrorBox';
 import { useState, useEffect } from 'react';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
-import { useIsLoggedIn } from '../../../GlobalHooks/useLoginState';
 
-function Home() {
+
+function Home({ isLoggedIn, profileID }) {
     const { recipes, error, fetchRecipes } = useRecipes();
 
     const [selectedTags, setSelectedTags] = useState([]);
@@ -19,39 +16,17 @@ function Home() {
     const [selectedIngredients, setSelectedIngredients] = useState([]);
 
     useEffect(() => {
-        fetchRecipes([
-            selectedTags,
-            selectedIngredients,
-            search
-        ])
+        const hasFilters = selectedTags.length > 0 || selectedIngredients.length > 0 || search.trim() !== "";
+
+        if (hasFilters) {
+            fetchRecipes([selectedTags, selectedIngredients, search]);
+        } else {
+            fetchRecipes();
+        }
     }, [selectedTags, selectedIngredients, search]);
-
-    const filteredRecipes = recipes.filter((recipe) => {
-        if (
-            selectedTags.length &&
-            !selectedTags.every((tag) => recipe.tags?.includes(tag))
-        ) {
-            return false;
-        }
-
-        if (
-            selectedIngredients.length &&
-            !selectedIngredients.every((ing) =>
-                recipe.ingredients?.includes(ing.name)
-            )
-        ) {
-            return false;
-        }
-
-        return true;
-    });
-
-    const { isLoggedIn, profileData } = useIsLoggedIn();
 
     return (
         <>
-            <Navbar />
-
             <div className="d-flex flex-column flex-xxl-row align-items-start justify-content-between w-100 gap-2">
                 <div className="d-flex flex-column w-100 h-100 justify-content-center align-items-center">
                     <SearchBottom
@@ -67,10 +42,8 @@ function Home() {
                     )}
                 </div>
 
-                <PollApp loginStatus={isLoggedIn} />
+                <PollApp loginStatus={isLoggedIn} profileID={profileID}/>
             </div>
-
-            <Footer />
         </>
     );
 }

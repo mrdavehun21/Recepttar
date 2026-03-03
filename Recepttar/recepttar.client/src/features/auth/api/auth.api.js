@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export async function checkEmailApi(email) {
-    return axios.get('https://localhost:7035/user/checkEmail', {
+    return axios.get('https://localhost:7035/api/user/checkEmail', {
         params: { email }
     })
 }
@@ -12,16 +12,16 @@ export async function loginApi(email, password) {
     formData.append('Password', password)
 
     return axios.post(
-        'https://localhost:7035/user/login',
+        'https://localhost:7035/api/user/login',
         formData, { withCredentials: true }
     )
 }
 
 export async function registerApi(name, email, password) {
     const formData = new FormData();
-    formData.append('Name', name);
+    formData.append('fullName', name);
     formData.append('Email', email)
     formData.append('Password', password)
 
-    return axios.post('https://localhost:7035/user/register', formData);
+    return axios.post('https://localhost:7035/api/user/register', formData);
 }

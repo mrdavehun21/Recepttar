@@ -10,7 +10,7 @@ function Reicpes({ recipes }) {
             <h1 className="m-2 mt-2 mb-4 ms-2 text-decoration-underline color-neutral-100 fs-3">Recipes</h1>
             <div className="d-flex flex-wrap align-items-center w-100 justify-content-center gap-3 pb-3 p-2">
                 {recipes.slice(0, visibleCount).map(item => (
-                    <Card key={item.id} data={item} />
+                    <Card key={item.recipeId} data={item} />
                 ))}
             </div>
             {

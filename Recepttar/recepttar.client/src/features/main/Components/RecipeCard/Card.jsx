@@ -2,10 +2,13 @@ import { Link } from "react-router-dom";
 import { useFavorites } from "../../hooks/useFavorites";
 import EmptyHeart from "../../../../assets/emptyHeart.svg";
 import FilledHeart from "../../../../assets/fullHeart.svg";
+import { ImageAvailable } from '../../../../GlobalHooks/usePictureChecker';
+import { useEffect, useState } from "react";
 import './Card.css'
 
-function Card({ data, allowFavorites = false }) {
+function Card({ data, allowFavorites = true }) {
     const { isFavorite, toggleFavorite } = useFavorites(data.isFavorite);
+    const [imageExists, setImageExists] = useState(false);
 
     const StarRating = ({ rating, maxStars = 5 }) => {
         const roundedRating = Math.ceil(rating);
@@ -23,6 +26,16 @@ function Card({ data, allowFavorites = false }) {
         );
     };
 
+    useEffect(() => {
+        async function checkImage() {
+            const exists = await ImageAvailable(
+                `https://localhost:7035/${data.dishPicture}`
+            );
+            setImageExists(exists);
+        }
+
+        checkImage();
+    }, [data.dishPicture]);
 
     return (
         <div className="card border-0 shadow MainCard">
@@ -30,7 +43,7 @@ function Card({ data, allowFavorites = false }) {
                 allowFavorites ? (
                     <div
                         className="position-absolute bg-light p-1 rounded-2 CardHeart"
-                        onClick={(e) => { e.stopPropagation(); toggleFavorite(data.id); }}
+                        onClick={(e) => { e.stopPropagation(); toggleFavorite(data.recipeId); }}
                     >
                         <img src={isFavorite ? FilledHeart : EmptyHeart} className="w-100" />
                     </div>
@@ -40,13 +53,20 @@ function Card({ data, allowFavorites = false }) {
             }
 
             <Link
-                to={`/recipe/${data.id}`} className="CardLink">
-                <div className="card border-0 h-100">
-                    <img
-                        className="card-img-top img-fluid CardImage"
-                        src={`https://localhost:7035/${data.dishPicture}`}
-                        alt={data.title}
-                    />
+                to={`/recipe/${data.recipeId}`} className="CardLink">
+                <div className="card border-0 h-100 overflow-hidden">
+                    {
+                        (imageExists == true) ? (
+                            <img
+                                src={`https://localhost:7035/${data.dishPicture}`}
+                                style={{ height: "200px" }}
+                            />
+                        ) : (
+                            <div className="w-100 bg-secondary" style={{height: "200px"}}>
+
+                            </div>
+                        )
+                    }
                     <div className="card-body">
                         <h4 className="card-title text-decoration-underline font-neutral-100 fw-bold">{data.title}</h4>
                         <p className=".font-neutral-100 mt-4 fw-bold">{
@@ -59,7 +79,7 @@ function Card({ data, allowFavorites = false }) {
                             <div>
                                 <StarRating rating={data.averageRating} />
                                 <span className="ms-2">
-                                    {Math.round(data.averageRating * 10) / 10}
+                                    {data.averageRating}
                                 </span>
                             </div>
                             <div>{data.reviewCount} Review{
