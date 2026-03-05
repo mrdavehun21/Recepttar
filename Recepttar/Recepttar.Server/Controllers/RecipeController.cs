@@ -60,40 +60,40 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var (dto, error) = await _recipeService.AddRecipeAsync(userId.Value, createDto);
+            var addRecipeResult = await _recipeService.AddRecipeAsync(userId.Value, createDto);
 
-            if (dto == null)
+            if (addRecipeResult.Data == null)
             {
-                return BadRequest(error);
+                return BadRequest(addRecipeResult.ErrorMessage);
             }
 
-            return Created(string.Empty, Messages.Recipe.Created);
+            return Created(string.Empty, addRecipeResult.SuccessMessage);
         }
 
         [HttpGet("{recipeId}/image")]
         public async Task<IActionResult> GetRecipeImage(int recipeId)
         {
-            var (picture, error) = await _recipeService.GetRecipeImageAsync(recipeId);
+            var recipeImageResult = await _recipeService.GetRecipeImageAsync(recipeId);
 
-            if (picture == null)
+            if (recipeImageResult.Data == null)
             {
-                return NotFound(error);
+                return NotFound(recipeImageResult.ErrorMessage);
             }
 
-            return File(picture, "image/jpg");
+            return File(recipeImageResult.Data, "image/jpg");
         }
 
         [HttpGet("{recipeId}")]
         public async Task<IActionResult> GetRecipe(int recipeId)
         {
-            var (dto, error) = await _recipeService.GetRecipeByIdAsync(recipeId);
+            var recipeByIdResult = await _recipeService.GetRecipeByIdAsync(recipeId);
 
-            if (dto == null)
+            if (recipeByIdResult.Data == null)
             {
-                return NotFound(error);
+                return NotFound(recipeByIdResult.ErrorMessage);
             }
 
-            return Ok(dto);
+            return Ok(recipeByIdResult.Data);
         }
         
         [HttpPatch("{recipeId}")]
@@ -106,19 +106,14 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var (success, wasUpdated, error) = await _recipeService.UpdateRecipeAsync(recipeId, userId.Value, updateDto);
+            var updateRecipeResult = await _recipeService.UpdateRecipeAsync(recipeId, userId.Value, updateDto);
 
-            if(!success)
+            if(!updateRecipeResult.IsSuccess)
             {
-                return BadRequest(error);
+                return BadRequest(updateRecipeResult.ErrorMessage);
             }
 
-            if(!wasUpdated)
-            {
-                return Ok(Messages.Recipe.NoChanges);
-            }
-
-            return Ok(Messages.Recipe.Updated);
+            return Ok(updateRecipeResult.SuccessMessage);
         }
 
         [HttpDelete("{recipeId}")]
@@ -131,16 +126,16 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var (success, error) = await _recipeService.RemoveRecipeByIdAsync(userId.Value, recipeId);
+            var removeRecipeResult = await _recipeService.RemoveRecipeByIdAsync(userId.Value, recipeId);
 
-            if (!success)
+            if (!removeRecipeResult.IsSuccess)
             {
-                if (error == Messages.Recipe.NotOwnerDelete)
+                if (removeRecipeResult.SuccessMessage == Messages.Recipe.NotOwnerDelete)
                 {
-                    return StatusCode(StatusCodes.Status403Forbidden, new { Message = error });
+                    return StatusCode(StatusCodes.Status403Forbidden, new { Message = removeRecipeResult.ErrorMessage });
                 }
 
-                return NotFound(error);
+                return NotFound(removeRecipeResult.ErrorMessage);
             }
 
             return NoContent();
@@ -179,23 +174,23 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var (success, error) = await _reviewService.AddReviewAsync(userId.Value, recipeId, createDto);
+            var addReviewResult = await _reviewService.AddReviewAsync(userId.Value, recipeId, createDto);
 
-            if (success)
+            if (addReviewResult.IsSuccess)
             {
-                return Created(string.Empty, Messages.Review.Created);
+                return Created(string.Empty, addReviewResult.SuccessMessage);
             }
 
-            switch (error)
+            switch (addReviewResult.ErrorMessage)
             {
                 case Messages.Review.AlreadyReviewed:
-                    return Conflict(error);
+                    return Conflict(addReviewResult.ErrorMessage);
 
                 case Messages.Recipe.NotFound:
-                    return NotFound(error);
+                    return NotFound(addReviewResult.ErrorMessage);
 
                 case Messages.Review.InvalidStars:
-                    return BadRequest(error);
+                    return BadRequest(addReviewResult.ErrorMessage);
 
                 default:
                     return StatusCode(500, Messages.Server.Error);

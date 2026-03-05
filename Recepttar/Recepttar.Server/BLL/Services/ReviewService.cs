@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Recepttar.Server.BLL.Common;
 using Recepttar.Server.BLL.Constants;
 using Recepttar.Server.BLL.DTOs.Review;
 using Recepttar.Server.BLL.Interfaces;
@@ -32,21 +33,21 @@ namespace Recepttar.Server.BLL.Services
             return _mapper.Map<List<ReviewDto>>(reviews);
         }
 
-        public async Task<(bool success, string? error)> AddReviewAsync(int userId, int recipeId, AddReviewDto reviewDto)
+        public async Task<Result> AddReviewAsync(int userId, int recipeId, AddReviewDto reviewDto)
         {
             if (!await _reviewRepository.RecipeExistsAsync(recipeId))
             {
-                return (false, Messages.Recipe.NotFound);
+                return Result.Failure(Messages.Recipe.NotFound);
             }
 
             if (await _reviewRepository.ReviewExistsForUserAsync(userId, recipeId))
             {
-                return (false, Messages.Review.AlreadyReviewed);
+                return Result.Failure(Messages.Review.AlreadyReviewed);
             }
 
             if (reviewDto.Stars < MinStars || reviewDto.Stars > MaxStars)
             {
-                return (false, Messages.Review.InvalidStars);
+                return Result.Failure(Messages.Review.InvalidStars);
             }
 
             var review = _mapper.Map<Review>(reviewDto);
@@ -54,20 +55,20 @@ namespace Recepttar.Server.BLL.Services
             review.UserId = userId;
 
             await _reviewRepository.AddReviewAsync(review);
-            return (true, null);
+            return Result.Success(Messages.Review.Created);
         }
-
-        public async Task<(bool success, bool wasUpdated, string? error)> UpdateReviewAsync(int userId, int reviewId, UpdateReviewDto updateDto)
+        
+        public async Task<ResultT<UpdateResult>> UpdateReviewAsync(int userId, int reviewId, UpdateReviewDto updateDto)
         {
             var review = await _reviewRepository.GetReviewByIdAsync(reviewId);
             if (review == null)
             {
-                return (false, false, Messages.Review.NotFound);
+                return ResultT<UpdateResult>.Failure(Messages.Review.NotFound);
             }
 
             if (review.UserId != userId)
             {
-                return (false, false, Messages.Review.NotOwner);
+                return ResultT<UpdateResult>.Failure(Messages.Review.NotOwner);
             }
 
             bool wasUpdated = false;
@@ -88,26 +89,27 @@ namespace Recepttar.Server.BLL.Services
             {
                 review.UpdatedAt = DateTime.Now;
                 await _reviewRepository.UpdateReviewAsync(review);
+                return ResultT<UpdateResult>.Success(new UpdateResult { WasUpdated = true }, Messages.Review.Updated);
             }
 
-            return (true, wasUpdated, null);
+            return ResultT<UpdateResult>.Success(new UpdateResult { WasUpdated = false }, Messages.Review.NoChanges);
         }
 
-        public async Task<(bool success, string? error, bool forbidden)> DeleteReviewAsync(int userId, int reviewId)
+        public async Task<Result> DeleteReviewAsync(int userId, int reviewId)
         {
             var review = await _reviewRepository.GetReviewByIdAsync(reviewId);
             if (review == null)
             {
-                return (false, Messages.Review.NotFound, false);
+                return Result.Failure(Messages.Review.NotFound);
             }
 
             if (review.UserId != userId)
             {
-                return (false, Messages.Review.NotOwnerDelete, true);
+                return Result.Failure(Messages.Review.NotOwnerDelete);
             }
 
             await _reviewRepository.DeleteReviewAsync(review);
-            return (true, null, false);
+            return Result.Success(null);
         }
     }
 }

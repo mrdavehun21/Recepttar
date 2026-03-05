@@ -26,19 +26,14 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var (success, wasUpdated, error) = await _reviewService.UpdateReviewAsync(userId.Value, reviewId, updateDto);
+            var updateReviewResult = await _reviewService.UpdateReviewAsync(userId.Value, reviewId, updateDto);
 
-            if (!success)
+            if (!updateReviewResult.IsSuccess)
             {
-                return BadRequest(error);
+                return BadRequest(updateReviewResult.ErrorMessage);
             }
 
-            if (!wasUpdated)
-            {
-                return Ok(Messages.Review.NoChanges);
-            }
-
-            return Ok(Messages.Review.Updated);
+            return Ok(updateReviewResult.SuccessMessage);
         }
 
         [HttpDelete("{reviewId}")]
@@ -51,16 +46,16 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var (success, error, forbidden) = await _reviewService.DeleteReviewAsync(userId.Value, reviewId);
+            var deleteReviewResult = await _reviewService.DeleteReviewAsync(userId.Value, reviewId);
 
-            if (!success)
+            if (!deleteReviewResult.IsSuccess)
             {
-                if (forbidden)
+                if (deleteReviewResult.ErrorMessage == Messages.Review.NotOwnerDelete)
                 {
-                    return StatusCode(StatusCodes.Status403Forbidden, new { Message = error });
+                    return StatusCode(StatusCodes.Status403Forbidden, new { Message = deleteReviewResult.ErrorMessage });
                 }
 
-                return NotFound(error);
+                return NotFound(deleteReviewResult.ErrorMessage);
             }
 
             return NoContent();
