@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Recepttar.Server.BLL.Common;
 using Recepttar.Server.BLL.Constants;
 using Recepttar.Server.BLL.DTOs.Recipe;
 using Recepttar.Server.BLL.Interfaces;
@@ -24,16 +25,16 @@ namespace Recepttar.Server.BLL.Services
             return _mapper.Map<List<RecipeCardDto>>(favorites.Select(f => f.Recipe).ToList());
         }
 
-        public async Task<(bool success, string message)> AddFavoriteAsync(CreateFavoriteRecipeDto favoriteRecipeDto)
+        public async Task<Result> AddFavoriteAsync(CreateFavoriteRecipeDto favoriteRecipeDto)
         {
             if (!await _favoriteRepository.RecipeExistsAsync(favoriteRecipeDto.RecipeId))
             {
-                return (false, Messages.Recipe.NotFound);
+                return Result.Failure(Messages.Recipe.NotFound);
             }
 
             if (await _favoriteRepository.GetFavoriteAsync(favoriteRecipeDto.UserId, favoriteRecipeDto.RecipeId) != null)
             {
-                return (false, Messages.Recipe.AlreadyInFavorites);
+                return Result.Failure(Messages.Recipe.AlreadyInFavorites);
             }
 
             await _favoriteRepository.AddFavoriteAsync(new Favorite
@@ -42,19 +43,19 @@ namespace Recepttar.Server.BLL.Services
                 RecipeId = favoriteRecipeDto.RecipeId
             });
 
-            return (true, Messages.Recipe.AddToFavorites);
+            return Result.Success(Messages.Recipe.AddToFavorites);
         }
 
-        public async Task<(bool success, string message)> RemoveFavoriteAsync(int userId, int recipeId)
+        public async Task<Result> RemoveFavoriteAsync(int userId, int recipeId)
         {
             var favorite = await _favoriteRepository.GetFavoriteAsync(userId, recipeId);
             if (favorite == null)
             {
-                return (false, Messages.Recipe.NotInFavorites);
+                return Result.Failure(Messages.Recipe.NotInFavorites);
             }
 
             await _favoriteRepository.RemoveFavoriteAsync(favorite);
-            return (true, null);
+            return Result.Success(null);
         }
     }
 }

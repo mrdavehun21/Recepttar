@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Recepttar.Server.BLL.Common;
 using Recepttar.Server.BLL.Constants;
 using Recepttar.Server.BLL.DTOs.Poll;
 using Recepttar.Server.BLL.Enums;
@@ -43,27 +44,27 @@ namespace Recepttar.Server.BLL.Services
             }).ToList();
         }
 
-        public async Task<(bool success, string? error)> CreatePollAsync(int userId, PollDto pollDto)
+        public async Task<Result> CreatePollAsync(int userId, PollDto pollDto)
         {
             var user = await _pollRepository.GetUserByIdAsync(userId);
             if (user == null)
             {
-                return (false, Messages.Auth.UserNotFound);
+                return Result.Failure(Messages.Auth.UserNotFound);
             }
 
             if (user.Rank == UserRanksEnum.HomeCook || user.Rank == UserRanksEnum.ChefMaster)
             {
-                return (false, Messages.Poll.LowRank);
+                return Result.Failure(Messages.Poll.LowRank);
             }
 
             if (string.IsNullOrWhiteSpace(pollDto.Question))
             {
-                return (false, Messages.Poll.NoQuestion);
+                return Result.Failure(Messages.Poll.NoQuestion);
             }
 
             if (pollDto.Options.Count < MinPollOptions)
             {
-                return (false, Messages.Poll.LowOptions);
+                return Result.Failure(Messages.Poll.LowOptions);
             }
 
             var poll = new Poll
@@ -74,59 +75,59 @@ namespace Recepttar.Server.BLL.Services
             };
 
             await _pollRepository.AddPollAsync(poll);
-            return (true, null);
+            return Result.Success(Messages.Poll.Created);
         }
 
-        public async Task<(bool success, string? error)> AddVoteAsync(int userId, int pollId, int optionId)
+        public async Task<Result> AddVoteAsync(int userId, int pollId, int optionId)
         {
             var poll = await _pollRepository.GetByIdAsync(pollId);
             if (poll == null)
             {
-                return (false, Messages.Poll.NotFound);
+                return Result.Failure(Messages.Poll.NotFound);
             }
 
             if (!await _pollRepository.OptionBelongsToPollAsync(pollId, optionId))
             {
-                return (false, Messages.Poll.InvalidOption);
+                return Result.Failure(Messages.Poll.InvalidOption);
             }
 
             if (await _pollRepository.GetExistingVoteAsync(userId, pollId) != null)
             {
-                return (false, Messages.Poll.Voted);
+                return Result.Failure(Messages.Poll.Voted);
             }
 
             await _pollRepository.AddVoteAsync(new Vote { UserId = userId, OptionId = optionId });
-            return (true, null);
+            return Result.Success(Messages.Poll.Recorded);
         }
 
-        public async Task<(bool success, string? error)> DeletePollAsync(int userId, int pollId)
+        public async Task<Result> DeletePollAsync(int userId, int pollId)
         {
             var poll = await _pollRepository.GetByIdAsync(pollId);
             if (poll == null)
             {
-                return (false, Messages.Poll.NotFound);
+                return Result.Failure(Messages.Poll.NotFound);
             }
 
             if (poll.AuthorId != userId)
             {
-                return (false, Messages.Poll.NotOwnerDelete);
+                return Result.Failure(Messages.Poll.NotOwnerDelete);
             }
 
             await _pollRepository.DeletePollAsync(poll);
-            return (true, null);
+            return Result.Success(null);
         }
 
-        public async Task<(bool success, bool wasUpdated, string? error)> UpdatePollAsync(int userId, int pollId, PollDto updateDto)
+        public async Task<ResultT<UpdateResult>> UpdatePollAsync(int userId, int pollId, PollDto updateDto)
         {
             var poll = await _pollRepository.GetByIdAsync(pollId);
             if (poll == null)
             {
-                return (false, false, Messages.Poll.NotFound);
+                return ResultT<UpdateResult>.Failure(Messages.Poll.NotFound);
             }
 
             if (poll.AuthorId != userId)
             {
-                return (false, false, Messages.Poll.NotOwner);
+                return ResultT<UpdateResult>.Failure(Messages.Poll.NotOwner);
             }
 
             bool wasUpdated = false;
@@ -151,9 +152,12 @@ namespace Recepttar.Server.BLL.Services
             }
 
             if (wasUpdated)
+            {
                 await _pollRepository.UpdatePollAsync(poll);
+                return ResultT<UpdateResult>.Success(new UpdateResult { WasUpdated = true }, Messages.Poll.Updated);
+            }
 
-            return (true, wasUpdated, null);
+            return ResultT<UpdateResult>.Success(new UpdateResult { WasUpdated = false }, Messages.Poll.NoChanges);
         }
     }
 }

@@ -129,21 +129,14 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var (success, wasUpdated, error) = await _userService.UpdateUserProfileAsync(userId.Value, updateDto);
+            var updateResult = await _userService.UpdateUserProfileAsync(userId.Value, updateDto);
 
-            if (!success)
+            if (!updateResult.IsSuccess)
             {
-                return BadRequest(error);
+                return BadRequest(updateResult.ErrorMessage);
             }
 
-            if (wasUpdated)
-            {
-                return Ok(Messages.Auth.Updated);
-            }
-            else
-            {
-                return Ok(Messages.Auth.NoChanges);
-            }
+            return Ok(updateResult.SuccessMessage);
         }
         
         [HttpGet("profile/{userId}")]
@@ -169,20 +162,20 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var (picture, error) = await _userService.GetUserProfilePictureAsync(userId.Value);
+            var userProfilePictureResult = await _userService.GetUserProfilePictureAsync(userId.Value);
 
-            if(error == null)
+            if(userProfilePictureResult.IsSuccess)
             {
-                return File(picture!, "image/jpeg");
+                return File(userProfilePictureResult.Data!, "image/jpeg");
             }
 
-            switch (error)
+            switch (userProfilePictureResult.ErrorMessage)
             {
                 case Messages.Auth.UserNotFound:
-                    return NotFound(error);
+                    return NotFound(userProfilePictureResult.ErrorMessage);
 
                 case Messages.Auth.NoPicture:
-                    return NotFound(error);
+                    return NotFound(userProfilePictureResult.ErrorMessage);
                     
                 default:
                     return StatusCode(500, Messages.Server.Error);
@@ -192,20 +185,20 @@ namespace Recepttar.Server.Controllers
         [HttpGet("profile/profilepicture/{userId}")]
         public async Task<IActionResult> ReturnProfilePic(int userId)
         {
-            var (picture, error) = await _userService.GetUserProfilePictureAsync(userId);
+            var userProfilePictureResult = await _userService.GetUserProfilePictureAsync(userId);
 
-            if (error == null)
+            if (userProfilePictureResult.IsSuccess)
             {
-                return File(picture!, "image/jpeg");
+                return File(userProfilePictureResult.Data!, "image/jpeg");
             }
 
-            switch (error)
+            switch (userProfilePictureResult.ErrorMessage)
             {
                 case Messages.Auth.UserNotFound:
-                    return NotFound(error);
+                    return NotFound(userProfilePictureResult.ErrorMessage);
 
                 case Messages.Auth.NoPicture:
-                    return NotFound(error);
+                    return NotFound(userProfilePictureResult.ErrorMessage);
 
                 default:
                     return StatusCode(500, Messages.Server.Error);
@@ -247,20 +240,20 @@ namespace Recepttar.Server.Controllers
                 RecipeId = recipeId
             };
 
-            var (success, message) = await _favoriteService.AddFavoriteAsync(dto);
+            var addFavResult = await _favoriteService.AddFavoriteAsync(dto);
 
-            if (success)
+            if (addFavResult.IsSuccess)
             {
-                return Ok(message);
+                return Ok(addFavResult.SuccessMessage);
             }
 
-            switch (message)
+            switch (addFavResult.ErrorMessage)
             {
                 case Messages.Recipe.NotFound:
-                    return NotFound(message);
+                    return NotFound(addFavResult.ErrorMessage);
                 
                 case Messages.Recipe.AlreadyInFavorites:
-                    return Conflict(message);
+                    return Conflict(addFavResult.ErrorMessage);
 
                 default:
                     return StatusCode(500, Messages.Server.Error);
@@ -277,11 +270,11 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var (success, message) = await _favoriteService.RemoveFavoriteAsync(userId.Value, recipeId);
+            var removeFavResult = await _favoriteService.RemoveFavoriteAsync(userId.Value, recipeId);
 
-            if (!success)
+            if (!removeFavResult.IsSuccess)
             {
-                return NotFound(message);
+                return NotFound(removeFavResult.ErrorMessage);
             }
 
             return NoContent();
