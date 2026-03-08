@@ -6,6 +6,8 @@ import FilledHeart from "../../../../assets/fullHeart.svg";
 import './Card.css';
 
 function Card({ data, allowFavorites = true }) {
+    const API_BASE = import.meta.env.VITE_API_URL;
+
     const { isFavorite, toggleFavorite } = useFavorites(data.isFavorite);
     const [imageExists, setImageExists] = useState(false);
 
@@ -27,9 +29,7 @@ function Card({ data, allowFavorites = true }) {
 
     useEffect(() => {
         async function checkImage() {
-            const exists = await ImageAvailable(
-                `https://localhost:7035/${data.dishPicture}`
-            );
+            const exists = await ImageAvailable(`${API_BASE}/${data.dishPicture}`);
             setImageExists(exists);
         }
 
@@ -57,7 +57,7 @@ function Card({ data, allowFavorites = true }) {
                     {
                         (imageExists == true) ? (
                             <img
-                                src={`https://localhost:7035/${data.dishPicture}`}
+                                src={`${API_BASE}/${data.dishPicture}`}
                                 className="w-100 object-cover h-200px"
                             />
                         ) : (

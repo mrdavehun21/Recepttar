@@ -15,6 +15,8 @@ const fallbackPolls = [
     }
 ];
 
+const API_BASE = import.meta.env.VITE_API_URL;
+
 function buildSearchParams([tags, ingredients, search]) {
     const params = {};
 
@@ -52,12 +54,12 @@ function buildSearchParams([tags, ingredients, search]) {
 }
 
 export async function getAllRecipes() {
-    const res = await axios.get("https://localhost:7035/api/recipe/all");
+    const res = await axios.get(`${API_BASE}/api/recipe/all`);
 
     const recipes = res.data;
 
     try {
-        const favRes = await axios.get("https://localhost:7035/api/user/favorites");
+        const favRes = await axios.get(`${API_BASE}/api/user/favorites`);
         const favoriteIds = favRes.data.map(fav => fav.recipeId);
 
         return recipes.map(recipe => ({
@@ -76,14 +78,14 @@ export async function searchRecipes(query = []) {
     const params = buildSearchParams(query);
 
     const res = await axios.get(
-        "https://localhost:7035/api/recipe/search",
+        `${API_BASE}/api/recipe/search`,
         { params }
     );
 
     const recipes = res.data;
 
     try {
-        const favRes = await axios.get("https://localhost:7035/api/user/favorites");
+        const favRes = await axios.get(`${API_BASE}/api/user/favorites`);
         const favoriteIds = favRes.data.map(fav => fav.id);
 
         return recipes.map(recipe => ({
@@ -99,13 +101,13 @@ export async function searchRecipes(query = []) {
 }
 
 export async function getRecipeReviews(recipeId) {
-    const res = await axios.get(`https://localhost:7035/api/recipe/${recipeId}/reviews`);
+    const res = await axios.get(`${API_BASE}/api/recipe/${recipeId}/reviews`);
     return res.data;
 }
 
 export async function fetchActivePolls() {
     try {
-        const res = await axios.get('https://localhost:7035/api/poll/active')
+        const res = await axios.get(`${API_BASE}/api/poll/active`);
         return res.data
     }
     catch (error) {
@@ -117,7 +119,7 @@ export async function submitVote(pollId, optionId) {
     const body = new URLSearchParams();
     body.append('OptionId', optionId);
 
-    const res = await axios.post(`https://localhost:7035/api/poll/${pollId}/vote`, body.toString());
+    const res = await axios.post(`${API_BASE}/api/poll/${pollId}/vote`, body.toString());
 
     return res.data;
 }
@@ -125,17 +127,17 @@ export async function submitVote(pollId, optionId) {
 export async function updateFavoriteState(recipeId, favoriteState) {
     let res = null;
     if (!favoriteState) {
-        res = await axios.post(`https://localhost:7035/api/user/favorites/` + recipeId);
+        res = await axios.post(`${API_BASE}/api/user/favorites/` + recipeId);
     }
     else {
-        res = await axios.delete(`https://localhost:7035/api/user/favorites/` + recipeId);
+        res = await axios.delete(`${API_BASE}/api/user/favorites/` + recipeId);
     }
     return res.data;
 }
 
 export async function getUserProfile() {
     try {
-        const res = await axios.get('https://localhost:7035/api/user/profile');
+        const res = await axios.get(`${API_BASE}/api/user/profile`);
 
         return res.data;
     } catch (err) {
@@ -149,7 +151,7 @@ export async function getUserProfile() {
 
 export async function getAuthorProfile(userId){
     try{
-        const res = await axios.get(`https://localhost:7035/api/user/profile/${userId}`);
+        const res = await axios.get(`${API_BASE}/api/user/profile/${userId}`);
 
         return res.data;
     }
@@ -160,7 +162,7 @@ export async function getAuthorProfile(userId){
 
 export async function deletePoll(pollId) {
     try {
-        const res = await axios.delete(`https://localhost:7035/api/poll/${pollId}`);
+        const res = await axios.delete(`${API_BASE}/api/poll/${pollId}`);
 
         return res;
     } catch (error) {

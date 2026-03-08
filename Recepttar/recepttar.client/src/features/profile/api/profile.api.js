@@ -1,10 +1,12 @@
 import axios from "axios";
 
+const API_BASE = import.meta.env.VITE_API_URL;
+
 export async function UpdateUserAPI(form, setError) {
     const token = localStorage.getItem('token');
 
     try{
-        await axios.patch('https://localhost:7035/api/user/profile', form, {
+        await axios.patch(`${API_BASE}/api/user/profile`, form, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'multipart/form-data'
@@ -22,8 +24,8 @@ export async function fetchProfileDataAPI(userId, setError) {
     const token = localStorage.getItem('token');
 
     try {
-        const response = await axios.get('https://localhost:7035/api/user/profile/' + (userId || ''));
-        const userRecipes = await axios.get('https://localhost:7035/api/recipe/' + response.data.id + "/recipes");
+        const response = await axios.get(`${API_BASE}/api/user/profile/` + (userId || ''));
+        const userRecipes = await axios.get(`${API_BASE}/api/recipe/` + response.data.id + "/recipes");
         response.data.recipes = userRecipes.data;
         return response.data;
     } catch (error) {

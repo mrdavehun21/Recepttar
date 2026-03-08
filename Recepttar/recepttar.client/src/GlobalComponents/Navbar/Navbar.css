@@ -1,9 +1,10 @@
-.Titlebar{
-    height: 100px;
+.h-75px{
+    height: 75px;
 }
 
-.Logo{
-    height: 100%;
+.profile-dimensions {
+    width: 30px;
+    height: 30px;
 }
 
 li:hover{

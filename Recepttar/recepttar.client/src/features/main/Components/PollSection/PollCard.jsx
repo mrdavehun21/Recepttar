@@ -4,6 +4,8 @@ import { ImageAvailable } from '../../../../GlobalHooks/usePictureChecker';
 import './PollCard.css';
 
 function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null, openFormTrigger, returnPollValues }) {
+    const API_BASE = import.meta.env.VITE_API_URL;
+
     const {
         question,
         options,
@@ -20,7 +22,7 @@ function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null
     useEffect(() => {
         async function checkImage() {
             const exists = await ImageAvailable(
-                `https://localhost:7035/${data?.profilePicture}`
+                `${API_BASE}/${data?.profilePicture}`
             );
             setImageExists(exists);
         }
@@ -42,7 +44,7 @@ function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null
                             {imageExists ? (
                                 <>
                                     <img
-                                        src={`https://localhost:7035/${data?.profilePicture}`}
+                                        src={`${API_BASE}/${data?.profilePicture}`}
                                         width={36}
                                         height={36}
                                         className="rounded-circle me-2"

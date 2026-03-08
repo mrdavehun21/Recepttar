@@ -9,6 +9,8 @@ import Logo from '../../../assets/Logo.png';
 import './index.css';
 
 function profile() {
+  const API_BASE = import.meta.env.VITE_API_URL;
+
   const { profileId } = useParams();
   const { isLoggedIn, profileData } = useAuth();
   const { UpdateUser } = useUpdateUser();
@@ -43,7 +45,7 @@ function profile() {
               <div className="m-3 bg-light rounded-circle shadow w-fit h-fit">
                 {
                   (imageExists) ? (
-                    <img className="rounded-circle m-2" src={`https://localhost:7035/${data?.profilePicture}`} style={{width: "150px", height: "150px"}}/>
+                    <img className="rounded-circle m-2" src={`${API_BASE}/${data?.profilePicture}`} style={{width: "150px", height: "150px"}}/>
                   ) : (
                     <img className="rounded-circle m-2" src={Logo} style={{width: "150px", height: "150px"}}/>
                   )

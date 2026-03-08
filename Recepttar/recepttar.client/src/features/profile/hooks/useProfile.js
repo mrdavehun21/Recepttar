@@ -3,6 +3,8 @@ import { useProfileFetcher } from "./useProfileFetcher";
 import { ImageAvailable } from "../../../GlobalHooks/usePictureChecker";
 
 export function useProfile(profileId, profileData, isLoggedIn, setError) {
+    const API_BASE = import.meta.env.VITE_API_URL;
+
     const { fetchProfileData } = useProfileFetcher();
 
     const [data, setData] = useState();
@@ -24,9 +26,7 @@ export function useProfile(profileId, profileData, isLoggedIn, setError) {
 
     useEffect(() => {
         async function checkImage() {
-            const exists = await ImageAvailable(
-                `https://localhost:7035/${data?.profilePicture}`
-            );
+            const exists = await ImageAvailable(`${API_BASE}/${data?.profilePicture}`);
             setImageExists(exists);
         }
 
