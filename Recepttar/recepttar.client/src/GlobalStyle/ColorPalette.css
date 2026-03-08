@@ -78,7 +78,7 @@
 
 /* ------ ~ Polls-additional-7 ~ ------ */
 .polls-bg-additional-7 {
-    background-color: #C98A5A;
+    background-color: #C98A5A !important;
 }
 
 .polls-text-additional-7 {
@@ -115,17 +115,7 @@
     border-color: #FF3333;
 }
 
-html, body, #root {
-    height: 100%;
-    margin: 0;
-}
-
-.app-container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-.content {
-    flex: 1;
+/* -------- ~ Container color */
+.container-bg-beige {
+    background-color: #EFE6D8;
 }

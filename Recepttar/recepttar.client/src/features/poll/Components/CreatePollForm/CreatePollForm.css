@@ -1,0 +1,11 @@
+.poll-form-background{
+    background-color: rgba(0, 0, 0, 0.85);
+}
+
+.w-min-320px{
+    min-width: 320px;
+}
+
+.w-max-800px{
+    max-width: 800px;
+}

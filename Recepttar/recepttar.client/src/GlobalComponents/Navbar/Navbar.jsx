@@ -5,12 +5,12 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Image from 'react-bootstrap/Image';
 import Logo from '../../assets/Logo.png';
 import './Navbar.css';
-import { useIsLoggedIn } from '../../GlobalHooks/useLoginState'
+import { useAuth } from '../../GlobalHooks/useAuthContext';
 import { submitLogoutRequest } from '../../GlobalApi/recipe.api';
 import { ImageAvailable } from '../../GlobalHooks/usePictureChecker';
 
 function NavbarComponent() {
-    const { isLoggedIn, profileData } = useIsLoggedIn();
+    const { isLoggedIn, profileData } = useAuth();
     const [imageExists, setImageExists] = useState(false);
 
     async function handleLogout() {

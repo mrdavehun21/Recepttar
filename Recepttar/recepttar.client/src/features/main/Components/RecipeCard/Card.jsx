@@ -1,10 +1,9 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useFavorites } from "../../hooks/useFavorites";
+import { ImageAvailable } from '../../../../GlobalHooks/usePictureChecker';
 import EmptyHeart from "../../../../assets/emptyHeart.svg";
 import FilledHeart from "../../../../assets/fullHeart.svg";
-import { ImageAvailable } from '../../../../GlobalHooks/usePictureChecker';
-import { useEffect, useState } from "react";
-import './Card.css'
+import './Card.css';
 
 function Card({ data, allowFavorites = true }) {
     const { isFavorite, toggleFavorite } = useFavorites(data.isFavorite);
@@ -48,21 +47,21 @@ function Card({ data, allowFavorites = true }) {
                         <img src={isFavorite ? FilledHeart : EmptyHeart} className="w-100" />
                     </div>
                 ) : (
-                    <div></div>
+                    null
                 )
             }
 
-            <Link
+            <a
                 to={`/recipe/${data.recipeId}`} className="CardLink">
                 <div className="card border-0 h-100 overflow-hidden">
                     {
                         (imageExists == true) ? (
                             <img
                                 src={`https://localhost:7035/${data.dishPicture}`}
-                                style={{ height: "200px" }}
+                                className="w-100 object-cover h-200px"
                             />
                         ) : (
-                            <div className="w-100 bg-secondary" style={{height: "200px"}}>
+                            <div className="w-100 bg-secondary h-200px">
 
                             </div>
                         )
@@ -88,7 +87,7 @@ function Card({ data, allowFavorites = true }) {
                         </div>
                     </div>
                 </div>
-            </Link>
+            </a>
         </div>
     );
 }

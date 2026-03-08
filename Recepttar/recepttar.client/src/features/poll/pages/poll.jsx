@@ -1,11 +1,9 @@
+import { usePolls } from '../../main/hooks/usePoll';
+import { createPoll } from '../hooks/useCreatePoll';
+
 import CreatePollCard from '../Components/CreateCard/CreatePollCard'
 import CreatePollForm from '../Components/CreatePollForm/CreatePollFrom';
-
 import PollCard from '../../main/Components/PollSection/PollCard';
-import { usePolls } from '../../main/hooks/usePoll';
-
-import { createPoll } from '../hooks/useCreatePoll';
-import { useEffect } from 'react';
 
 function poll({ loginStatus, profileID }) {
   const { polls, deletePoll } = usePolls();

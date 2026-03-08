@@ -1,0 +1,27 @@
+.w-fit {
+    width: fit-content;
+}
+
+.h-fit {
+    height: fit-content;
+}
+
+.h-fill-available {
+    height: -webkit-fill-available;
+}
+
+html, body, #root {
+    height: 100%;
+    margin: 0;
+}
+
+.app-container {
+    min-height: 100vh;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    flex: 1;
+}

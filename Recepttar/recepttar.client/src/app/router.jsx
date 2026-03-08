@@ -1,13 +1,15 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import LoginPage from '../features/auth/pages/LoginPage.jsx'
-import RegisterPage from '../features/auth/pages/RegisterPage.jsx'
-import Home from '../features/main/pages/Home.jsx'
-import Recipe from '../features/recipe/pages/RecipeDetail.jsx'
-import Polls from '../features/poll/pages/poll.jsx'
-import { useIsLoggedIn } from '../GlobalHooks/useLoginState'
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAuth } from '../GlobalHooks/useAuthContext';
+import LoginPage from '../features/auth/pages/LoginPage.jsx';
+import RegisterPage from '../features/auth/pages/RegisterPage.jsx';
+import Home from '../features/main/pages/Home.jsx';
+// import Recipe from '../features/recipe/pages/RecipeDetail.jsx';
+import Polls from '../features/poll/pages/poll.jsx';
+import ProfilePage from '../features/profile/pages/profile.jsx';
 
 export default function AppRouter() {
-    const { isLoggedIn, profileData } = useIsLoggedIn();
+    const { isLoggedIn, profileData } = useAuth();
 
     return (
         <Routes>
@@ -15,7 +17,7 @@ export default function AppRouter() {
             <Route path="/register" element={<RegisterPage/>} />
             <Route path="/home" element={<Home isLoggedIn={isLoggedIn} profileID={profileData} />} />
             <Route path="/" element={<Navigate to="/home" />} />
-            <Route path="/recipe/:recipeId" element={<Recipe />} />
+            {/* <Route path="/recipe/:recipeId" element={<Recipe />} /> */}
             <Route path="/polls"
                 element={
                     isLoggedIn === true ? (
@@ -25,6 +27,16 @@ export default function AppRouter() {
                     ) : null
                 }
             />
+            <Route path="/profile" 
+                element={
+                    isLoggedIn === true ? (
+                        <ProfilePage />
+                    ) : isLoggedIn === false ? (
+                        <Navigate to="/login" replace />
+                    ) : null
+                }
+            />
+            <Route path="/profile/:profileId" element={<ProfilePage />} />
         </Routes>
     )
 }

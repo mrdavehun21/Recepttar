@@ -9,9 +9,13 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="src\GlobalComponents\NewFolder\**" />
+    <TypeScriptConfiguration Remove="src\GlobalComponents\NewFolder\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\features\profile\components\" />
     <Folder Include="src\GlobalComponents\ErrorBox\" />
     <Folder Include="src\GlobalComponents\IngredientsFilter\" />
-    <Folder Include="src\GlobalComponents\NewFolder\" />
     <Folder Include="src\GlobalStyle\" />
   </ItemGroup>
 </Project>

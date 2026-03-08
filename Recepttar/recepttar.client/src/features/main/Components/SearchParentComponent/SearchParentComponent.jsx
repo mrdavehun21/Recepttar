@@ -1,16 +1,15 @@
-import { useState } from "react";
+import { useTagSelection } from "../../hooks/useTagSelection";
 import SearchComponent from "../Search/SearchComponent";
 import Ingredient from "../../../../GlobalComponents/IngredientsFilter/IngredientFilter";
 import "./SearchParentComponent.css";
-import { useTagSelection } from "../../hooks/useTagSelection";
 
 function SearchApp({
-    selectedTags,
-    setSelectedTags,
-    selectedIngredients,
-    setSelectedIngredients,
-    setSearch
-}) {
+        selectedTags,
+        setSelectedTags,
+        selectedIngredients,
+        setSelectedIngredients,
+        setSearch
+    }) {
 
     const { TAGS, toggleTag } = useTagSelection(
         selectedTags,

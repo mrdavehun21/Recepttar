@@ -1,50 +1,12 @@
-import { useState } from "react";
-import axios from "axios";
+import usePollForm from "../../hooks/usePollForm";
+import './CreatePollForm.css';
 
-export default function CreatePollForm({isFormOpen, openForm, preData = null}) {
-    const [options, setOptions] = useState([null, null, null, null]);
-
-    async function handleSubmit(e) {
-        e.preventDefault();
-        
-        const form = e.target;
-
-        const FilteredForm = document.createElement('form');
-        const Question = document.createElement('input');
-        Question.name = "Question";
-        Question.value = form.Question.value;
-        FilteredForm.appendChild(Question);
-        options.forEach((option, index) => {
-            const optionValue = form[`options[${index}].OptionText`].value;
-            if (optionValue.trim() !== "") {
-            const input = document.createElement('input');
-            input.name = `options[${index}].OptionText`;
-            input.value = optionValue;
-            FilteredForm.appendChild(input);
-            }
-        });
-        
-        try{
-            if(preData?.id != undefined) {
-                let result = await axios.patch(`https://localhost:7035/api/poll/${preData.id}`, FilteredForm);
-            }
-            else{
-                let result = await axios.post(`https://localhost:7035/api/poll/create`, FilteredForm);
-            }
-        } catch (error) {
-            console.error("Error creating poll:", error);
-        }
-    }
-
-    function handleAddOption(e) {
-        e.preventDefault();
-        setOptions(prev => [...prev, null]);
-    }
+export default function CreatePollForm({isFormOpen, openForm, preData = [null, null]}) {
+    const { options, handleSubmit, handleAddOption } = usePollForm(preData);
 
     return (
-        <div className={"position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" } style={{ backgroundColor: 'rgba(0, 0, 0, 0.85)', zIndex: '9999' }}>
-            <form onSubmit={handleSubmit} className="p-4 rounded-4 w-75 polls-bg-additional-5" style={{minWidth:"320px", maxWidth: "800px"}}>
-
+        <div className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center poll-form-background" >
+            <form onSubmit={handleSubmit} className="p-4 rounded-4 w-75 polls-bg-additional-5 w-min-320px w-max-800px">
                 <h2 className="text-decoration-underline">Question</h2>
                 <input name="Question" type="text" className="border border-black form-control mb-3 rounded-4 p-2" placeholder="Enter your question here..." defaultValue={(preData?.id == undefined) ? "" : preData?.question}/>
 

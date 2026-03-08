@@ -1,12 +1,10 @@
+import { useRecipes } from '../hooks/useRecipes';
+import { useState, useEffect } from 'react';
 import Recipes from '../Components/RecipeList/RecipeListComponent.jsx';
 import PollApp from '../Components/PollSection/PollApp';
 import SearchBottom from '../Components/SearchParentComponent/SearchParentComponent';
-import { useRecipes } from '../hooks/useRecipes';
-import { useState, useEffect } from 'react';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
-
 
 function Home({ isLoggedIn, profileID }) {
     const { recipes, error, fetchRecipes } = useRecipes();
