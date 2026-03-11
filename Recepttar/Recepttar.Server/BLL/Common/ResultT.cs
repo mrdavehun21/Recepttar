@@ -15,7 +15,7 @@
             ErrorMessage = errorMessage;
         }
 
-        public static ResultT<T> Success(T data, string message)
+        public static ResultT<T> Success(T data, string message = "")
         {
             return new ResultT<T>(true, data, message, null);
         }

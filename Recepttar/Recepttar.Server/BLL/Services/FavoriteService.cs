@@ -19,10 +19,10 @@ namespace Recepttar.Server.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<List<RecipeCardDto>> GetUserFavoritesAsync(int userId)
+        public async Task<IEnumerable<RecipeCardDto>> GetUserFavoritesAsync(int userId)
         {
             var favorites = await _favoriteRepository.GetByUserIdAsync(userId);
-            return _mapper.Map<List<RecipeCardDto>>(favorites.Select(f => f.Recipe).ToList());
+            return _mapper.Map<IEnumerable<RecipeCardDto>>(favorites.Select(f => f.Recipe));
         }
 
         public async Task<Result> AddFavoriteAsync(CreateFavoriteRecipeDto favoriteRecipeDto)
@@ -55,7 +55,7 @@ namespace Recepttar.Server.BLL.Services
             }
 
             await _favoriteRepository.RemoveFavoriteAsync(favorite);
-            return Result.Success(null);
+            return Result.Success();
         }
     }
 }

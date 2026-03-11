@@ -5,7 +5,7 @@ namespace Recepttar.Server.BLL.Interfaces
 {
     public interface IFavoriteService
     {
-        Task<List<RecipeCardDto>> GetUserFavoritesAsync(int userId);
+        Task<IEnumerable<RecipeCardDto>> GetUserFavoritesAsync(int userId);
         Task<Result> AddFavoriteAsync(CreateFavoriteRecipeDto favoriteRecipeDto);
         Task<Result> RemoveFavoriteAsync(int userId, int recipeId);
     }

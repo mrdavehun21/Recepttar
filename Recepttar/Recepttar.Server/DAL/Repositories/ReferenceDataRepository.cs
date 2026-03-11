@@ -16,7 +16,7 @@ namespace Recepttar.Server.DAL.Repositories
             _context = context;
         }
 
-        public async Task<List<Ingredient>> SearchAsync(string? search)
+        public async Task<IEnumerable<Ingredient>> SearchAsync(string? search)
         {
             var query = string.IsNullOrWhiteSpace(search)
                 ? _context.Ingredients.Take(MaxSearchResults)

@@ -19,16 +19,16 @@ namespace Recepttar.Server.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<List<RecipeCardDto>> GetRecipesAsync()
+        public async Task<IEnumerable<RecipeCardDto>> GetRecipesAsync()
         {
             var recipes = await _recipeRepository.GetAllAsync();
-            return _mapper.Map<List<RecipeCardDto>>(recipes);
+            return _mapper.Map<IEnumerable<RecipeCardDto>>(recipes);
         }
 
-        public async Task<List<RecipeCardDto>> GetRecipesByUserIdAsync(int userId)
+        public async Task<IEnumerable<RecipeCardDto>> GetRecipesByUserIdAsync(int userId)
         {
             var recipes = await _recipeRepository.GetByUserIdAsync(userId);
-            return _mapper.Map<List<RecipeCardDto>>(recipes);
+            return _mapper.Map<IEnumerable<RecipeCardDto>>(recipes);
         }
 
         public async Task<ResultT<RecipeDto>> GetRecipeByIdAsync(int recipeId)
@@ -205,13 +205,13 @@ namespace Recepttar.Server.BLL.Services
             }
 
             await _recipeRepository.DeleteAsync(recipe);
-            return Result.Success(null);
+            return Result.Success();
         }
 
-        public async Task<List<RecipeCardDto>> SearchRecipesAsync(SearchQueryDto queryDto)
+        public async Task<IEnumerable<RecipeCardDto>> SearchRecipesAsync(SearchQueryDto queryDto)
         {
             var recipes = await _recipeRepository.SearchAsync(queryDto);
-            return _mapper.Map<List<RecipeCardDto>>(recipes);
+            return _mapper.Map<IEnumerable<RecipeCardDto>>(recipes);
         }
     }
 }

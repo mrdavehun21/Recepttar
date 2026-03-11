@@ -13,7 +13,7 @@
             ErrorMessage = errorMessage;
         }
 
-        public static Result Success(string message)
+        public static Result Success(string message = "")
         {
             return new Result(true, message, null);
         }

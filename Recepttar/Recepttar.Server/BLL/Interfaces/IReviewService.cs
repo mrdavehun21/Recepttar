@@ -5,7 +5,7 @@ namespace Recepttar.Server.BLL.Interfaces
 {
     public interface IReviewService
     {
-        Task<List<ReviewDto>?> GetRecipeReviewsAsync(int recipeId);
+        Task<IEnumerable<ReviewDto>> GetRecipeReviewsAsync(int recipeId);
 
         Task<Result> AddReviewAsync(int userId, int recipeId, AddReviewDto reviewDto);
 

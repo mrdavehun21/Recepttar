@@ -15,14 +15,14 @@ namespace Recepttar.Server.DAL.Repositories
             _context = context;
         }
 
-        public async Task<List<Recipe>> GetAllAsync()
+        public async Task<IEnumerable<Recipe>> GetAllAsync()
         {
             return await _context.Recipes
                 .Include(r => r.Reviews)
                 .ToListAsync();
         }
 
-        public async Task<List<Recipe>> GetByUserIdAsync(int userId)
+        public async Task<IEnumerable<Recipe>> GetByUserIdAsync(int userId)
         {
             return await _context.Recipes
                 .Include(r => r.Reviews)
@@ -58,21 +58,21 @@ namespace Recepttar.Server.DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task ReplaceIngredientsAsync(int recipeId, List<RecipeIngredient> ingredients)
+        public async Task ReplaceIngredientsAsync(int recipeId, IEnumerable<RecipeIngredient> ingredients)
         {
             await _context.RecipeIngredients.Where(ri => ri.RecipeId == recipeId).ExecuteDeleteAsync();
             _context.RecipeIngredients.AddRange(ingredients);
             await _context.SaveChangesAsync();
         }
 
-        public async Task ReplaceStepsAsync(int recipeId, List<RecipeStep> steps)
+        public async Task ReplaceStepsAsync(int recipeId, IEnumerable<RecipeStep> steps)
         {
             await _context.RecipeSteps.Where(rs => rs.RecipeId == recipeId).ExecuteDeleteAsync();
             _context.RecipeSteps.AddRange(steps);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<Recipe>> SearchAsync(SearchQueryDto queryDto)
+        public async Task<IEnumerable<Recipe>> SearchAsync(SearchQueryDto queryDto)
         {
             IQueryable<Recipe> query = _context.Recipes
                 .Include(r => r.Reviews)

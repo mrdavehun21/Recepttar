@@ -8,7 +8,7 @@ using Moq;
 
 namespace Recepttar.Server.Tests
 {
-    public class UserServiceTest
+    public class UserServiceTests
     {
         private Mock<IMapper> _mapperMock;
         private Mock<IUserRepository> _userRepositoryMock;
@@ -89,9 +89,9 @@ namespace Recepttar.Server.Tests
         public async Task EmailExistsAsync_ShouldReturnFalse_WhenEmailIsInvalid()
         {
             _userRepositoryMock.Setup(r => r.EmailExistsAsync("user@test.com", null))
-                     .ReturnsAsync(true);
+                     .ReturnsAsync(false);
 
-            var result = await _userService.EmailExistsAsync("invalid@test.com");
+            var result = await _userService.EmailExistsAsync("user@test.com");
 
             Assert.That(result, Is.False);
         }

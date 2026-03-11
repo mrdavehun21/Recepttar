@@ -22,7 +22,7 @@ namespace Recepttar.Server.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<List<ReviewDto>?> GetRecipeReviewsAsync(int recipeId)
+        public async Task<IEnumerable<ReviewDto>> GetRecipeReviewsAsync(int recipeId)
         {
             if (!await _reviewRepository.RecipeExistsAsync(recipeId))
             {
@@ -30,7 +30,7 @@ namespace Recepttar.Server.BLL.Services
             }
 
             var reviews = await _reviewRepository.GetRecipeReviewsAsync(recipeId);
-            return _mapper.Map<List<ReviewDto>>(reviews);
+            return _mapper.Map<IEnumerable<ReviewDto>>(reviews);
         }
 
         public async Task<Result> AddReviewAsync(int userId, int recipeId, AddReviewDto reviewDto)
@@ -109,7 +109,7 @@ namespace Recepttar.Server.BLL.Services
             }
 
             await _reviewRepository.DeleteReviewAsync(review);
-            return Result.Success(null);
+            return Result.Success();
         }
     }
 }

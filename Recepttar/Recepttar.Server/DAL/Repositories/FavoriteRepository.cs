@@ -14,7 +14,7 @@ namespace Recepttar.Server.DAL.Repositories
             _context = context;
         }
 
-        public async Task<List<Favorite>> GetByUserIdAsync(int userId)
+        public async Task<IEnumerable<Favorite>> GetByUserIdAsync(int userId)
         {
             return await _context.Favorites
                 .Where(f => f.UserId == userId)

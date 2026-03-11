@@ -19,7 +19,7 @@ namespace Recepttar.Server.DAL.Repositories
             return await _context.Recipes.AnyAsync(r => r.Id == recipeId);
         }
 
-        public async Task<List<Review>> GetRecipeReviewsAsync(int recipeId)
+        public async Task<IEnumerable<Review>> GetRecipeReviewsAsync(int recipeId)
         {
             return await _context.Reviews
                 .Where(r => r.RecipeId == recipeId)

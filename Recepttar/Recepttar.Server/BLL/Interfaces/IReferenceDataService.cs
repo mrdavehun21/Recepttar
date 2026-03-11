@@ -4,7 +4,7 @@ namespace Recepttar.Server.BLL.Interfaces
 {
     public interface IReferenceDataService
     {
-        Task<List<IngredientSearchDto>> SearchTagsAsync(string? search);
-        List<string> GetUnits();
+        Task<IEnumerable<IngredientSearchDto>> SearchTagsAsync(string? search);
+        IEnumerable<string> GetUnits();
     }
 }

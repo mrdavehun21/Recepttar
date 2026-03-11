@@ -22,7 +22,7 @@ namespace Recepttar.Server.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<List<PollCardDto>> GetActivePollsAsync(int userId)
+        public async Task<IEnumerable<PollCardDto>> GetActivePollsAsync(int userId)
         {
             var polls = await _pollRepository.GetAllAsync();
             return polls.Select(p => new PollCardDto
@@ -42,6 +42,37 @@ namespace Recepttar.Server.BLL.Services
                     .SelectMany(o => o.Votes.Where(v => v.UserId == userId).Select(v => (int?)o.Id))
                     .FirstOrDefault()
             }).ToList();
+        }
+
+        public async Task<ResultT<IEnumerable<PollCardDto>>> GetPollsByUserId(int userId)
+        {
+            var user = await _pollRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return ResultT<IEnumerable<PollCardDto>>.Failure(Messages.Auth.UserNotFound);
+            }
+
+            var polls = await _pollRepository.GetPollsByUserId(userId);
+            
+            var result = polls.Select(p => new PollCardDto
+            {
+                Id = p.Id,
+                AuthorId = p.Author.Id,
+                FullName = p.Author.FullName,
+                ProfilePicture = ProfilePicturePath.GetPath(p.Author.Id),
+                Question = p.Question,
+                Options = p.Options.Select(o => new PollOptionDto
+                {
+                    OptionId = o.Id,
+                    OptionText = o.OptionText,
+                    VoteCount = o.Votes.Count
+                }).ToList(),
+                VotedOn = p.Options
+                    .SelectMany(o => o.Votes.Where(v => v.UserId == userId).Select(v => (int?)o.Id))
+                    .FirstOrDefault()
+            }).ToList();
+
+            return ResultT<IEnumerable<PollCardDto>>.Success(result);
         }
 
         public async Task<Result> CreatePollAsync(int userId, PollDto pollDto)
@@ -114,7 +145,7 @@ namespace Recepttar.Server.BLL.Services
             }
 
             await _pollRepository.DeletePollAsync(poll);
-            return Result.Success(null);
+            return Result.Success();
         }
 
         public async Task<ResultT<UpdateResult>> UpdatePollAsync(int userId, int pollId, PollDto updateDto)

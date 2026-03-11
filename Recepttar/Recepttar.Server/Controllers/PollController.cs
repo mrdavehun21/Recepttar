@@ -31,6 +31,27 @@ namespace Recepttar.Server.Controllers
             return Ok(polls);
         }
 
+        [HttpGet("{userId}/polls")]
+        public async Task<IActionResult> GetPollsByUserId(int userId)
+        {
+            var polls = await _pollService.GetPollsByUserId(userId);
+
+            if(polls.IsSuccess)
+            {
+                return Ok(polls.Data);
+            }
+
+            switch (polls.ErrorMessage)
+            {
+                case Messages.Auth.UserNotFound:
+                    return NotFound(polls.ErrorMessage);
+
+                default:
+                    return StatusCode(500, Messages.Server.Error);
+            }
+
+        }
+
         [HttpPost("{pollId}/vote")]
         public async Task<IActionResult> Vote(int pollId, [FromForm] PollOptionDto voted)
         {

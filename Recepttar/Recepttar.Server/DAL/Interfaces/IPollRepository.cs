@@ -4,7 +4,8 @@ namespace Recepttar.Server.DAL.Interfaces
 {
     public interface IPollRepository
     {
-        Task<List<Poll>> GetAllAsync();
+        Task<IEnumerable<Poll>> GetAllAsync();
+        Task<IEnumerable<Poll>> GetPollsByUserId(int userId);
         Task<Poll?> GetByIdAsync(int pollId);
         Task<User?> GetUserByIdAsync(int userId);
         Task<bool> OptionBelongsToPollAsync(int pollId, int optionId);
@@ -12,7 +13,7 @@ namespace Recepttar.Server.DAL.Interfaces
         Task AddPollAsync(Poll poll);
         Task AddVoteAsync(Vote vote);
         Task DeletePollAsync(Poll poll);
-        Task ReplaceOptionsAsync(int pollId, List<PollOption> options);
+        Task ReplaceOptionsAsync(int pollId, IEnumerable<PollOption> options);
         Task UpdatePollAsync(Poll poll);
     }
 }
