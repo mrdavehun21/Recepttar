@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Recepttar.Server.BLL.Common;
 using Recepttar.Server.BLL.Constants;
 using Recepttar.Server.BLL.DTOs.User;
 using Recepttar.Server.BLL.HelperMethods;
@@ -54,21 +55,21 @@ namespace Recepttar.Server.BLL.Services
             return await _userRepository.EmailExistsAsync(email);
         }
 
-        public async Task<(byte[]?, string? error)> GetUserProfilePictureAsync(int userId)
+        public async Task<ResultT<byte[]>> GetUserProfilePictureAsync(int userId)
         {
             var user = await _userRepository.GetByIdAsync(userId);
 
             if (user == null)
             {
-                return (null, Messages.Auth.UserNotFound);
+                return ResultT<byte[]>.Failure(Messages.Auth.UserNotFound);
             }
 
             if (user.ProfilePicture == null)
             {
-                return (null, Messages.Auth.NoPicture);
+                return ResultT<byte[]>.Failure(Messages.Auth.NoPicture);
             }
 
-            return (user.ProfilePicture, null);
+            return ResultT<byte[]>.Success(user.ProfilePicture, null);
         }
 
         public async Task<ProfileDto?> GetProfileByIdAsync(int userId)
@@ -76,12 +77,12 @@ namespace Recepttar.Server.BLL.Services
             var user = await _userRepository.GetByIdAsync(userId);
             return user == null ? null : _mapper.Map<ProfileDto>(user);
         }
-        public async Task<(bool success, bool wasUpdated, string? error)> UpdateUserProfileAsync(int userId, UpdateProfileDto updateDto)
+        public async Task<ResultT<UpdateResult>> UpdateUserProfileAsync(int userId, UpdateProfileDto updateDto)
         {
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
             {
-                return (false, false, Messages.Auth.UserNotFound);
+                return ResultT<UpdateResult>.Failure(Messages.Auth.UserNotFound);
             }
 
             bool wasUpdated = false;
@@ -96,7 +97,7 @@ namespace Recepttar.Server.BLL.Services
             {
                 if (await _userRepository.EmailExistsAsync(updateDto.Email, excludeUserId: userId))
                 {
-                    return (false, false, Messages.Auth.EmailExists);
+                    return ResultT<UpdateResult>.Failure(Messages.Auth.EmailExists);
                 }
 
                 user.Email = updateDto.Email;
@@ -126,9 +127,10 @@ namespace Recepttar.Server.BLL.Services
             if (wasUpdated)
             {
                 await _userRepository.UpdateAsync(user);
+                return ResultT<UpdateResult>.Success(new UpdateResult { WasUpdated = true }, Messages.Auth.Updated);
             }
 
-            return (true, wasUpdated, null);
+            return ResultT<UpdateResult>.Success(new UpdateResult { WasUpdated = false }, Messages.Auth.NoChanges);
         }
     }
 }

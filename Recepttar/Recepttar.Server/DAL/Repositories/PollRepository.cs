@@ -14,9 +14,19 @@ namespace Recepttar.Server.DAL.Repositories
             _context = context;
         }
 
-        public async Task<List<Poll>> GetAllAsync()
+        public async Task<IEnumerable<Poll>> GetAllAsync()
         {
             return await _context.Polls
+                .Include(p => p.Author)
+                .Include(p => p.Options)
+                    .ThenInclude(o => o.Votes)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Poll>> GetPollsByUserId(int userId)
+        {
+            return await _context.Polls
+                .Where(p => p.AuthorId == userId)
                 .Include(p => p.Author)
                 .Include(p => p.Options)
                     .ThenInclude(o => o.Votes)
@@ -69,7 +79,7 @@ namespace Recepttar.Server.DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task ReplaceOptionsAsync(int pollId, List<PollOption> options)
+        public async Task ReplaceOptionsAsync(int pollId, IEnumerable<PollOption> options)
         {
             var existing = _context.PollOptions.Where(o => o.PollId == pollId);
             _context.PollOptions.RemoveRange(existing);

@@ -7,6 +7,8 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "recepttar.client", "receptt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recepttar.Server", "Recepttar.Server\Recepttar.Server.csproj", "{64DA5FCF-028C-459E-9BF7-38B1C0340261}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recepttar.Server.Tests", "Recepttar.Server.Tests\Recepttar.Server.Tests.csproj", "{2E91E9F3-5C4C-4D1B-9B62-0AFC41EAEC2B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{64DA5FCF-028C-459E-9BF7-38B1C0340261}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64DA5FCF-028C-459E-9BF7-38B1C0340261}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64DA5FCF-028C-459E-9BF7-38B1C0340261}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E91E9F3-5C4C-4D1B-9B62-0AFC41EAEC2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E91E9F3-5C4C-4D1B-9B62-0AFC41EAEC2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E91E9F3-5C4C-4D1B-9B62-0AFC41EAEC2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E91E9F3-5C4C-4D1B-9B62-0AFC41EAEC2B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

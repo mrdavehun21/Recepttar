@@ -17,13 +17,13 @@ namespace Recepttar.Server.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<List<IngredientSearchDto>> SearchTagsAsync(string? search)
+        public async Task<IEnumerable<IngredientSearchDto>> SearchTagsAsync(string? search)
         {
             var ingredients = await _referenceDataRepository.SearchAsync(search);
-            return _mapper.Map<List<IngredientSearchDto>>(ingredients);
+            return _mapper.Map<IEnumerable<IngredientSearchDto>>(ingredients);
         }
 
-        public List<string> GetUnits()
+        public IEnumerable<string> GetUnits()
         {
             return Enum.GetValues<MeasurementUnitEnum>().Select(u => u.ToString()).ToList();
         }

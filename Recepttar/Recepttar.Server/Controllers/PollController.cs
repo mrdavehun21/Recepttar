@@ -31,6 +31,27 @@ namespace Recepttar.Server.Controllers
             return Ok(polls);
         }
 
+        [HttpGet("{userId}/polls")]
+        public async Task<IActionResult> GetPollsByUserId(int userId)
+        {
+            var polls = await _pollService.GetPollsByUserId(userId);
+
+            if(polls.IsSuccess)
+            {
+                return Ok(polls.Data);
+            }
+
+            switch (polls.ErrorMessage)
+            {
+                case Messages.Auth.UserNotFound:
+                    return NotFound(polls.ErrorMessage);
+
+                default:
+                    return StatusCode(500, Messages.Server.Error);
+            }
+
+        }
+
         [HttpPost("{pollId}/vote")]
         public async Task<IActionResult> Vote(int pollId, [FromForm] PollOptionDto voted)
         {
@@ -41,23 +62,23 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var (success, error) = await _pollService.AddVoteAsync(userId.Value, pollId, voted.OptionId);
+            var voteResult = await _pollService.AddVoteAsync(userId.Value, pollId, voted.OptionId);
 
-            if (success)
+            if (voteResult.IsSuccess)
             {
-                return Ok(Messages.Poll.Recorded);
+                return Ok(voteResult.SuccessMessage);
             }
 
-            switch (error)
+            switch (voteResult.ErrorMessage)
             {
                 case Messages.Poll.Voted:
-                    return Conflict(error);
+                    return Conflict(voteResult.ErrorMessage);
 
                 case Messages.Poll.NotFound:
-                    return NotFound(error);
+                    return NotFound(voteResult.ErrorMessage);
 
                 case Messages.Poll.InvalidOption:
-                    return BadRequest(error);
+                    return BadRequest(voteResult.ErrorMessage);
 
                 default:
                     return StatusCode(500, Messages.Server.Error);
@@ -74,14 +95,14 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var (success, error) = await _pollService.CreatePollAsync(userId.Value, poll);
+            var pollResult = await _pollService.CreatePollAsync(userId.Value, poll);
 
-            if (!success)
+            if (!pollResult.IsSuccess)
             {
-                return BadRequest(error);
+                return BadRequest(pollResult.ErrorMessage);
             }
 
-            return Created(String.Empty, Messages.Poll.Created);
+            return Created(string.Empty, pollResult.SuccessMessage);
         }
 
         [HttpPatch("{pollId}")]
@@ -94,19 +115,19 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var (success, wasUpdated, error) = await _pollService.UpdatePollAsync(userId.Value, pollId, updates);
+            var updateResult = await _pollService.UpdatePollAsync(userId.Value, pollId, updates);
 
-            if (!success)
+            if (!updateResult.IsSuccess)
             {
-                return BadRequest(error);
+                return BadRequest(updateResult.ErrorMessage);
             }
 
-            if (!wasUpdated)
+            if (!updateResult.Data.WasUpdated)
             {
-                return Ok(Messages.Poll.NoChanges);
+                return Ok(updateResult.SuccessMessage);
             }
 
-            return Ok(Messages.Poll.Updated);
+            return Ok(updateResult.SuccessMessage);
         }
 
 
@@ -120,20 +141,20 @@ namespace Recepttar.Server.Controllers
                 return Unauthorized(Messages.Auth.Unauthorized);
             }
 
-            var (success, error) = await _pollService.DeletePollAsync(userId.Value, pollId);
+            var deleteResult = await _pollService.DeletePollAsync(userId.Value, pollId);
 
-            if (success)
+            if (deleteResult.IsSuccess)
             {
                 return NoContent();
             }
             
-            switch(error)
+            switch(deleteResult.ErrorMessage)
             {
                 case Messages.Poll.NotFound:
-                    return NotFound(error);
+                    return NotFound(deleteResult.ErrorMessage);
 
                 case Messages.Poll.NotOwnerDelete:
-                    return StatusCode(403, error);
+                    return StatusCode(StatusCodes.Status403Forbidden, new { Message = deleteResult.ErrorMessage });
 
                 default:
                     return StatusCode(500, Messages.Server.Error);

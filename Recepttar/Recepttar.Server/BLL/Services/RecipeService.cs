@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Recepttar.Server.BLL.Common;
 using Recepttar.Server.BLL.Constants;
 using Recepttar.Server.BLL.DTOs.Recipe;
 using Recepttar.Server.BLL.Interfaces;
@@ -18,65 +19,65 @@ namespace Recepttar.Server.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<List<RecipeCardDto>> GetRecipesAsync()
+        public async Task<IEnumerable<RecipeCardDto>> GetRecipesAsync()
         {
             var recipes = await _recipeRepository.GetAllAsync();
-            return _mapper.Map<List<RecipeCardDto>>(recipes);
+            return _mapper.Map<IEnumerable<RecipeCardDto>>(recipes);
         }
 
-        public async Task<List<RecipeCardDto>> GetRecipesByUserIdAsync(int userId)
+        public async Task<IEnumerable<RecipeCardDto>> GetRecipesByUserIdAsync(int userId)
         {
             var recipes = await _recipeRepository.GetByUserIdAsync(userId);
-            return _mapper.Map<List<RecipeCardDto>>(recipes);
+            return _mapper.Map<IEnumerable<RecipeCardDto>>(recipes);
         }
 
-        public async Task<(RecipeDto? dto, string? error)> GetRecipeByIdAsync(int recipeId)
+        public async Task<ResultT<RecipeDto>> GetRecipeByIdAsync(int recipeId)
         {
             var recipe = await _recipeRepository.GetByIdAsync(recipeId);
             if (recipe == null)
             {
-                return (null, Messages.Recipe.NotFound);
+                return ResultT<RecipeDto>.Failure(Messages.Recipe.NotFound);
             }
 
-            return (_mapper.Map<RecipeDto>(recipe), null);
+            return ResultT<RecipeDto>.Success(_mapper.Map<RecipeDto>(recipe), null);
         }
 
-        public async Task<(byte[]? picture, string? error)> GetRecipeImageAsync(int recipeId)
+        public async Task<ResultT<byte[]>> GetRecipeImageAsync(int recipeId)
         {
             var recipe = await _recipeRepository.GetByIdAsync(recipeId);
             if (recipe == null)
             {
-                return (null, Messages.Recipe.NotFound);
+                return ResultT<byte[]>.Failure(Messages.Recipe.NotFound);
             }
 
-            return (recipe.DishPicture, null);
+            return ResultT<byte[]>.Success(recipe.DishPicture, null);
         }
 
-        public async Task<(RecipeDto? dto, string? error)> AddRecipeAsync(int userId, CreateRecipeDto createDto)
+        public async Task<ResultT<RecipeDto>> AddRecipeAsync(int userId, CreateRecipeDto createDto)
         {
             if (createDto.TimeMinutes <= 0)
             {
-                return (null, Messages.Recipe.InvalidTime);
+                return ResultT<RecipeDto>.Failure(Messages.Recipe.InvalidTime);
             }
 
             if (createDto.Servings <= 0)
             {
-                return (null, Messages.Recipe.InvalidServings);
+                return ResultT<RecipeDto>.Failure(Messages.Recipe.InvalidServings);
             }
 
             if (createDto.Ingredients.Count <= 0)
             {
-                return (null, Messages.Recipe.NoIngredients);
+                return ResultT<RecipeDto>.Failure(Messages.Recipe.NoIngredients);
             }
 
             if (createDto.Steps.Count == 0)
             {
-                return (null, Messages.Recipe.NoSteps);
+                return ResultT<RecipeDto>.Failure(Messages.Recipe.NoSteps);
             }
 
             if (createDto.DishPicture == null)
             {
-                return (null, Messages.Recipe.NoPicture);
+                return ResultT<RecipeDto>.Failure(Messages.Recipe.NoPicture);
             }
 
             var recipe = _mapper.Map<Recipe>(createDto);
@@ -93,20 +94,20 @@ namespace Recepttar.Server.BLL.Services
             recipe.Steps = _mapper.Map<List<RecipeStep>>(createDto.Steps);
 
             var created = await _recipeRepository.AddAsync(recipe);
-            return (_mapper.Map<RecipeDto>(created), null);
+            return ResultT<RecipeDto>.Success(_mapper.Map<RecipeDto>(created), Messages.Recipe.Created);
         }
 
-        public async Task<(bool success, bool wasUpdated, string? error)> UpdateRecipeAsync(int recipeId, int userId, UpdateRecipeDto updateDto)
+        public async Task<ResultT<UpdateResult>> UpdateRecipeAsync(int recipeId, int userId, UpdateRecipeDto updateDto)
         {
             var recipe = await _recipeRepository.GetByIdAsync(recipeId);
             if(recipe == null)
             {
-                return (false, false, Messages.Recipe.NotFound);
+                return ResultT<UpdateResult>.Failure(Messages.Recipe.NotFound);
             }
 
             if (recipe.AuthorId != userId)
             {
-                return (false, false, Messages.Recipe.NotOwner);
+                return ResultT<UpdateResult>.Failure(Messages.Recipe.NotOwner);
             }
 
             bool wasUpdated = false;
@@ -184,32 +185,33 @@ namespace Recepttar.Server.BLL.Services
             if (wasUpdated)
             {
                 await _recipeRepository.UpdateAsync(recipe);
+                return ResultT<UpdateResult>.Success(new UpdateResult { WasUpdated = true }, Messages.Recipe.Updated);
             }
 
-            return (true, wasUpdated, null);
+            return ResultT<UpdateResult>.Success(new UpdateResult { WasUpdated = false }, Messages.Recipe.NoChanges);
         }
 
-        public async Task<(bool success, string? error)> RemoveRecipeByIdAsync(int userId, int recipeId)
+        public async Task<Result> RemoveRecipeByIdAsync(int userId, int recipeId)
         {
             var recipe = await _recipeRepository.GetByIdAsync(recipeId);
             if (recipe == null)
             {
-                return (false, Messages.Recipe.NotFound);
+                return Result.Failure(Messages.Recipe.NotFound);
             }
 
             if (recipe.AuthorId != userId)
             {
-                return (false, Messages.Recipe.NotOwner);
+                return Result.Failure(Messages.Recipe.NotOwner);
             }
 
             await _recipeRepository.DeleteAsync(recipe);
-            return (true, null);
+            return Result.Success();
         }
 
-        public async Task<List<RecipeCardDto>> SearchRecipesAsync(SearchQueryDto queryDto)
+        public async Task<IEnumerable<RecipeCardDto>> SearchRecipesAsync(SearchQueryDto queryDto)
         {
             var recipes = await _recipeRepository.SearchAsync(queryDto);
-            return _mapper.Map<List<RecipeCardDto>>(recipes);
+            return _mapper.Map<IEnumerable<RecipeCardDto>>(recipes);
         }
     }
 }

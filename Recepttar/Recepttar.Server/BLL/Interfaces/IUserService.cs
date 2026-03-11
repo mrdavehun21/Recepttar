@@ -1,4 +1,5 @@
-﻿using Recepttar.Server.BLL.DTOs.User;
+﻿using Recepttar.Server.BLL.Common;
+using Recepttar.Server.BLL.DTOs.User;
 
 namespace Recepttar.Server.BLL.Interfaces
 {
@@ -7,8 +8,8 @@ namespace Recepttar.Server.BLL.Interfaces
         Task<UserDto?> RegisterUserAsync(RegisterUserDto registerDto);
         Task<UserDto?> LoginUserAsync(LogInUserDto loginDto);
         Task<bool> EmailExistsAsync(string email);
-        Task<(byte[]?, string? error)> GetUserProfilePictureAsync(int userId);
+        Task<ResultT<byte[]>> GetUserProfilePictureAsync(int userId);
         Task<ProfileDto?> GetProfileByIdAsync(int userId);
-        Task<(bool success, bool wasUpdated, string? error)> UpdateUserProfileAsync(int userId, UpdateProfileDto updateDto);
+        Task<ResultT<UpdateResult>> UpdateUserProfileAsync(int userId, UpdateProfileDto updateDto);
     }
 }
