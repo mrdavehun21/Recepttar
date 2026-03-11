@@ -1,6 +1,6 @@
 ﻿import { useState } from "react";
 
-import Card from '../RecipeCard/Card';
+import Card from '../recipe-card/Card';
 
 function Reicpes({ recipes }) {
     const [visibleCount, setVisibleCount] = useState(9);

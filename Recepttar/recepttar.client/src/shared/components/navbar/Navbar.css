@@ -31,3 +31,9 @@ li:hover{
     text-transform: uppercase;
     font-weight: bold;
 }
+
+@media print{
+    .navbar {
+        display: none !important;
+    }
+}

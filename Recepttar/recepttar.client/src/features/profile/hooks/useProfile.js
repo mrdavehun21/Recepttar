@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useProfileFetcher } from "./useProfileFetcher";
-import { ImageAvailable } from "../../../GlobalHooks/usePictureChecker";
+import { ImageAvailable } from "../../../shared/hooks/usePictureChecker";
 
 export function useProfile(profileId, profileData, isLoggedIn, setError) {
     const API_BASE = import.meta.env.VITE_API_URL;

@@ -1,13 +1,13 @@
 .w-fit {
-    width: fit-content;
+    width: fit-content !important;
 }
 
 .h-fit {
-    height: fit-content;
+    height: fit-content !important;
 }
 
 .h-fill-available {
-    height: -webkit-fill-available;
+    height: -webkit-fill-available !important;
 }
 
 html, body, #root {

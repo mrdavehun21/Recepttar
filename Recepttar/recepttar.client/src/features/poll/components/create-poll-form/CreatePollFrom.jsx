@@ -1,8 +1,8 @@
 import usePollForm from "../../hooks/usePollForm";
 import './CreatePollForm.css';
 
-export default function CreatePollForm({isFormOpen, openForm, preData = [null, null]}) {
-    const { options, handleSubmit, handleAddOption } = usePollForm(preData);
+export default function CreatePollForm({isFormOpen, openForm, preData = [null, null], errorMessage, children}) {
+    const { options, handleSubmit, handleAddOption } = usePollForm(preData, errorMessage);
 
     return (
         <div className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center poll-form-background" >
@@ -27,6 +27,7 @@ export default function CreatePollForm({isFormOpen, openForm, preData = [null, n
                 <button type="submit" className="d-block btn rounded-4 fw-bold polls-bg-additional-8 border border-black text-light ps-4 pe-4">{(preData?.id == undefined) ? "Submit" : "Update"}</button>
                 </div>
             </form>
+            {children}
         </div>
     );
 }

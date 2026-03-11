@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useAuth } from '../../GlobalHooks/useAuthContext';
-import { ImageAvailable } from '../../GlobalHooks/usePictureChecker';
-import { submitLogoutRequest } from '../../GlobalApi/recipe.api';
+import { useAuth } from '../../hooks/useAuthContext';
+import { ImageAvailable } from '../../hooks/usePictureChecker';
+import { submitLogoutRequest } from '../../api/recipe.api';
 import Dropdown from 'react-bootstrap/Dropdown';
-import Logo from '../../assets/Logo.png';
+import Logo from '../../../assets/Logo.png';
 import './Navbar.css';
 
 export default function NavbarComponent() {
@@ -37,9 +37,9 @@ export default function NavbarComponent() {
     }, [profileData?.profilePicture]);
 
     return (
-        <nav className="w-100 main-green d-flex justify-content-between align-items-center pt-2 pb-2">
+        <nav className="w-100 main-green d-flex justify-content-between align-items-center pt-2 pb-2 navbar">
             <div className="d-none d-sm-block">
-                <img className="h-75px" src={Logo} alt="" />
+                <a href="/home"><img className="h-75px" src={Logo} alt="" /></a>
                 <a href="/recipes" className="fs-4 ms-3 font-neutral-100 fw-bold">Recipes</a>
                 <a href="/polls" className="fs-4 ms-3 font-neutral-100 fw-bold">Polls</a>
             </div>

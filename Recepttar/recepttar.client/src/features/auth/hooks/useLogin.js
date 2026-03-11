@@ -8,7 +8,7 @@ import {
     validateEmail,
     validatePassword
 } from './authHelper'
-import { useAuth } from '../../../GlobalHooks/useAuthContext'
+import { useAuth } from '../../../shared/hooks/useAuthContext'
 
 export function useLogin() {
     const [step, setStep] = useState(1)

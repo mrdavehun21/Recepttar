@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { usePollCard } from '../../hooks/usePollVote';
-import { ImageAvailable } from '../../../../GlobalHooks/usePictureChecker';
+import { ImageAvailable } from '../../../../shared/hooks/usePictureChecker';
 import './PollCard.css';
 
 function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null, openFormTrigger, returnPollValues }) {

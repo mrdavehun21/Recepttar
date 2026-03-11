@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getLoginStatus } from "../GlobalApi/recipe.api";
+import { getLoginStatus } from "../api/recipe.api";
 
 const AuthContext = createContext();
 

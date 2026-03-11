@@ -2,7 +2,7 @@ import './ErrorBox.css';
 
 function ErrorBox({ errorCode = '', errorMessage = "The data you're trying to read is not found!", visible = false, clearError, closeError }) {
     return (
-        <div className={"p-4 w-100 polls-bg-additional-5 rounded-2 shadow BoxBody position-absolute " + (!visible ? "d-none" : "d-flex")}>
+        <div className={"p-4 w-fit polls-bg-additional-5 rounded-2 shadow BoxBody position-absolute " + (!visible ? "d-none" : "d-flex")}>
             <div>
                 <h3>Error! 
                 { 

@@ -1,8 +1,8 @@
 import { useRecipes } from '../hooks/useRecipes';
 import { useState, useEffect } from 'react';
-import Recipes from '../Components/RecipeList/RecipeListComponent.jsx';
-import PollApp from '../Components/PollSection/PollApp';
-import SearchBottom from '../Components/SearchParentComponent/SearchParentComponent';
+import Recipes from '../components/recipe-list/RecipeListComponent.jsx';
+import PollApp from '../components/poll-section/PollApp.jsx';
+import SearchBottom from '../components/search-parent-component/SearchParentComponent.jsx';
 
 import './index.css';
 

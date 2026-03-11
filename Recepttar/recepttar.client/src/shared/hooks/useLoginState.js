@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getLoginStatus } from '../GlobalApi/recipe.api';
+import { getLoginStatus } from '../api/recipe.api';
 
 export function useIsLoggedIn() {
     const [isLoggedIn, setIsLoggedIn] = useState(null);

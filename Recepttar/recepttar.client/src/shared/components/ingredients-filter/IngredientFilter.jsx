@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { getIngredientsOnSearch } from "../../GlobalHooks/useIngredientSearch";
-import "./IngredientFilter.css";
+import { getIngredientsOnSearch } from "../../hooks/useIngredientSearch";
+import "../ingredients-filter/IngredientFilter.css";
 
 function IngredientFilter({ selectedIngredients, setSelectedIngredients }) {
     const [ingredientSearch, setIngredientSearch] = useState("");

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useAuth } from '../../../GlobalHooks/useAuthContext';
+import { useAuth } from '../../../shared/hooks/useAuthContext';
 import { useUpdateUser } from '../hooks/useProfileUpdate';
 import { useProfile } from '../hooks/useProfile';
-import ErrorBox from '../../../GlobalComponents/ErrorBox/ErrorBox';
-import Card from '../../main/Components/RecipeCard/Card';
+import ErrorBox from '../../../shared/components/error-box/ErrorBox';
+import Card from '../../main/components/recipe-card/Card';
 import Logo from '../../../assets/Logo.png';
 import './index.css';
 
@@ -74,7 +74,7 @@ function profile() {
               </div>
               <div className="w-100 w-md-75 mx-md-auto">
                 <span className="d-block fs-4 fw-normal m-0 mt-3 w-fit">Email</span>
-                <input name="Email" className="p-2 w-100 rounded-3 border border-black" type="text" disabled={profileId != undefined}/>
+                <input name="Email" className="p-2 w-100 rounded-3 border border-black" type="text" disabled={profileId != undefined} defaultValue={data?.email}/>
               </div>
               <div className="w-100 w-md-75 mx-md-auto">
                 <span className="d-block fs-4 fw-normal m-0 mt-3 w-fit">Bio</span>

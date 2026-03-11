@@ -1,4 +1,4 @@
-import '../../../main/Components/PollSection/PollCard.css';
+import '../../../main/components/poll-section/PollCard.css';
 
 function CreatePollCard({ openFormTrigger }) {
   return (

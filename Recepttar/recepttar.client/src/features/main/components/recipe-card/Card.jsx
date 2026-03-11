@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useFavorites } from "../../hooks/useFavorites";
-import { ImageAvailable } from '../../../../GlobalHooks/usePictureChecker';
+import { ImageAvailable } from '../../../../shared/hooks/usePictureChecker';
 import EmptyHeart from "../../../../assets/emptyHeart.svg";
 import FilledHeart from "../../../../assets/fullHeart.svg";
 import './Card.css';
@@ -52,7 +52,7 @@ function Card({ data, allowFavorites = true }) {
             }
 
             <a
-                to={`/recipe/${data.recipeId}`} className="CardLink">
+                href={`/recipe/${data.recipeId}`} className="CardLink">
                 <div className="card border-0 h-100 overflow-hidden">
                     {
                         (imageExists == true) ? (

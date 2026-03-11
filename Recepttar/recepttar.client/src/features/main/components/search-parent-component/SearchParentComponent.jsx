@@ -1,6 +1,6 @@
 import { useTagSelection } from "../../hooks/useTagSelection";
-import SearchComponent from "../Search/SearchComponent";
-import Ingredient from "../../../../GlobalComponents/IngredientsFilter/IngredientFilter";
+import SearchComponent from "../search/SearchComponent";
+import Ingredient from "../../../../shared/components/ingredients-filter/IngredientFilter";
 import "./SearchParentComponent.css";
 
 function SearchApp({

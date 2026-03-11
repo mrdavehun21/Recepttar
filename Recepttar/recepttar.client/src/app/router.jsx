@@ -1,10 +1,9 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import { useAuth } from '../GlobalHooks/useAuthContext';
+import { useAuth } from '../shared/hooks/useAuthContext';
 import LoginPage from '../features/auth/pages/LoginPage.jsx';
 import RegisterPage from '../features/auth/pages/RegisterPage.jsx';
-import Home from '../features/main/pages/Home.jsx';
-// import Recipe from '../features/recipe/pages/RecipeDetail.jsx';
+import Home from '../features/main/pages/home.jsx';
+import Recipe from '../features/recipe/pages/RecipeDetail.jsx';
 import Polls from '../features/poll/pages/poll.jsx';
 import ProfilePage from '../features/profile/pages/profile.jsx';
 
@@ -17,7 +16,7 @@ export default function AppRouter() {
             <Route path="/register" element={<RegisterPage/>} />
             <Route path="/home" element={<Home isLoggedIn={isLoggedIn} profileID={profileData} />} />
             <Route path="/" element={<Navigate to="/home" />} />
-            {/* <Route path="/recipe/:recipeId" element={<Recipe />} /> */}
+            <Route path="/recipe/:recipeId" element={<Recipe />} />
             <Route path="/polls"
                 element={
                     isLoggedIn === true ? (

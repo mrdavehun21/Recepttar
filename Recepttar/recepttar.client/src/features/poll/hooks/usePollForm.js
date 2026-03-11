@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { patchPollAPI, createPollAPI } from "../api/poll.api";
 
-export default function usePollForm(preData = [null, null]) {
+export default function usePollForm(preData = [null, null], errorMessage) {
     const [options, setOptions] = useState(preData.options == undefined ? [null, null] : preData.options);
 
     async function handleSubmit(e) {
@@ -34,7 +34,14 @@ export default function usePollForm(preData = [null, null]) {
                 await createPollAPI(FilteredForm);
             }
         } catch (error) {
-            console.error("Error creating poll:", error);
+            // error.response.data
+            if(error.response.data.title == undefined){
+                errorMessage(error.response.data);
+            }
+            else{
+                errorMessage(error.response.data.title);
+            }
+            return;
         }
 
         window.location.reload();
