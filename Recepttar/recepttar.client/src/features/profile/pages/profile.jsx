@@ -68,7 +68,7 @@ function profile() {
                 <span className="d-block fs-4 fw-normal m-0 w-fit">Full name</span>
                 <input name="Name" className="d-block w-100 p-2 rounded-3 border border-black" type="text" defaultValue={data?.fullName} disabled={profileId != undefined}/>
               </div>
-              <div className="w-100 w-md-75 mx-md-auto">
+              <div className={"w-100 w-md-75 mx-md-auto " + (profileId != undefined ? "d-none" : "")}>
                 <span className="d-block fs-4 fw-normal m-0 mt-3 w-fit">Password</span>
                 <input name="Password" className="p-2 w-100 rounded-3 border border-black" type="password" disabled={profileId != undefined}/>
               </div>
