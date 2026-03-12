@@ -3,8 +3,11 @@ import { Link } from 'react-router-dom';
 import { usePollCard } from '../../hooks/usePollVote';
 import { ImageAvailable } from '../../../../shared/hooks/usePictureChecker';
 import './PollCard.css';
+import ErrorBox from '../../../../shared/components/error-box/ErrorBox';
+import CreatePollForm from '../../../poll/components/create-poll-form/CreatePollFrom';
+import { createPoll } from '../../../poll/hooks/useCreatePoll';
 
-function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null, openFormTrigger, returnPollValues }) {
+function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null, returnPollValues }) {
     const API_BASE = import.meta.env.VITE_API_URL;
 
     const {
@@ -31,6 +34,17 @@ function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null
             checkImage();
         }
     }, [data?.profilePicture]);
+
+    const { isFormOpen, openForm, pollValues, setPollValue } = createPoll();
+
+    const [error, setError] = useState('');
+    const [errorVisible, setErrorVisible] = useState(false);
+
+    useEffect(() => {
+      if(error !== ''){
+        setErrorVisible(true);
+      }
+    }, [error]);
 
     return (
         <div className="card overflow-hidden shadow m-3 rounded-3 vote-card d-flex felx-column justify-content-between">
@@ -97,7 +111,7 @@ function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null
                         <div className="d-flex gap-1">
                             <button
                                 className={"w-50 text-light fw-bold border-0 polls-bg-additional-7 p-2 "}
-                                onClick={() => {openFormTrigger(); returnPollValues(data)}}
+                                onClick={() => {openForm(); setPollValue(data)}}
                             >
                                 Edit
                             </button>
@@ -121,6 +135,15 @@ function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null
 
                 
             </div>
+
+            {
+            (isFormOpen) ? 
+            (
+                <CreatePollForm isFormOpen={isFormOpen} openForm={openForm} preData={pollValues} errorMessage={setError} >
+                  <ErrorBox visible={errorVisible} errorMessage={error} clearError={setError} closeError={setErrorVisible}/>
+                </CreatePollForm>
+              ) : ( null )
+          }
         </div>
     );
 }

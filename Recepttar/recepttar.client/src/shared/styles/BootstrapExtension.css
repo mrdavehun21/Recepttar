@@ -2,12 +2,20 @@
     width: fit-content !important;
 }
 
+.w-min-95 {
+    min-width: 95% !important;
+}
+
 .h-fit {
     height: fit-content !important;
 }
 
 .h-fill-available {
     height: -webkit-fill-available !important;
+}
+
+.z-index-max{
+    z-index: 2147483647 !important;
 }
 
 html, body, #root {

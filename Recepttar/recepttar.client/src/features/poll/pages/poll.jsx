@@ -13,7 +13,7 @@ function poll({ loginStatus, profileID }) {
     const { isFormOpen, openForm, pollValues, setPollValue } = createPoll();
 
     const [error, setError] = useState('');
-    const [errorVisible, setErrorVisible] = useState(true);
+    const [errorVisible, setErrorVisible] = useState(false);
 
     useEffect(() => {
       if(error !== ''){
