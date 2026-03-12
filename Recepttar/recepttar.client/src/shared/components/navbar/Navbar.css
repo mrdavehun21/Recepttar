@@ -22,10 +22,6 @@ li:hover{
     max-height: 50px;
 }
 
-.main-green {
-    background-color: #6F9D48;
-}
-
 .navbar-link {
     text-decoration: underline;
     text-transform: uppercase;

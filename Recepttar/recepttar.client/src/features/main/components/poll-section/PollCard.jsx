@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
 import { usePollCard } from '../../hooks/usePollVote';
 import { ImageAvailable } from '../../../../shared/hooks/usePictureChecker';
 import './PollCard.css';
@@ -38,7 +39,7 @@ function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null
                     <p className="card-title fs-5 text-center mb-0 w-100 p-2 pb-0">{question}</p>
                 </div>
 
-                <a href={`https://localhost:65534/profile/${data?.authorId}`} className="text-decoration-none text-black">
+                <Link to={`https://localhost:65534/profile/${data?.authorId}`} className="text-decoration-none text-black">
                     <div className="card-body mb-0 p-2 fw-bold border-0 border-bottom border-black">
                         <div className="d-flex justify-content-center align-items-center">
                             {imageExists ? (
@@ -63,7 +64,7 @@ function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null
                             )}
                         </div>
                     </div>
-                </a>
+                </Link>
             </div>
 
             <div>

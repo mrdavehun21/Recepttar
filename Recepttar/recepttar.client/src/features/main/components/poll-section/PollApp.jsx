@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { usePolls } from '../../hooks/usePoll';
 import PollCard from './PollCard';
 import './PollApp.css';
@@ -30,7 +31,7 @@ function PollApp({ loginStatus, profileID }) {
                                     <PollCard key={index} data={item} loginStatus={loginStatus} profileID={profileID} />
                                 ))
                             }
-                            <a href="/polls" className="d-block polls-bg-additional-8 p-2 rounded-2 text-light text-decoration-none ms-auto me-auto mb-3 w-fit">View all</a>
+                            <Link to="/polls" className="d-block polls-bg-additional-8 p-2 rounded-2 text-light text-decoration-none ms-auto me-auto mb-3 w-fit">View all</Link>
                         </div>
                     )
                 }

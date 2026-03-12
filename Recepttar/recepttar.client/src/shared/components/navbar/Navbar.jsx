@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuthContext';
 import { ImageAvailable } from '../../hooks/usePictureChecker';
 import { submitLogoutRequest } from '../../api/recipe.api';
@@ -39,9 +40,9 @@ export default function NavbarComponent() {
     return (
         <nav className="w-100 main-green d-flex justify-content-between align-items-center pt-2 pb-2 navbar">
             <div className="d-none d-sm-block">
-                <a href="/home"><img className="h-75px" src={Logo} alt="" /></a>
-                <a href="/recipes" className="fs-4 ms-3 font-neutral-100 fw-bold">Recipes</a>
-                <a href="/polls" className="fs-4 ms-3 font-neutral-100 fw-bold">Polls</a>
+                <Link to="/home"><img className="h-75px" src={Logo} alt="" /></Link>
+                <Link to="/recipes" className="fs-4 ms-3 font-neutral-100 fw-bold">Recipes</Link>
+                <Link to="/polls" className="fs-4 ms-3 font-neutral-100 fw-bold">Polls</Link>
             </div>
             <div className="d-block d-sm-none">
             <Dropdown align="end" className="ms-3 rounded-2 dropdown">
