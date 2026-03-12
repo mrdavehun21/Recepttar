@@ -5,7 +5,7 @@ export default function CreatePollForm({isFormOpen, openForm, preData = [null, n
     const { options, handleSubmit, handleAddOption } = usePollForm(preData, errorMessage);
 
     return (
-        <div className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center poll-form-background" >
+        <div className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center poll-form-background z-index-max" >
             <form onSubmit={handleSubmit} className="p-4 rounded-4 w-75 polls-bg-additional-5 w-min-320px w-max-800px">
                 <h2 className="text-decoration-underline">Question</h2>
                 <input name="Question" type="text" className="border border-black form-control mb-3 rounded-4 p-2" placeholder="Enter your question here..." defaultValue={(preData?.id == undefined) ? "" : preData?.question}/>

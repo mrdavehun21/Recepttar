@@ -6,6 +6,7 @@ import Home from '../features/main/pages/home.jsx';
 import Recipe from '../features/recipe/pages/RecipeDetail.jsx';
 import Polls from '../features/poll/pages/poll.jsx';
 import ProfilePage from '../features/profile/pages/profile.jsx';
+import MyCollection from '../features/my-collection/pages/MyCollection.jsx';
 
 export default function AppRouter() {
     const { isLoggedIn, profileData } = useAuth();
@@ -36,6 +37,15 @@ export default function AppRouter() {
                 }
             />
             <Route path="/profile/:profileId" element={<ProfilePage />} />
+            <Route path="/mycollection" 
+                element={
+                    isLoggedIn === true ? (
+                        <MyCollection />
+                    ) : isLoggedIn === false ? (
+                        <Navigate to="/login" replace />
+                    ) : null
+                }
+            />
         </Routes>
     )
 }
