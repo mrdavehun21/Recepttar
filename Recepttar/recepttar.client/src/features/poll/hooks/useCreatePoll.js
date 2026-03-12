@@ -2,12 +2,12 @@ import { useState } from 'react';
 
 export function createPoll() {
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [pollValues, setPollValues] = useState([]);
+    const [pollValues, setPollValues] = useState([null, null]);
 
     const openForm = () => {
         if(isFormOpen) {
             setIsFormOpen(false);
-            setPollValues([]);
+            setPollValues([null, null]);
         } else {
             setIsFormOpen(true);
         }

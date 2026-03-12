@@ -1,0 +1,35 @@
+.h-75px{
+    height: 75px;
+}
+
+.profile-dimensions {
+    width: 30px;
+    height: 30px;
+}
+
+li:hover{
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.ProfileBox {
+    max-height: 75px;
+    width: fit-content !important;
+}
+
+.ProfileBoxImage{
+    max-height: 50px;
+}
+
+.navbar-link {
+    text-decoration: underline;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+@media print{
+    .navbar {
+        display: none !important;
+    }
+}

@@ -8,6 +8,7 @@ import {
     validateEmail,
     validatePassword
 } from './authHelper'
+import { useAuth } from '../../../shared/hooks/useAuthContext'
 
 export function useLogin() {
     const [step, setStep] = useState(1)
@@ -18,6 +19,8 @@ export function useLogin() {
 
     const isEmailValid = validateEmailInput(email);
     const isPasswordValid = validatePasswordInput(password);
+
+    const { refetch } = useAuth();
 
     useEffect(() => {
         if (!error) return;
@@ -47,6 +50,7 @@ export function useLogin() {
 
         try {
             await loginApi(email, password)
+            await refetch();
             navigate('/', { replace: true })
         } catch (err) {
             setError(getApiErrorMessage(err) || 'Login failed')
