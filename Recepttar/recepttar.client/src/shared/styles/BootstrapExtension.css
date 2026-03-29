@@ -6,6 +6,10 @@
     min-width: 95% !important;
 }
 
+.w-min-100 {
+    min-width: 100% !important;
+}
+
 .h-fit {
     height: fit-content !important;
 }
