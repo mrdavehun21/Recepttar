@@ -15,7 +15,7 @@ namespace Recepttar.Server.BLL.DTOs.Recipe
         public DateTime CreatedAt { get; set; }
         public IFormFile DishPicture { get; set; } = null!;
 
-        public List<IngredientDto> Ingredients { get; set; } = new();
-        public List<StepDto> Steps { get; set; } = new();
+        public List<IngredientDto> Ingredients { get; set; } = null!;
+        public List<StepDto> Steps { get; set; } = null!;
     }
 }
