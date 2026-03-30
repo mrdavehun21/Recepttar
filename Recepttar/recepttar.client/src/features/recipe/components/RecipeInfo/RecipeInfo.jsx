@@ -47,25 +47,27 @@ const RecipeInfo = ({ recipe, author, reviews }) => {
                     className="w-100 rounded-4 mb-3" style={{ height: '340px', objectFit: 'cover' }} />
             )}
             
-            <h1 className="fw-bold text-center text-decoration-underline mb-2 position-relative">
-                {recipe.title}
-                <div className="position-absolute end-0 top-50 translate-middle-y d-flex gap-2">
-                    <button type="button" className="btn btn-lg btn-success print"
+            <div className="mb-2">
+                <h1 className="fw-bold text-center text-decoration-underline mb-2">
+                    {recipe.title}
+                </h1>
+                <div className="d-flex justify-content-center gap-2">
+                    <button type="button" className="btn btn-success print"
                         onClick={() => { document.title = `Recepttar_${recipe.title}`; window.print(); }}>
                         <i className="bi bi-printer" />
                     </button>
                     {isOwner && (
                         <>
-                            <Link to={`/recipe/${recipe.recipeId}/editrecipe`} className="btn btn-lg btn-warning">
+                            <Link to={`/recipe/${recipe.recipeId}/editrecipe`} className="btn btn-warning">
                                 <i className="bi bi-pencil" />
                             </Link>
-                            <button type="button" className="btn btn-lg btn-danger" onClick={handleDeleteClick}>
+                            <button type="button" className="btn btn-danger" onClick={handleDeleteClick}>
                                 <i className="bi bi-trash" />
                             </button>
                         </>
                     )}
                 </div>
-            </h1>
+            </div>
 
             {avg && (
                 <div className="d-flex flex-column align-items-center mb-3">
@@ -126,7 +128,7 @@ const RecipeInfo = ({ recipe, author, reviews }) => {
                     <div className="card h-100 text-center border-0 shadow-sm rounded-3">
                         <div className="card-body py-3 px-2">
                             <div className="fw-bold text-decoration-underline mb-2">Author</div>
-                            <Link to={`/profile/${author?.id}`} className="d-flex align-items-center justify-content-center gap-2 text-decoration-none text-dark">
+                            <Link to={`/profile/${author?.id}`} className="d-flex flex-column align-items-center justify-content-center gap-2 text-decoration-none text-dark">
                                 {author?.profilePicture ? (
                                     <img src={`${API_BASE}/${author.profilePicture}`} alt={author?.fullName} className="rounded-circle flex-shrink-0"
                                         style={{ width: '30px', height: '30px', objectFit: 'cover' }}
@@ -137,11 +139,13 @@ const RecipeInfo = ({ recipe, author, reviews }) => {
                                         <i className="bi bi-person-fill text-white" />
                                     </div>
                                 )}
-                                <div className="text-start" style={{ minWidth: 0 }}>
+                                <div className="text-center" style={{ minWidth: 0 }}>
                                     <div style={{
-                                        display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                                        {author?.fullName}</div>
-                                    <div className="text-muted mt-1 text-decoration-underline">{author?.rank}</div>
+                                        display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden'
+                                    }}>{author?.fullName}</div>
+                                    <div className="text-muted mt-1 text-decoration-underline" style={{
+                                        overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'
+                                    }}>{author?.rank}</div>
                                 </div>
                             </Link>
                         </div>
