@@ -1,0 +1,25 @@
+.form-check-input {
+    margin-right: 10px !important;
+}
+
+.form-check-input:checked {
+    background-color: #8FC3A6 !important;
+}
+
+.form-check-input:checked + .label-style {
+    text-decoration: line-through;
+}
+
+@media print {
+    .reviews, .print {
+        display: none;
+    }
+
+    @page {
+        margin-bottom: 20mm;
+    }
+
+    @page:last {
+        margin-bottom: 0px;
+    }
+}
