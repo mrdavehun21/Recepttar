@@ -14,7 +14,7 @@ function IngredientList({ ingredients, setIngredients, errors }) {
             <h5 className="card-title">Selected Ingredients</h5>
             <ul className="list-group list-group-flush">
                 {ingredients.map((ingredient, index) => (
-                    <div>
+                    <div key={`ingredient${index}`}>
                         <div className={"p-2 bg-danger text-white text-start mt-1 " + (errors?.[`Ingredients[${index}].Quantity`] == null ? "d-none" : "")}>{errors?.[`Ingredients[${index}].Quantity`]?.[0]}&nbsp;</div>
                         <div className={"p-2 bg-danger text-white text-start mt-1 " + (errors?.[`Ingredients[${index}].MeasurementUnit`] == null ? "d-none" : "")}>{errors?.[`Ingredients[${index}].MeasurementUnit`]?.[0]}&nbsp;</div>
                         <div key={ingredient.id} className="list-group-item d-flex justify-content-between flex-wrap">
@@ -22,13 +22,13 @@ function IngredientList({ ingredients, setIngredients, errors }) {
                             <div className="d-flex gap-1">
                                 <input type="hidden" name={`Ingredients[${index}].Id`} value={ingredient.id} />
                                 <input type="number" name={`Ingredients[${index}].Quantity`} id="" className="d-block form-control" style={{width: "80px"}} min={1} max={999} defaultValue={1} />
-                                <select name={`Ingredients[${index}].MeasurementUnit`} id="" className="form-select">
-                                <option value="" selected>Unit</option>
-                                {measurementUnits.map((unit) => (
-                                    <option key={unit} value={unit}>{unit}</option>
-                                ))}
+                                <select name={`Ingredients[${index}].MeasurementUnit`} id="" className="form-select" defaultValue={"Unit"}>
+                                    <option value="">Unit</option>
+                                    {measurementUnits.map((unit) => (
+                                        <option key={unit} value={unit}>{unit}</option>
+                                    ))}
                                 </select>
-                                <a onClick={() => handleRemoveIngredient(ingredient.id, setIngredients)}><i class="bi bi-trash3 text-danger fs-3 ms-2"></i></a>
+                                <a onClick={() => handleRemoveIngredient(ingredient.id, setIngredients)}><i className="bi bi-trash3 text-danger fs-3 ms-2"></i></a>
                             </div>
                         </div>
                     </div>

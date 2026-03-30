@@ -13,10 +13,13 @@ function RecipeSteps({ errors }){
     }
 
     const updateStepText = (index, text) => {
+        let trimmed = text.trimStart();
+        if(trimmed.length > 400) trimmed = trimmed.slice(0, 400);
+
         const updatedSteps = [...steps];
-        updatedSteps[index].text = text;
+        updatedSteps[index].text = trimmed;
         setSteps(updatedSteps);
-    }
+    };
 
     const removeStep = (id) => {
         setSteps(steps.filter(step => step.id !== id));
@@ -30,16 +33,17 @@ function RecipeSteps({ errors }){
                 list={steps}
                 setList={setSteps}
                 animation={150}
-                className="list-group w-100 pe-5 border-0"
+                handle=".drag-handle"
+                className="list-group w-100 pe-md-5 pe-3 border-0"
                 >
                 {steps.map((step, index) => (
-                    <div className="d-flex gap-2 align-items-center m-2 w-100">
-                        <span className="border border-white border-3 rounded-circle d-flex justify-content-center align-items-center fs-5 me-2" style={{ width: "40px", height: "40px" }}>{index + 1}</span>
+                    <div className="d-flex gap-2 align-items-center m-2 w-100" key={`Step${index}`}>
+                        <span className="drag-handle border border-white border-3 rounded-circle d-md-flex justify-content-center align-items-center fs-5 me-2 d-none" style={{ width: "40px", height: "40px", cursor: "grab" }}>{index + 1}</span>
                         <input type="hidden" name={`Steps[${index}].StepNumber`} value={step.id} />
                         <div className="w-100">
                             <div className={"p-2 bg-danger text-white text-start " + (errors?.[`Steps[${index}].StepDescription`]?.[0] == null ? "d-none" : "")}>{errors?.[`Steps[${index}].StepDescription`]?.[0]}&nbsp;</div>
                             <div key={step.id} className="list-group-item w-100 rounded-3 d-flex align-items-center">
-                                <textarea className="form-control border-0" name={`Steps[${index}].StepDescription`} defaultValue={step.text} onChange={(e) => updateStepText(index, e.target.value)} style={{ resize: 'none' }} rows={2} />
+                            <textarea className="form-control border-0" name={`Steps[${index}].StepDescription`} value={step.text} onChange={(e) => updateStepText(index, e.target.value, e.target)} style={{ resize: "none", fieldSizing: "content" }} rows={5} />
                                 <a onClick={() => removeStep(step.id)}><i className="bi bi-trash3 text-danger fs-3 ms-2"></i></a>
                             </div>
                         </div>

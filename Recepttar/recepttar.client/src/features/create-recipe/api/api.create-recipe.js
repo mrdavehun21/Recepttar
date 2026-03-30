@@ -17,11 +17,12 @@ export async function uploadRecipe(recipeForm, setErrorMessage){
               'Content-Type': 'multipart/form-data',
             },
         });
+        setErrorMessage(null);
+        // location.href = `/recipes`;
     }
     catch(error){
         const message = error?.response?.data?.errors;
 
-        // Replace every Ingredients[n].MeasurementUnit[] text with "Invalid measurement unit"
         if(message){
             Object.keys(message).forEach(key => {
                 if(key.includes("Ingredients") && key.includes("MeasurementUnit")){
