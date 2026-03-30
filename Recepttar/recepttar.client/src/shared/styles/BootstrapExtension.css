@@ -37,3 +37,7 @@ html, body, #root {
 .content {
     flex: 1;
 }
+
+.ingredient-highlight:hover{
+    background-color: #D9C3A5 !important;
+}

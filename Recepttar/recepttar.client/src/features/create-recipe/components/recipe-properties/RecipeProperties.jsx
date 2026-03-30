@@ -17,7 +17,7 @@ function RecipeProperties({ errors }) {
         </div>
         
         <div>
-          <h5 className="form-check-label d-block card-title" htmlFor="PrepMin">Preparation time</h5>
+          <h5 className="form-check-label d-block card-title" htmlFor="PrepMin">Preparation time (min)</h5>
           <input type="number" min={1} max={1440} id="PrepMin" name="TimeMinutes" defaultValue={1} className="d-block w-100 form-control"></input>
         </div>
 

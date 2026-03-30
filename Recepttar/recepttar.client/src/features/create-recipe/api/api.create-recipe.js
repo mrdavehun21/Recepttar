@@ -9,7 +9,7 @@ export async function getMeasurementUnit(setMeasurementUnits){
     })
 }
 
-export async function uploadRecipe(recipeForm, setErrorMessage){
+export async function uploadRecipe(recipeForm, setErrorMessage, userId){
     let response = null;
     try{
         response = await axios.post(`${API_BASE}/api/recipe/create`, recipeForm, {
@@ -18,7 +18,8 @@ export async function uploadRecipe(recipeForm, setErrorMessage){
             },
         });
         setErrorMessage(null);
-        // location.href = `/recipes`;
+        let newReciepeId = await axios.get(`${API_BASE}/api/recipe/${userId}/recipes`);
+        return newReciepeId.data[newReciepeId.data.length - 1].recipeId;
     }
     catch(error){
         const message = error?.response?.data?.errors;

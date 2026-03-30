@@ -17,13 +17,13 @@ function IngredientList({ ingredients, setIngredients, errors }) {
                     <div key={`ingredient${index}`}>
                         <div className={"p-2 bg-danger text-white text-start mt-1 " + (errors?.[`Ingredients[${index}].Quantity`] == null ? "d-none" : "")}>{errors?.[`Ingredients[${index}].Quantity`]?.[0]}&nbsp;</div>
                         <div className={"p-2 bg-danger text-white text-start mt-1 " + (errors?.[`Ingredients[${index}].MeasurementUnit`] == null ? "d-none" : "")}>{errors?.[`Ingredients[${index}].MeasurementUnit`]?.[0]}&nbsp;</div>
-                        <div key={ingredient.id} className="list-group-item d-flex justify-content-between flex-wrap">
+                        <div key={ingredient.id} className="ingredient-highlight list-group-item d-flex justify-content-between flex-wrap align-items-center">
                             {ingredient.name}
                             <div className="d-flex gap-1">
                                 <input type="hidden" name={`Ingredients[${index}].Id`} value={ingredient.id} />
                                 <input type="number" name={`Ingredients[${index}].Quantity`} id="" className="d-block form-control" style={{width: "80px"}} min={1} max={999} defaultValue={1} />
                                 <select name={`Ingredients[${index}].MeasurementUnit`} id="" className="form-select" defaultValue={"Unit"}>
-                                    <option value="">Unit</option>
+                                    <option value="Unit">Unit</option>
                                     {measurementUnits.map((unit) => (
                                         <option key={unit} value={unit}>{unit}</option>
                                     ))}

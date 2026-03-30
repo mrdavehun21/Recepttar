@@ -61,7 +61,7 @@ function RecipeBasic({ errors }) {
         <input type="file" id="imgUpload" name="DishPicture" accept="image/*" className="form-control" onChange={handleChange} />
 
         <div className={"p-2 bg-danger text-white text-start mt-3 " + (errors?.Description == null ? "d-none" : "")}>{errors?.Description}&nbsp;</div>
-        <textarea className="form-control review-bg mb-2" name="Description" placeholder="A short description about this recipe..." value={description} onChange={e => UpdateDescription(e)} style={{ resize: 'none' }} rows={5} />
+        <textarea className="form-control review-bg mb-2 mt-3" name="Description" placeholder="A short description about this recipe..." value={description} onChange={e => UpdateDescription(e)} style={{ resize: 'none' }} rows={5} />
         <div className="d-flex justify-content-between align-items-center mb-2">
             <div className={`text - end small mb-2 ${remainingDesc <= 20 ? 'text-danger' : 'text-muted'}`}>
                 {remainingDesc} / {MAX_DESC_CHARS}
