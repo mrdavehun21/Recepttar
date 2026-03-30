@@ -7,6 +7,7 @@ import Recipe from '../features/recipe/pages/RecipeDetail.jsx';
 import Polls from '../features/poll/pages/poll.jsx';
 import ProfilePage from '../features/profile/pages/profile.jsx';
 import MyCollection from '../features/my-collection/pages/MyCollection.jsx';
+import CreateRecipe from '../features/create-recipe/pages/CreateRecipe.jsx';
 
 export default function AppRouter() {
     const { isLoggedIn, profileData } = useAuth();
@@ -41,6 +42,15 @@ export default function AppRouter() {
                 element={
                     isLoggedIn === true ? (
                         <MyCollection />
+                    ) : isLoggedIn === false ? (
+                        <Navigate to="/login" replace />
+                    ) : null
+                }
+            />
+            <Route path="/recipe/createrecipe"
+                element={
+                    isLoggedIn === true ? (
+                        <CreateRecipe />
                     ) : isLoggedIn === false ? (
                         <Navigate to="/login" replace />
                     ) : null

@@ -90,6 +90,10 @@
 }
 
 /* ------ ~ Polls-additional-8 ~ ------ */
+.polls-bg-additional-8:hover {
+    background-color: #C98A5A;
+}
+
 .polls-bg-additional-8 {
     background-color: #8C5A32;
 }
@@ -122,4 +126,8 @@
 
 .main-green {
     background-color: #6F9D48;
+}
+
+.main-dark-green {
+    background-color: rgb(107, 143, 62);
 }

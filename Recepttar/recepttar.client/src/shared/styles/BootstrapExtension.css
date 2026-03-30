@@ -6,6 +6,10 @@
     min-width: 95% !important;
 }
 
+.w-min-100 {
+    min-width: 100% !important;
+}
+
 .h-fit {
     height: fit-content !important;
 }
@@ -32,4 +36,8 @@ html, body, #root {
 
 .content {
     flex: 1;
+}
+
+.ingredient-highlight:hover{
+    background-color: #D9C3A5 !important;
 }

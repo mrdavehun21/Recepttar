@@ -81,6 +81,8 @@ export default function NavbarComponent() {
                             <Dropdown.Item href="/mycollection#polls">My polls</Dropdown.Item>
                             <Dropdown.Item href="/mycollection#recipes">My recipes</Dropdown.Item>
                             <Dropdown.Divider />
+                            <Dropdown.Item href="/recipe/createrecipe">Create recipe</Dropdown.Item>
+                            <Dropdown.Divider />
                             <Dropdown.Item href="/profile">Profile</Dropdown.Item>
                             <Dropdown.Divider />
                             <Dropdown.Item onClick={handleLogout} className="text-danger">Log out</Dropdown.Item>
