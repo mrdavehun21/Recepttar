@@ -131,3 +131,22 @@
 .main-dark-green {
     background-color: rgb(107, 143, 62);
 }
+
+/* ------ ~ Review ~ ------ */
+.reviews-bg {
+    background-color: #8DA5F7;
+}
+
+.review-bg {
+    border: 1px solid #ddd;
+    background-color: #F5F5F5;
+}
+
+.profile-picture-border {
+    border: 2px solid #FFC107;
+}
+
+/* ------ ~ Ingredients ~ ------ */
+.ingredients {
+    background-color: #8DA5F7;
+}

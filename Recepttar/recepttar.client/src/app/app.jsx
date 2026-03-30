@@ -1,18 +1,13 @@
 import { AuthProvider } from '../shared/hooks/useAuthContext';
 import AppRouter from './router';
-import Navbar from '../shared/components/Navbar/Navbar';
-import Footer from '../shared/components/Footer/Footer';
+import Layout from './layout';
 
 export default function App() {
     return (
         <AuthProvider>
-            <div className="app-container">
-                <Navbar />
-                <main className="content">
-                    <AppRouter />
-                </main>
-                <Footer />
-            </div>
+            <Layout>
+                <AppRouter />
+            </Layout>
         </AuthProvider>
     )
 }

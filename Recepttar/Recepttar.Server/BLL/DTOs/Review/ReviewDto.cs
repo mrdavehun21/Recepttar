@@ -2,6 +2,8 @@
 {
     public class ReviewDto
     {
+        public int ReviewId { get; set; }
+        public int UserId { get; set; }
         public string FullName { get; set; } = string.Empty;
         public string ProfilePicture { get; set; } = string.Empty;
         public int Stars { get; set; }
