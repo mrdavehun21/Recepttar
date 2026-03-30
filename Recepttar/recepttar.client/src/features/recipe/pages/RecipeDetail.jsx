@@ -29,10 +29,10 @@ const RecipeDetail = () => {
                     <RecipeInfo recipe={recipe} author={author} reviews={reviews} />
                 </div>
                 <div className="col-lg-4">
-                    <div className="row">
+                    <div className="row mx-auto">
                         <IngredientsCard ingredients={ingredients} />
                     </div>
-                    <div className="row reviews">
+                    <div className="row reviews mx-auto">
                         <Reviews reviews={reviews} recipeId={recipeId} onReviewAdded={refetchReviews} />
                     </div>
                 </div>
