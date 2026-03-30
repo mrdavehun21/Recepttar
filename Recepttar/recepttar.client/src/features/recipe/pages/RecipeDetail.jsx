@@ -24,7 +24,7 @@ const RecipeDetail = () => {
 
     return (
         <div className="container py-4 mt-4">
-            <div className="row g-4 pe-2 rounded-2 container-bg-beige">
+            <div className="row g-4 rounded-2 container-bg-beige">
                 <div className="col-lg-8">
                     <RecipeInfo recipe={recipe} author={author} reviews={reviews} />
                 </div>
