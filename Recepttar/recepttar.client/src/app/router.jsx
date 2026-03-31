@@ -30,7 +30,7 @@ export default function AppRouter() {
                     ) : null
                 }
             />
-            <Route path="/profile" 
+            <Route path="/profile"
                 element={
                     isLoggedIn === true ? (
                         <ProfilePage />
@@ -40,7 +40,7 @@ export default function AppRouter() {
                 }
             />
             <Route path="/profile/:profileId" element={<ProfilePage />} />
-            <Route path="/mycollection" 
+            <Route path="/mycollection"
                 element={
                     isLoggedIn === true ? (
                         <MyCollection />
@@ -50,6 +50,15 @@ export default function AppRouter() {
                 }
             />
             <Route path="/recipe/createrecipe"
+                element={
+                    isLoggedIn === true ? (
+                        <CreateRecipe />
+                    ) : isLoggedIn === false ? (
+                        <Navigate to="/login" replace />
+                    ) : null
+                }
+            />
+            <Route path="/recipe/:recipeId/editrecipe"
                 element={
                     isLoggedIn === true ? (
                         <CreateRecipe />

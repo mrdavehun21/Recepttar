@@ -2,7 +2,17 @@ import { useState } from "react";
 import { patchPollAPI, createPollAPI } from "../api/poll.api";
 
 export default function usePollForm(preData = [null, null], errorMessage) {
-    const [options, setOptions] = useState(preData.options == undefined ? [null, null] : preData.options);
+    const [options, setOptions] = useState(
+        preData?.options?.length
+          ? preData.options.map((o, i) => ({
+              id: i + 1,
+              text: o.optionText || ""
+            }))
+          : [
+              { id: 1, text: "" },
+              { id: 2, text: "" }
+            ]
+      );
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -49,12 +59,24 @@ export default function usePollForm(preData = [null, null], errorMessage) {
 
     function handleAddOption(e) {
         e.preventDefault();
-        setOptions((prev) => [...prev, null]);
-    }
+        setOptions((prev) => [
+          ...prev,
+          {
+            id: Math.max(...prev.map(o => o.id), 0) + 1,
+            text: ""
+          }
+        ]);
+      }
+
+      function handleRemoveOption(id) {
+        setOptions((prev) => prev.filter(o => o.id !== id));
+      }
 
     return {
         options,
         handleSubmit,
-        handleAddOption
+        handleAddOption,
+        handleRemoveOption,
+        setOptions
     };
 }

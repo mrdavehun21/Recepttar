@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, use } from "react";
 
-function RecipeBasic({ errors }) {
+function RecipeBasic({ errors, recipeData }) {
   const [image, setImage] = useState(null);
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(recipeData?.title || "");
   const [description, setDescription] = useState("");
 
   const MAX_CHARS = 25;
@@ -19,12 +19,9 @@ function RecipeBasic({ errors }) {
   };
 
   const UpdateTitle = (e) => {
-    if(e.target.value.length > MAX_CHARS){
-      e.target.value = e.target.value.slice(0, MAX_CHARS);
-      return;
-    }
-    setTitle(e.target.value);
-  }
+    const value = e.target.value.slice(0, MAX_CHARS);
+    setTitle(value);
+  };
 
   const UpdateDescription = (e) => {
     if(e.target.value.length > MAX_DESC_CHARS){
@@ -34,12 +31,19 @@ function RecipeBasic({ errors }) {
     setDescription(e.target.value);
   }
 
+  useEffect(() => {
+    if(recipeData != null){
+      setTitle(recipeData.title);
+      setDescription(recipeData.description);
+      setImage(import.meta.env.VITE_API_URL + "/" + recipeData.dishPicture);
+    }
+  }, [recipeData]);
+
   return (
     <div className="container p-0 d-flex shadow">
       <div className="card p-4 text-center w-100">
-
         <div className={"p-2 bg-danger text-white text-start " + (errors?.Title == null ? "d-none" : "")}>{errors?.Title}&nbsp;</div>
-        <input type="text" id="recipeTitle" name="Title" placeholder="Title" className="form-control mb-3 border-0 border-bottom border-black" onChange={(e) => {UpdateTitle(e)}} /> 
+        <input type="text" id="recipeTitle" name="Title" placeholder="Title" className="form-control mb-3 border-0 border-bottom border-black" onChange={UpdateTitle} value={title} /> 
 
         <div className="d-flex justify-content-between align-items-center mb-2">
             <div className={`text - end small mb-2 ${remaining <= 5 ? 'text-danger' : 'text-muted'}`}>
@@ -68,7 +72,7 @@ function RecipeBasic({ errors }) {
             </div>
         </div>
 
-        <input type="submit" className="btn btn-primary mt-3" value="Create recipe" />
+        <input type="submit" className="btn btn-primary mt-3" value={recipeData? "Update recipe" : "Create recipe"} />
       
       </div>
     </div>
