@@ -23,6 +23,7 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.
+builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
 builder.Services.AddScoped<IFavoriteService, FavoriteService>();
 builder.Services.AddScoped<IReferenceDataService, ReferenceDataService>();
 builder.Services.AddScoped<IPollService, PollService>();
@@ -32,6 +33,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddAutoMapper(cfg =>
 {
+    cfg.AddProfile<LeaderboardMappingProfile>();
     cfg.AddProfile<IngredientMappingProfile>();
     cfg.AddProfile<PollMappingProfile>();
     cfg.AddProfile<RecipeMappingProfile>();
@@ -39,6 +41,7 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.AddProfile<ReviewMappingProfile>();
 });
 
+builder.Services.AddScoped<ILeaderboardRepository, LeaderboardRepository>();
 builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 builder.Services.AddScoped<IReferenceDataRepository, ReferenceDataRepository>();
 builder.Services.AddScoped<IPollRepository, PollRepository>();
