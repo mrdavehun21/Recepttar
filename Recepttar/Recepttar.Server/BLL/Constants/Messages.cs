@@ -77,5 +77,10 @@
             public const string LowOptions = "At least 2 options are needed";
             public const string NoQuestion = "A question is needed";
         }
+
+        public static class Leaderboard
+        {
+            public const string InvalidOption = "Invalid sort option.";
+        }
     }
 }
