@@ -8,7 +8,8 @@ import Polls from '../features/poll/pages/poll.jsx';
 import ProfilePage from '../features/profile/pages/profile.jsx';
 import MyCollection from '../features/my-collection/pages/MyCollection.jsx';
 import CreateRecipe from '../features/create-recipe/pages/CreateRecipe.jsx';
-import NotFound from '../shared/pages/NotFound.jsx';
+import NotFound from '../shared/pages/NotFound.jsx'
+import Leaderboard from '../features/leaderboard/pages/leaderboard.jsx';
 
 export default function AppRouter() {
     const { isLoggedIn, profileData } = useAuth();
@@ -67,6 +68,7 @@ export default function AppRouter() {
                     ) : null
                 }
             />
+            <Route path="/leaderboard" element={<Leaderboard />} />
         </Routes>
     )
 }
