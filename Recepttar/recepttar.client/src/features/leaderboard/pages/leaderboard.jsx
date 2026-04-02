@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getLeaderboardData } from "../hook/useGetLeaderboard";
+import OtherUsersTable from "../components/ther-users-table/other-users-table";
 import Podium from "../components/podium/podium";
 
 export default function Leaderboard() {
@@ -14,9 +15,10 @@ export default function Leaderboard() {
     }, []);
 
     return (
-        <div className="leaderboard-page">
-            <h1>Leaderboard</h1>
+        <div className="leaderboard-page bg-dark h-100 text-white pt-4">
+            <h1 className="fs-1 w-fit mx-auto mb-5">Leaderboard</h1>
             <Podium profiles={leaderboardData}></Podium>
+            <OtherUsersTable profiles={leaderboardData.slice(3)}></OtherUsersTable>
         </div>
     );
 }
