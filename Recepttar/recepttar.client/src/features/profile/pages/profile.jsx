@@ -7,6 +7,7 @@ import ErrorBox from '../../../shared/components/error-box/ErrorBox';
 import Card from '../../main/components/recipe-card/Card';
 import Logo from '../../../assets/Logo.png';
 import './index.css';
+import NotFound from '../../../shared/pages/NotFound';
 
 function profile() {
   const API_BASE = import.meta.env.VITE_API_URL;
@@ -26,10 +27,13 @@ function profile() {
     }
   }, [error]);
 
+  if(errorVisible){
+    return (<NotFound message="The user you are looking for does not exist."/>);
+  }
+  
   return (
       <div className="d-flex align-items-center h-100 w-100 justify-content-center">
-        <ErrorBox visible={errorVisible} errorMessage={error} clearError={setError} closeError={setErrorVisible}/>
-          <form className="p-4 ms-auto me-auto mt-4 mb-4 container-bg-beige rounded-2 shadow w-75 w-min-320" onSubmit={async (e) => {
+        <form className="p-4 ms-auto me-auto mt-4 mb-4 container-bg-beige rounded-2 shadow w-75 w-min-320" onSubmit={async (e) => {
               e.preventDefault();
 
               const formData = new FormData(e.target);

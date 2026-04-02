@@ -1,12 +1,39 @@
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../../shared/hooks/useAuthContext';
 import useGetUserCollections from "../hooks/useGetUserCollections";
 import RecipeCard from "../../main/components/recipe-card/Card";
 import PollCard from "../../main/components/poll-section/PollCard";
 import ContainerLayout from "../components/containerLayout";
+import CreatePollCard from "../../poll/components/create-card/CreatePollCard";
+import CreatePollForm from "../../poll/components/create-poll-form/CreatePollFrom";
+import { createPoll } from '../../poll/hooks/useCreatePoll';
+import { usePolls } from '../../main/hooks/usePoll';
+import ErrorBox from '../../../shared/components/error-box/ErrorBox';
 
 export default function MyCollection() {
     const { isLoggedIn, profileData } = useAuth();
+    const { polls, deletePoll } = usePolls();
+    const { isFormOpen, openForm, pollValues } = createPoll();
     const { favoriteRecipes, userRecipes, userPolls } = useGetUserCollections(profileData?.id);
+    
+    const [pollCards, updatePolls] = useState([]);
+    const [error, setError] = useState('');
+    const [errorVisible, setErrorVisible] = useState(false);
+
+    useEffect(() => {
+        if(error !== ''){
+            setErrorVisible(true);
+        }
+    }, [error]);
+
+    useEffect(() => {
+        updatePolls(userPolls);
+    }, [userPolls]);
+
+    function deletePollCard(pollId) {
+        deletePoll(pollId);
+        updatePolls(prevPolls => prevPolls.filter(poll => poll.id !== pollId));
+    }
 
     return (
         <div className="w-100">
@@ -26,10 +53,20 @@ export default function MyCollection() {
                     <h2 className="text-white fw-bold">My polls</h2>
                 </div>
                 <ContainerLayout>
+                    <CreatePollCard openFormTrigger={openForm} caption={"Create new!"} />
                     {
-                        userPolls.map(poll => (
-                            <PollCard key={poll.id} data={poll} profileID={profileData} />
+                        pollCards.map(poll => (
+                            <PollCard key={poll.id} data={poll} profileID={profileData} deletePollMethod={deletePollCard} />
                         ))
+                    }
+
+                    {
+                        (isFormOpen) ? 
+                        (
+                            <CreatePollForm isFormOpen={isFormOpen} openForm={openForm} preData={pollValues} errorMessage={setError} >
+                                <ErrorBox visible={errorVisible} errorMessage={error} clearError={setError} closeError={setErrorVisible}/>
+                            </CreatePollForm>
+                        ) : ( null )
                     }
                 </ContainerLayout>
             </div>

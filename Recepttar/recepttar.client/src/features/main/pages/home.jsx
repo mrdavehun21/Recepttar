@@ -36,7 +36,7 @@ function Home({ isLoggedIn, profileID }) {
                     />
 
                     {!error.errorCode && (
-                        <Recipes recipes={recipes} />
+                        <Recipes recipes={recipes} loginStatus={isLoggedIn} />
                     )}
                 </div>
 

@@ -1,8 +1,9 @@
 import usePollForm from "../../hooks/usePollForm";
+import { ReactSortable } from "react-sortablejs";
 import './CreatePollForm.css';
 
 export default function CreatePollForm({isFormOpen, openForm, preData = [null, null], errorMessage, children}) {
-    const { options, handleSubmit, handleAddOption } = usePollForm(preData, errorMessage);
+    const { options, handleSubmit, handleAddOption, handleRemoveOption, setOptions } = usePollForm(preData, errorMessage);
 
     return (
         <div className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center poll-form-background z-index-max" >
@@ -11,14 +12,33 @@ export default function CreatePollForm({isFormOpen, openForm, preData = [null, n
                 <input name="Question" type="text" className="border border-black form-control mb-3 rounded-4 p-2" placeholder="Enter your question here..." defaultValue={(preData?.id == undefined) ? "" : preData?.question}/>
 
                 <h2 className="text-decoration-underline">Options</h2>
+                <ReactSortable
+                list={options}
+                setList={setOptions}
+                animation={150}
+                handle=".border-end"
+                >
                 {options.map((option, index) => (
-                <div className="d-flex border border-black form-control mb-3 rounded-4">
-                    <div className="d-flex align-items-center p-1 border-end border-black">
-                    <span className="fw-bold me-2">{index + 1}</span>
+                    <div className="d-flex border border-black form-control mb-3 rounded-4">
+                        <div className="d-flex align-items-center p-1 border-end border-black">
+                        <span className="fw-bold me-2">{index + 1}</span>
+                        </div>
+                        <input
+                            name={`options[${index}].OptionText`}
+                            type="text"
+                            className="d-block form-control border-0 shadow-none"
+                            placeholder={`Option ${index + 1}`}
+                            value={option.text}
+                            onChange={(e) => {
+                                const updated = [...options];
+                                updated[index].text = e.target.value;
+                                setOptions(updated);
+                            }}
+                        />
+                        <button type="button" onClick={() => handleRemoveOption(option.id)} className="d-flex align-items-center justify-content-center p-2 border-0 bg-transparent"><i className="bi bi-x-lg text-danger fs-4"></i></button>
                     </div>
-                    <input name={`options[${index}].OptionText`} key={index} type="text" className="d-block form-control border-0 shadow-none" placeholder={`Option ${index + 1}`} defaultValue={(preData?.options?.[index]?.optionText == undefined) ? "" : preData?.options?.[index]?.optionText } />
-                </div>
                 ))}
+                </ReactSortable>
 
                 <button onClick={handleAddOption} className="w-100 d-flex align-items-center gap-2 justify-content-center rounded-4 polls-bg-additional-7 text-light fw-bold"><i className="bi bi-plus-circle fs-3 fw-bold text-black"></i>Add option</button>
 

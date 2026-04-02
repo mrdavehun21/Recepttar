@@ -90,7 +90,7 @@ export async function searchRecipes(query = []) {
 
         return recipes.map(recipe => ({
             ...recipe,
-            isFavorite: favoriteIds.includes(recipe.id)
+            isFavorite: favoriteIds.includes(recipe.recipeId)
         }));
     } catch (err) {
         if (err.response?.status === 401) {

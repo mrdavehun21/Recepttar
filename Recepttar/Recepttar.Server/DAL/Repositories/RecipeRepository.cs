@@ -61,6 +61,7 @@ namespace Recepttar.Server.DAL.Repositories
         public async Task ReplaceIngredientsAsync(int recipeId, IEnumerable<RecipeIngredient> ingredients)
         {
             await _context.RecipeIngredients.Where(ri => ri.RecipeId == recipeId).ExecuteDeleteAsync();
+            ingredients.ToList().ForEach(i => i.RecipeId = recipeId);
             _context.RecipeIngredients.AddRange(ingredients);
             await _context.SaveChangesAsync();
         }
@@ -68,6 +69,7 @@ namespace Recepttar.Server.DAL.Repositories
         public async Task ReplaceStepsAsync(int recipeId, IEnumerable<RecipeStep> steps)
         {
             await _context.RecipeSteps.Where(rs => rs.RecipeId == recipeId).ExecuteDeleteAsync();
+            steps.ToList().ForEach(s => s.RecipeId = recipeId);
             _context.RecipeSteps.AddRange(steps);
             await _context.SaveChangesAsync();
         }
