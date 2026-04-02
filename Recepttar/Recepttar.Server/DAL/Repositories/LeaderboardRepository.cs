@@ -10,6 +10,8 @@ namespace Recepttar.Server.DAL.Repositories
     {
         private readonly AppDbContext _context;
 
+         private const int LeaderboardSize = 6;
+
         public LeaderboardRepository(AppDbContext context)
         {
             _context = context;
@@ -30,7 +32,7 @@ namespace Recepttar.Server.DAL.Repositories
                 _ => query.OrderByDescending(u => u.Recipes.SelectMany(r => r.Favorites).Count())
             };
 
-            return await sorted.Take(3).ToListAsync();
+            return await sorted.Take(LeaderboardSize).ToListAsync();
         }
     }
 }
