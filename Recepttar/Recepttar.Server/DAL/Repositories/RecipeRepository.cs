@@ -8,9 +8,9 @@ namespace Recepttar.Server.DAL.Repositories
 {
     public class RecipeRepository : IRecipeRepository
     {
-        private readonly AppDbContext _context;
+        private readonly RecepttarDbContext _context;
 
-        public RecipeRepository(AppDbContext context)
+        public RecipeRepository(RecepttarDbContext context)
         {
             _context = context;
         }
@@ -120,6 +120,11 @@ namespace Recepttar.Server.DAL.Repositories
             }
 
             return await query.ToListAsync();
+        }
+
+        public async Task<int> CountByUserAsync(int userId)
+        {
+            return await _context.Recipes.CountAsync(r => r.AuthorId == userId);
         }
     }
 }

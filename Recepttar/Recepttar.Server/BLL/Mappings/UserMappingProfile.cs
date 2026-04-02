@@ -13,7 +13,7 @@ namespace Recepttar.Server.BLL.Mappings
         {
             CreateMap<User, UserDto>();
             CreateMap<User, ProfileDto>()
-                .ForMember(dest => dest.ProfilePicture, opt => opt.MapFrom(src => ProfilePicturePath.GetPath(src.Id)));
+                .ForMember(dest => dest.ProfilePicture, opt => opt.MapFrom(src => PicturePaths.ProfilePicturePath.GetPath(src.Id)));
 
             CreateMap<RegisterUserDto, User>()
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())

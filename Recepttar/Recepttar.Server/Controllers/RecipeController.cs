@@ -12,11 +12,13 @@ namespace Recepttar.Server.Controllers
     {
         private readonly IRecipeService _recipeService;
         private readonly IReviewService _reviewService;
+        private readonly IUserRankService _userRankService;
 
-        public RecipeController(IRecipeService recipeService, IReviewService reviewService)
+        public RecipeController(IRecipeService recipeService, IReviewService reviewService, IUserRankService userRankService)
         {
             _recipeService = recipeService;
             _reviewService = reviewService;
+            _userRankService = userRankService;
         }
 
         [HttpGet("all")]
@@ -67,6 +69,7 @@ namespace Recepttar.Server.Controllers
                 return BadRequest(addRecipeResult.ErrorMessage);
             }
 
+            await _userRankService.EvaluateUserRankAsync(userId.Value);
             return Created(string.Empty, addRecipeResult.SuccessMessage);
         }
 

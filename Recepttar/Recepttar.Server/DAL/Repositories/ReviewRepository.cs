@@ -7,9 +7,9 @@ namespace Recepttar.Server.DAL.Repositories
 {
     public class ReviewRepository : IReviewRepository
     {
-        private readonly AppDbContext _context;
+        private readonly RecepttarDbContext _context;
 
-        public ReviewRepository(AppDbContext context)
+        public ReviewRepository(RecepttarDbContext context)
         {
             _context = context;
         }

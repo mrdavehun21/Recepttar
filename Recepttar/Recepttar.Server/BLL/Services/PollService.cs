@@ -30,7 +30,7 @@ namespace Recepttar.Server.BLL.Services
                 Id = p.Id,
                 AuthorId = p.Author.Id,
                 FullName = p.Author.FullName,
-                ProfilePicture = ProfilePicturePath.GetPath(p.Author.Id),
+                ProfilePicture = PicturePaths.ProfilePicturePath.GetPath(p.Author.Id),
                 Question = p.Question,
                 Options = p.Options.Select(o => new PollOptionDto
                 {
@@ -59,7 +59,7 @@ namespace Recepttar.Server.BLL.Services
                 Id = p.Id,
                 AuthorId = p.Author.Id,
                 FullName = p.Author.FullName,
-                ProfilePicture = ProfilePicturePath.GetPath(p.Author.Id),
+                ProfilePicture = PicturePaths.ProfilePicturePath.GetPath(p.Author.Id),
                 Question = p.Question,
                 Options = p.Options.Select(o => new PollOptionDto
                 {

@@ -14,7 +14,7 @@ namespace Recepttar.Server.BLL.Mappings
                 .ForMember(dest => dest.ReviewId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.Id))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
-                .ForMember(dest => dest.ProfilePicture, opt => opt.MapFrom(src => ProfilePicturePath.GetPath(src.User.Id)));
+                .ForMember(dest => dest.ProfilePicture, opt => opt.MapFrom(src => PicturePaths.ProfilePicturePath.GetPath(src.User.Id)));
         }
     }
 }

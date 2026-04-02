@@ -11,7 +11,7 @@ namespace Recepttar.Server.BLL.Mappings
         {
             CreateMap<Recipe, RecipeCardDto>()
                 .ForMember(dest => dest.RecipeId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.DishPicture, opt => opt.MapFrom(src => DishPicturePath.GetPath(src.Id)))
+                .ForMember(dest => dest.DishPicture, opt => opt.MapFrom(src => PicturePaths.DishPicturePath.GetPath(src.Id)))
                 .ForMember(dest => dest.AverageRating, opt => opt.MapFrom(src =>
                     src.Reviews.Any()
                         ? (float)Math.Round(src.Reviews.Average(rv => rv.Stars), 1)
@@ -20,7 +20,7 @@ namespace Recepttar.Server.BLL.Mappings
 
             CreateMap<Recipe, RecipeDto>()
                 .ForMember(dest => dest.RecipeId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.DishPicture, opt => opt.MapFrom(src => DishPicturePath.GetPath(src.Id)))
+                .ForMember(dest => dest.DishPicture, opt => opt.MapFrom(src => PicturePaths.DishPicturePath.GetPath(src.Id)))
                 .ForMember(dest => dest.Ingredients, opt => opt.MapFrom(src => src.Ingredients))
                 .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps.OrderBy(s => s.StepNumber)));
 

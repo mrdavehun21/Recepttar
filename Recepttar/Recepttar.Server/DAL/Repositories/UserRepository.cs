@@ -9,10 +9,10 @@ namespace Recepttar.Server.DAL.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly AppDbContext _context;
+        private readonly RecepttarDbContext _context;
         private readonly IMapper _mapper;
 
-        public UserRepository(AppDbContext context, IMapper mapper)
+        public UserRepository(RecepttarDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
