@@ -7,9 +7,9 @@ namespace Recepttar.Server.DAL.Repositories
 {
     public class PollRepository : IPollRepository
     {
-        private readonly AppDbContext _context;
+        private readonly RecepttarDbContext _context;
 
-        public PollRepository(AppDbContext context)
+        public PollRepository(RecepttarDbContext context)
         {
             _context = context;
         }

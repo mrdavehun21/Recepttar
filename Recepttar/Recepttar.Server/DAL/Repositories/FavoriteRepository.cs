@@ -7,9 +7,9 @@ namespace Recepttar.Server.DAL.Repositories
 {
     public class FavoriteRepository : IFavoriteRepository
     {
-        private readonly AppDbContext _context;
+        private readonly RecepttarDbContext _context;
 
-        public FavoriteRepository(AppDbContext context)
+        public FavoriteRepository(RecepttarDbContext context)
         {
             _context = context;
         }

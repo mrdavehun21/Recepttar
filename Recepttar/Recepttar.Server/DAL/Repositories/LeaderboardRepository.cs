@@ -8,11 +8,11 @@ namespace Recepttar.Server.DAL.Repositories
 {
     public class LeaderboardRepository : ILeaderboardRepository
     {
-        private readonly AppDbContext _context;
+        private readonly RecepttarDbContext _context;
 
          private const int LeaderboardSize = 6;
 
-        public LeaderboardRepository(AppDbContext context)
+        public LeaderboardRepository(RecepttarDbContext context)
         {
             _context = context;
         }

@@ -14,5 +14,6 @@ namespace Recepttar.Server.DAL.Interfaces
         Task ReplaceIngredientsAsync(int recipeId, IEnumerable<RecipeIngredient> ingredients);
         Task ReplaceStepsAsync(int recipeId, IEnumerable<RecipeStep> steps);
         Task<IEnumerable<Recipe>> SearchAsync(SearchQueryDto queryDto);
+        Task<int> CountByUserAsync(int userId);
     }
 }

@@ -7,11 +7,11 @@ namespace Recepttar.Server.DAL.Repositories
 {
     public class ReferenceDataRepository : IReferenceDataRepository
     {
-        private readonly AppDbContext _context;
+        private readonly RecepttarDbContext _context;
 
         private const int MaxSearchResults = 4;
 
-        public ReferenceDataRepository(AppDbContext context)
+        public ReferenceDataRepository(RecepttarDbContext context)
         {
             _context = context;
         }

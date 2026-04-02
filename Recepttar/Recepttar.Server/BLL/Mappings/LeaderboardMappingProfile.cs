@@ -14,7 +14,7 @@ namespace Recepttar.Server.BLL.Mappings
                     opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.ProfilePicture,
                     opt => opt.MapFrom(src =>
-                        ProfilePicturePath.GetPath(src.Id)))
+                        PicturePaths.ProfilePicturePath.GetPath(src.Id)))
                 .ForMember(dest => dest.RecipeCount,
                     opt => opt.MapFrom(src => src.Recipes.Count))
                 .ForMember(dest => dest.AvgRating,

@@ -4,9 +4,9 @@ using Recepttar.Server.BLL.Enums;
 
 namespace Recepttar.Server.DAL.Data
 {
-    public class AppDbContext : DbContext
+    public class RecepttarDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public RecepttarDbContext(DbContextOptions<RecepttarDbContext> options) : base(options) { }
 
         public DbSet<User> Users => Set<User>();
         public DbSet<Recipe> Recipes => Set<Recipe>();
@@ -66,33 +66,43 @@ namespace Recepttar.Server.DAL.Data
                 .HasForeignKey(v => v.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // HasConversion
+            // Enums
+            modelBuilder.Entity<User>()
+                .Property(r => r.Rank)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => Enum.Parse<UserRanksEnum>(v)
+                )
+                .HasColumnType($"ENUM('{string.Join("', '", Enum.GetNames<UserRanksEnum>())}')")
+                .HasDefaultValue(UserRanksEnum.HomeCook);
+
+
             modelBuilder.Entity<Recipe>()
                 .Property(r => r.Difficulty)
                 .HasConversion(
                     v => v.ToString(),
                     v => Enum.Parse<RecipeDiffEnum>(v)
-                );
+                )
+                .HasColumnType($"ENUM('{string.Join("', '", Enum.GetNames<RecipeDiffEnum>())}')")
+                .HasDefaultValue(RecipeDiffEnum.Easy);
 
             modelBuilder.Entity<Recipe>()
                 .Property(r => r.Type)
                 .HasConversion(
                     v => v.ToString(),
                     v => Enum.Parse<RecipeTypeEnum>(v)
-                );
+                )
+                .HasColumnType($"ENUM('{string.Join("', '", Enum.GetNames<RecipeTypeEnum>())}')")
+                .HasDefaultValue(RecipeTypeEnum.Appetizer);
 
-            modelBuilder.Entity<User>()
-                .Property(r => r.Rank)
-                .HasConversion(
-                    v => v.ToString(),
-                    v => Enum.Parse<UserRanksEnum>(v)
-                );
             modelBuilder.Entity<RecipeIngredient>()
                 .Property(r => r.MeasurementUnit)
                 .HasConversion(
                     v => v.ToString(),
                     v => Enum.Parse<MeasurementUnitEnum>(v)
-                );
+                )
+                .HasColumnType($"ENUM('{string.Join("', '", Enum.GetNames<MeasurementUnitEnum>())}')")
+                .HasDefaultValue(MeasurementUnitEnum.Piece);
         }
 
     }
