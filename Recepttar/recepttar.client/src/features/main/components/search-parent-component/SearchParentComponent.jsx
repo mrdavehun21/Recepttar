@@ -16,6 +16,20 @@ function SearchApp({
         setSelectedTags
     );
 
+    const colors = [
+        "is-expensive",
+        "is-expensive",
+        "is-vegan",
+
+        "Difficulty",
+        "Difficulty",
+        "Difficulty",
+
+        "DishType",
+        "DishType",
+        "DishType"
+    ]
+
     return (
         <div className="search-container w-95 rounded-2 m-4">
             <h2 className="m-2 mt-2 mb-4 ms-2 text-decoration-underline text-light fs-3">
@@ -29,13 +43,13 @@ function SearchApp({
                     </h3>
 
                     <div className="OptionButtonContainer">
-                        {TAGS.map((tag) => (
+                        {TAGS.map((tag, index) => (
                             <button
                                 key={tag}
                                 onClick={() => toggleTag(tag)}
                                 className={`OptionButton tag-bg-additional-1 tag-bg-additional-2-hover ${selectedTags.includes(tag)
-                                    ? "tag-bg-additional-3"
-                                        : ""
+                                    ? "bg-white border border-black border-2"
+                                        : colors[index]
                                     }`}
                             >
                                 {tag}

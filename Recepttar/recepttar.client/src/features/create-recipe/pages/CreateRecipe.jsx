@@ -8,6 +8,7 @@ import RecipeBasic from '../components/recipe-basic-info/RecipeBasic';
 import Ingredients from '../../../shared/components/ingredients-filter/IngredientFilter';
 import RecipeSteps from '../components/recipe-steps/RecipeSteps';
 import IngredientList from '../components/recipe-ingredients-list/IngredientsList';
+import ErrorPage from '../../../shared/pages/NotFound';
 
 function CreateRecipe() {
   const { recipeId } = useParams();
@@ -34,6 +35,11 @@ function CreateRecipe() {
     useEffect(() => {
       async function fetchData(recipeId) {
         const recipe = await fetchRecipe(recipeId);
+
+        if(recipe?.authorId !== profileData?.id){
+          navigate(`/recipe/${recipeId}`);
+        }
+
         setIngredients(recipe.ingredients);
         setRecipeData(recipe);
       }

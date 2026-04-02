@@ -73,10 +73,10 @@ export function usePollCard(data) {
     const submitVote = async () => {
         const success = await handleSubmit(data.id);
         if (!success) return;
-
+        
         setOptions(prev =>
             prev.map(opt =>
-                opt.id === selectedOptionId
+                opt.optionId === selectedOptionId
                     ? { ...opt, voteCount: opt.voteCount + 1 }
                     : opt
             )

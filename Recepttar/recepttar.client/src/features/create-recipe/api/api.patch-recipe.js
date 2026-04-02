@@ -7,6 +7,7 @@ export async function getRecipe(recipeId){
         return repsonse.data;
     } catch (error) {
         console.error(error);
+        return null;
     }
 }
 

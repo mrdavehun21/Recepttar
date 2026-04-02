@@ -150,3 +150,17 @@
 .ingredients {
     background-color: #8DA5F7;
 }
+
+/* ------ ~ Filter colors ~ ------ */
+.is-expensive{
+    background-color: #38B4B4;
+}
+.is-vegan {
+    background-color: #1C8D89;
+}
+.Difficulty{
+    background-color: #42B895;
+}
+.DishType{
+    background-color: #46B6CC;
+}
