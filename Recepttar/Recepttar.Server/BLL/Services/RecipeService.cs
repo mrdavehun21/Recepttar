@@ -65,7 +65,7 @@ namespace Recepttar.Server.BLL.Services
                 return ResultT<RecipeDto>.Failure(Messages.Recipe.InvalidServings);
             }
 
-            if (createDto.Ingredients.Count <= 0)
+            if (createDto.Ingredients.Count == 0)
             {
                 return ResultT<RecipeDto>.Failure(Messages.Recipe.NoIngredients);
             }
@@ -108,6 +108,26 @@ namespace Recepttar.Server.BLL.Services
             if (recipe.AuthorId != userId)
             {
                 return ResultT<UpdateResult>.Failure(Messages.Recipe.NotOwner);
+            }
+
+            if (updateDto.TimeMinutes.HasValue && updateDto.TimeMinutes <= 0)
+            {
+                return ResultT<UpdateResult>.Failure(Messages.Recipe.InvalidTime);
+            }
+
+            if (updateDto.Servings.HasValue && updateDto.Servings <= 0)
+            {
+                return ResultT<UpdateResult>.Failure(Messages.Recipe.InvalidServings);
+            }
+
+            if (updateDto.Ingredients != null && updateDto.Ingredients.Count == 0)
+            {
+                return ResultT<UpdateResult>.Failure(Messages.Recipe.NoIngredients);
+            }
+
+            if (updateDto.Steps != null && updateDto.Steps.Count == 0)
+            {
+                return ResultT<UpdateResult>.Failure(Messages.Recipe.NoSteps);
             }
 
             bool wasUpdated = false;
