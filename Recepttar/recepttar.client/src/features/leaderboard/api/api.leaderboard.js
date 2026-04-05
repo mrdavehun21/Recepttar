@@ -6,7 +6,7 @@ export async function fetchSortOptions(){
     let response = null;
     try {
         response = await axios.get(`${API_BASE}/api/leaderboard/sortoptions`);
-        return response.data.categories;
+        return response.data;
     } catch (err) {
         console.error('Error fetching categories:', err);
         throw err;

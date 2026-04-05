@@ -1,7 +1,7 @@
-import { fetchLeaderboardData } from '../api/api.leaderboard';
+import { fetchLeaderboardData, fetchSortOptions } from '../api/api.leaderboard';
 
 export async function getSortOptions() {
-    
+    return await fetchSortOptions();
 }
 
 export async function getLeaderboardData(sortOption = null) {
