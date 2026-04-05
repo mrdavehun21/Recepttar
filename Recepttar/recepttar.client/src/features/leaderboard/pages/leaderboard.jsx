@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getLeaderboardData, getSortOptions } from "../hook/useGetLeaderboard";
-import OtherUsersTable from "../components/ther-users-table/other-users-table";
+import OtherUsersTable from "../components/other-users-table/other-users-table";
 import Podium from "../components/podium/podium";
 
 export default function Leaderboard() {
