@@ -64,6 +64,7 @@
         {
             public const string Created = "Poll created";
             public const string NotFound = "Poll not found";
+            public const string NotActive = "This poll is no longer active";
             public const string Voted = "User already voted";
             public const string InvalidOption = "Invalid option";
             public const string Recorded = "Vote recorded";

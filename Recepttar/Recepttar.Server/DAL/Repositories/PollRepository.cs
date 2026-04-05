@@ -14,9 +14,10 @@ namespace Recepttar.Server.DAL.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Poll>> GetAllAsync()
+        public async Task<IEnumerable<Poll>> GetAllActiveAsync()
         {
             return await _context.Polls
+                .Where(p => p.IsActive)
                 .Include(p => p.Author)
                 .Include(p => p.Options)
                     .ThenInclude(o => o.Votes)

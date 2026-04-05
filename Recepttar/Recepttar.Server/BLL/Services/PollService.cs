@@ -24,11 +24,12 @@ namespace Recepttar.Server.BLL.Services
 
         public async Task<IEnumerable<PollCardDto>> GetActivePollsAsync(int userId)
         {
-            var polls = await _pollRepository.GetAllAsync();
+            var polls = await _pollRepository.GetAllActiveAsync();
             return polls.Select(p => new PollCardDto
             {
                 Id = p.Id,
                 AuthorId = p.Author.Id,
+                IsActive = p.IsActive,
                 FullName = p.Author.FullName,
                 ProfilePicture = PicturePaths.ProfilePicturePath.GetPath(p.Author.Id),
                 Question = p.Question,
@@ -58,6 +59,7 @@ namespace Recepttar.Server.BLL.Services
             {
                 Id = p.Id,
                 AuthorId = p.Author.Id,
+                IsActive = p.IsActive,
                 FullName = p.Author.FullName,
                 ProfilePicture = PicturePaths.ProfilePicturePath.GetPath(p.Author.Id),
                 Question = p.Question,
@@ -117,6 +119,11 @@ namespace Recepttar.Server.BLL.Services
                 return Result.Failure(Messages.Poll.NotFound);
             }
 
+            if (!poll.IsActive)
+            {
+                return Result.Failure(Messages.Poll.NotActive);
+            }
+
             if (!await _pollRepository.OptionBelongsToPollAsync(pollId, optionId))
             {
                 return Result.Failure(Messages.Poll.InvalidOption);
@@ -161,6 +168,11 @@ namespace Recepttar.Server.BLL.Services
                 return ResultT<UpdateResult>.Failure(Messages.Poll.NotOwner);
             }
 
+            if (!poll.IsActive)
+            {
+                return ResultT<UpdateResult>.Failure(Messages.Poll.NotActive);
+            }
+
             bool wasUpdated = false;
 
             if (!string.IsNullOrWhiteSpace(updateDto.Question) && updateDto.Question != poll.Question)
@@ -189,6 +201,11 @@ namespace Recepttar.Server.BLL.Services
             }
 
             return ResultT<UpdateResult>.Success(new UpdateResult { WasUpdated = false }, Messages.Poll.NoChanges);
+        }
+
+        public async Task DeactivateAllPollsAsync(CancellationToken ct)
+        {
+            await _pollRepository.DeactivateAllActivePollsAsync(ct);
         }
     }
 }
