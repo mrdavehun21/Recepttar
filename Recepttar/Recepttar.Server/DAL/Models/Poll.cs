@@ -10,6 +10,7 @@ namespace Recepttar.Server.DAL.Models
 
         [ForeignKey(nameof(Author))]
         public int AuthorId { get; set; }
+        public bool IsActive { get; set; } = true;
 
         [Required, MaxLength(255)]
         public string Question { get; set; } = string.Empty;

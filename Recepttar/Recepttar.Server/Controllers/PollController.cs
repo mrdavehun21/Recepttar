@@ -80,6 +80,9 @@ namespace Recepttar.Server.Controllers
                 case Messages.Poll.InvalidOption:
                     return BadRequest(voteResult.ErrorMessage);
 
+                case Messages.Poll.NotActive:
+                    return BadRequest(voteResult.ErrorMessage);
+
                 default:
                     return StatusCode(500, Messages.Server.Error);
             }

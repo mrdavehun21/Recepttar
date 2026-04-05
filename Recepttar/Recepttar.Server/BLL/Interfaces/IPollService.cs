@@ -11,5 +11,6 @@ namespace Recepttar.Server.BLL.Interfaces
         Task<Result> AddVoteAsync(int userId, int pollId, int optionId);
         Task<Result> DeletePollAsync(int userId, int pollId);
         Task<ResultT<UpdateResult>> UpdatePollAsync(int userId, int pollId, PollDto updateDto);
+        Task DeactivateAllPollsAsync(CancellationToken ct);
     }
 }

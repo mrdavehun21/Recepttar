@@ -23,6 +23,7 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.
+builder.Services.AddHostedService<PollCleanupService>();
 builder.Services.AddScoped<IUserRankService, UserRankService>();
 builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
 builder.Services.AddScoped<IFavoriteService, FavoriteService>();
