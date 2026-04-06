@@ -65,6 +65,16 @@ i18n.use(initReactI18next).init({
                     viewAll: "View all",
                 },
 
+                leaderboardPage: {
+                    leaderboardHeader: "Leaderboard",
+                    sortBy: {
+                        FavoriteCount: "Favorite count",
+                        AvgRating: "Average rating",
+                        RecipeCount: "Recipe count",
+                    },
+                    recipes: "recipe",
+                },
+
                 pollCard: {
                     editPoll: "Edit",
                     deletePoll: "Delete",
@@ -135,6 +145,17 @@ i18n.use(initReactI18next).init({
                     polls: "Szavazások",
 
                     viewAll: "Összes megtekintése",
+                },
+
+                //Leaderboard page translations
+                leaderboardPage: {
+                    leaderboardHeader: "Ranglista",
+                    sortBy: {
+                        FavoriteCount: "Legnépszerűbb",
+                        AvgRating: "Legjobbra értékelt",
+                        RecipeCount: "Legaktívabb",
+                    },
+                    recipes: "recept",
                 },
 
                 //Components translations
