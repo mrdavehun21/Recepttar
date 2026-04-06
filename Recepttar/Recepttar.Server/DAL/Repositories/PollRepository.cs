@@ -93,5 +93,13 @@ namespace Recepttar.Server.DAL.Repositories
             _context.Polls.Update(poll);
             await _context.SaveChangesAsync();
         }
+
+         public async Task DeactivateAllActivePollsAsync(CancellationToken ct)
+         {
+             await _context.Polls
+                 .Where(p => p.IsActive)
+                 .ExecuteUpdateAsync(p =>
+                     p.SetProperty(x => x.IsActive, false), ct);
+         }
     }
 }
