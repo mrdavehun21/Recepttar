@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuthContext';
 import { ImageAvailable } from '../../hooks/usePictureChecker';
 import { submitLogoutRequest } from '../../api/recipe.api';
+import { useTranslation } from 'react-i18next';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Logo from '../../../assets/Logo.png';
 import './Navbar.css';
@@ -10,7 +11,10 @@ import './Navbar.css';
 export default function NavbarComponent() {
     const { isLoggedIn, profileData } = useAuth();
     const [imageExists, setImageExists] = useState(false);
+
     const API_BASE = import.meta.env.VITE_API_URL;
+
+    const { t, i18n } = useTranslation();
 
     async function handleLogout() {
         try {
@@ -41,8 +45,8 @@ export default function NavbarComponent() {
         <nav className="w-100 main-green d-flex justify-content-between align-items-center pt-2 pb-2 navbar">
             <div className="d-none d-sm-block">
                 <Link to="/home"><img className="h-75px" src={Logo} alt="" /></Link>
-                <Link to="/leaderboard" className="fs-4 ms-3 font-neutral-100 fw-bold">Leaderboard</Link>
-                <Link to="/polls" className="fs-4 ms-3 font-neutral-100 fw-bold">Polls</Link>
+                <Link to="/leaderboard" className="fs-4 ms-3 font-neutral-100 fw-bold">{t("navbar.leaderboard")}</Link>
+                <Link to="/polls" className="fs-4 ms-3 font-neutral-100 fw-bold">{t("navbar.polls")}</Link>
             </div>
             <div className="d-block d-sm-none">
             <Dropdown align="end" className="ms-3 rounded-2 dropdown">
@@ -51,8 +55,8 @@ export default function NavbarComponent() {
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu className="mt-1">
-                    <Dropdown.Item href="/home">Home</Dropdown.Item>
-                    <Dropdown.Item href="/leaderboard">Leaderboard</Dropdown.Item>
+                    <Dropdown.Item href="/home">{t("navbar.home")}</Dropdown.Item>
+                    <Dropdown.Item href="/leaderboard">{t("navbar.leaderboard")}</Dropdown.Item>
                     <Dropdown.Item href="/polls">Polls</Dropdown.Item>
                 </Dropdown.Menu>
             </Dropdown>
@@ -69,7 +73,7 @@ export default function NavbarComponent() {
                     ) : (
                         <>
                             <i className="bi bi-person-circle fs-2"></i>
-                            <span className="fw-semibold d-none d-sm-block">Profile</span>
+                            <span className="fw-semibold d-none d-sm-block">{t("navbar.profile")}</span>
                         </>
                     )}
                 </Dropdown.Toggle>
@@ -77,18 +81,18 @@ export default function NavbarComponent() {
                 <Dropdown.Menu className="mt-1">
                     {isLoggedIn ? (
                         <>
-                            <Dropdown.Item href="/mycollection#favorites">My favorites</Dropdown.Item>
-                            <Dropdown.Item href="/mycollection#polls">My polls</Dropdown.Item>
-                            <Dropdown.Item href="/mycollection#recipes">My recipes</Dropdown.Item>
+                            <Dropdown.Item href="/mycollection#favorites">{t("navbar.myFavorites")}</Dropdown.Item>
+                            <Dropdown.Item href="/mycollection#polls">{t("navbar.myPolls")}</Dropdown.Item>
+                            <Dropdown.Item href="/mycollection#recipes">{t("navbar.createRecipe")}</Dropdown.Item>
                             <Dropdown.Divider />
-                            <Dropdown.Item href="/recipe/createrecipe">Create recipe</Dropdown.Item>
+                            <Dropdown.Item href="/recipe/createrecipe">{t("navbar.createRecipe")}</Dropdown.Item>
                             <Dropdown.Divider />
-                            <Dropdown.Item href="/profile">Profile</Dropdown.Item>
+                            <Dropdown.Item href="/profile">{t("navbar.myProfile")}</Dropdown.Item>
                             <Dropdown.Divider />
-                            <Dropdown.Item onClick={handleLogout} className="text-danger">Log out</Dropdown.Item>
+                            <Dropdown.Item onClick={handleLogout} className="text-danger">{t("navbar.logOut")}</Dropdown.Item>
                         </>
                     ) : (
-                        <Dropdown.Item href="/login">Login</Dropdown.Item>
+                        <Dropdown.Item href="/login">{t("navbar.logIn")}</Dropdown.Item>
                     )}
                 </Dropdown.Menu>
             </Dropdown>

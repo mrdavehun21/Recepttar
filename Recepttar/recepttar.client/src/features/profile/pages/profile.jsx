@@ -3,15 +3,15 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../../../shared/hooks/useAuthContext';
 import { useUpdateUser } from '../hooks/useProfileUpdate';
 import { useProfile } from '../hooks/useProfile';
-import ErrorBox from '../../../shared/components/error-box/ErrorBox';
+import { useTranslation } from 'react-i18next';
 import Card from '../../main/components/recipe-card/Card';
+import NotFound from '../../../shared/pages/NotFound';
 import Logo from '../../../assets/Logo.png';
 import './index.css';
-import NotFound from '../../../shared/pages/NotFound';
 
-function profile() {
+function Profile() {
   const API_BASE = import.meta.env.VITE_API_URL;
-
+  
   const { profileId } = useParams();
   const { isLoggedIn, profileData } = useAuth();
   const { UpdateUser } = useUpdateUser();
@@ -20,6 +20,13 @@ function profile() {
   const [errorVisible, setErrorVisible] = useState(false);
   
   const { data, imageExists } = useProfile(profileId, profileData, isLoggedIn, setError);
+
+  const { t, i18n } = useTranslation();
+
+  const Languages = [
+    { code: 'en', name: 'English', flag: 'GB' },
+    { code: 'hu', name: 'Hungarian', flag: 'HU' },
+  ]
 
   useEffect(() => {
     if(error !== ''){
@@ -55,13 +62,13 @@ function profile() {
                   )
                 }
               </div>
-                <p>Rank level - {data?.rank}</p>
+                <p>{t("userRank.rankLevel")} - {t(`userRank.${data?.rank}`)}</p>
                 {
                 (profileId !== undefined) ? (
                   null
                 ) : (
                   <label className="upload-btn polls-bg-additional-7 text-white w-100">
-                    <span className="d-block ms-auto me-auto w-fit">Upload image</span>
+                    <span className="d-block ms-auto me-auto w-fit">{t("userPage.uploadImage")}</span>
                     <input type="file" name="ProfilePicture" accept="image/*" hidden />
                   </label>
                 )
@@ -69,22 +76,32 @@ function profile() {
             </div>
             <div className="w-100 w-max-510">
               <div className="w-100 w-md-75 mx-md-auto">
-                <span className="d-block fs-4 fw-normal m-0 w-fit">Full name</span>
+                <span className="d-block fs-4 fw-normal m-0 w-fit">{t("userPage.fullName")}</span>
                 <input name="Name" className="d-block w-100 p-2 rounded-3 border border-black" type="text" defaultValue={data?.fullName} disabled={profileId != undefined}/>
               </div>
               <div className={"w-100 w-md-75 mx-md-auto " + (profileId != undefined ? "d-none" : "")}>
-                <span className="d-block fs-4 fw-normal m-0 mt-3 w-fit">Password</span>
+                <span className="d-block fs-4 fw-normal m-0 mt-3 w-fit">{t("userPage.password")}</span>
                 <input name="Password" className="p-2 w-100 rounded-3 border border-black" type="password" disabled={profileId != undefined}/>
               </div>
               <div className="w-100 w-md-75 mx-md-auto">
-                <span className="d-block fs-4 fw-normal m-0 mt-3 w-fit">Email</span>
+                <span className="d-block fs-4 fw-normal m-0 mt-3 w-fit">{t("userPage.email")}</span>
                 <input name="Email" className="p-2 w-100 rounded-3 border border-black" type="text" disabled={profileId != undefined} defaultValue={data?.email}/>
               </div>
               <div className="w-100 w-md-75 mx-md-auto">
-                <span className="d-block fs-4 fw-normal m-0 mt-3 w-fit">Bio</span>
+                <span className="d-block fs-4 fw-normal m-0 mt-3 w-fit">{t("userPage.bio")}</span>
                 <textarea name="Bio" className="p-2 w-100 rounded-3 border border-black" type="text" defaultValue={data?.bio} style={{height: "180px"}} disabled={profileId != undefined} />
               </div>
 
+              <div>
+                <span className="d-block fs-4 fw-normal m-0 mt-2 w-fit">{t("userPage.language")}</span>
+                <select className="form-select mb-3" name="" id="" value={i18n.language} onChange={(e) => { i18n.changeLanguage(e.target.value); localStorage.setItem('i18nextLng', e.target.value);}}>
+                  {
+                    Languages.map((language) => (
+                      <option key={language.code} value={language.code}>{language.flag} {language.name}</option>
+                    ))
+                  }
+                </select>
+              </div>
             </div>
           </div>
             {
@@ -100,7 +117,7 @@ function profile() {
                     </div>
                 </div>
               ) : (
-                <input className="d-block ms-auto mt-3 polls-bg-additional-8 text-white border border-black p-2 rounded-3" type="submit" value="Save" style={{ width: "100px" }} />
+                <input className="d-block ms-auto mt-3 polls-bg-additional-8 text-white border border-black p-2 rounded-3" type="submit" value={t("userPage.save")} style={{ width: "100px" }} />
               )
             }
         </form>
@@ -108,4 +125,4 @@ function profile() {
   );
 }
 
-export default profile;
+export default Profile;

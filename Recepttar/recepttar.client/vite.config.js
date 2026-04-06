@@ -45,6 +45,9 @@ export default defineConfig({
             '@': fileURLToPath(new URL('./src', import.meta.url))
         }
     },
+    optimizeDeps: {
+        include: ['i18next', 'react-i18next']
+    },
     server: {
         proxy: {
             '^/weatherforecast': {
