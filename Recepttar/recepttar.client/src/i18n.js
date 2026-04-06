@@ -40,6 +40,36 @@ i18n.use(initReactI18next).init({
 
                 homePage: {
                     search: "Search",
+                    tags: "Tags",
+                    tagsList: {
+                        expensive: "Expensive",
+                        cheap: "Cheap",
+                        vegan: "Vegan",
+
+                        easy: "Easy",
+                        medium: "Medium",
+                        hard: "Hard",
+
+                        appetizer: "Appetizer",
+                        maindish: "Main dish",
+                        dessert: "Dessert",
+                    },
+                    ingredients: "Ingredients",
+                    recipesHeader: "Recipes",
+                    showMore: "Show More",
+
+                    reviewSingular: "review",
+                    reviewPlural: "reviews",
+
+                    polls: "Polls",
+                    viewAll: "View all",
+                },
+
+                pollCard: {
+                    editPoll: "Edit",
+                    deletePoll: "Delete",
+                    submitVote: "Submit",
+                    alreadyVoted: "Already voted",
                 }
             }
         },
@@ -76,6 +106,43 @@ i18n.use(initReactI18next).init({
                     language: "Nyelv",
                     uploadImage: "Kép feltöltése",
                     save: "Mentés",
+                },
+
+                //Home page translations
+                homePage: {
+                    search: "Keresés",
+                    tags: "Címkék",
+                    tagsList: {
+                        expensive: "Költséges",
+                        cheap: "Olcsó",
+                        vegan: "Vegán",
+
+                        easy: "Könnyű",
+                        medium: "Átlagos",
+                        hard: "Nehéz",
+
+                        appetizer: "Előétel",
+                        maindish: "Főétel",
+                        dessert: "Édesség",
+                    },
+                    ingredients: "Hozávalók",
+                    recipesHeader: "Receptek",
+                    showMore: "Mutass többet",
+
+                    reviewSingular: "értékelés",
+                    reviewPlural: "értékelés",
+
+                    polls: "Szavazások",
+
+                    viewAll: "Összes megtekintése",
+                },
+
+                //Components translations
+                pollCard: {
+                    editPoll: "Szerkesztés",
+                    deletePoll: "Törlés",
+                    submitVote: "Szavazat leadása",
+                    alreadyVoted: "Már szavaztál",
                 }
             }
         }

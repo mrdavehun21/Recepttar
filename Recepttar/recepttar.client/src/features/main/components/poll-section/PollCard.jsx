@@ -7,7 +7,7 @@ import ErrorBox from '../../../../shared/components/error-box/ErrorBox';
 import CreatePollForm from '../../../poll/components/create-poll-form/CreatePollFrom';
 import { createPoll } from '../../../poll/hooks/useCreatePoll';
 
-function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null, returnPollValues }) {
+function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null, returnPollValues, t }) {
     const API_BASE = import.meta.env.VITE_API_URL;
 
     const {
@@ -113,13 +113,13 @@ function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null
                                 className={"w-50 text-light fw-bold border-0 polls-bg-additional-7 p-2 "}
                                 onClick={() => {openForm(); setPollValue(data)}}
                             >
-                                Edit
+                                {t("pollCard.editPoll")}
                             </button>
                             <button
                                 className={"w-50 text-light fw-bold border-0 polls-bg-additional-7 p-2 "}
                                 onClick={() => deletePollMethod(data.id)}
                             >
-                                Delete
+                                {t("pollCard.deletePoll")}
                             </button>
                         </div>
                     ): (
@@ -128,7 +128,7 @@ function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null
                             disabled={hasVoted || submitting || !selectedOptionId || !loginStatus}
                             onClick={submitVote}
                         >
-                            {hasVoted ? 'Already voted' : 'Submit'}
+                            {hasVoted ? t("pollCard.alreadyVoted") : t("pollCard.submitVote")}
                         </button>
                     )
                 }

@@ -14,7 +14,7 @@ export default function NavbarComponent() {
 
     const API_BASE = import.meta.env.VITE_API_URL;
 
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
 
     async function handleLogout() {
         try {
@@ -57,7 +57,7 @@ export default function NavbarComponent() {
                 <Dropdown.Menu className="mt-1">
                     <Dropdown.Item href="/home">{t("navbar.home")}</Dropdown.Item>
                     <Dropdown.Item href="/leaderboard">{t("navbar.leaderboard")}</Dropdown.Item>
-                    <Dropdown.Item href="/polls">Polls</Dropdown.Item>
+                    <Dropdown.Item href="/polls">{t("navbar.polls")}</Dropdown.Item>
                 </Dropdown.Menu>
             </Dropdown>
             </div>

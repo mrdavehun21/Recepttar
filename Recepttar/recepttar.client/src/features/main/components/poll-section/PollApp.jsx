@@ -3,7 +3,7 @@ import { usePolls } from '../../hooks/usePoll';
 import PollCard from './PollCard';
 import './PollApp.css';
 
-function PollApp({ loginStatus, profileID }) {
+function PollApp({ loginStatus, profileID, t }) {
     const { polls } = usePolls();
 
     return (
@@ -17,21 +17,21 @@ function PollApp({ loginStatus, profileID }) {
                     <div className="d-none"></div>
                 )
             }
-            <h2 className="m-2 mt-2 mb-4 ms-2 text-decoration-underline color-neutral-100 fs-3">Polls</h2>
+            <h2 className="m-2 mt-2 mb-4 ms-2 text-decoration-underline color-neutral-100 fs-3">{t("homePage.polls")}</h2>
             <div className="d-block d-md-flex m-1 flex-column align-items-center overflow-auto">
                 {
                     (!loginStatus) ? (
                         polls.slice(0, 1).map((item, index) => (
-                            <PollCard key={index} data={item} loginStatus={loginStatus} profileID={profileID} />
+                            <PollCard key={index} data={item} loginStatus={loginStatus} profileID={profileID} t={t} />
                         ))
                     ) : (
                         <div>
                             {
                                 polls.slice(0, 4).map((item, index) => (
-                                    <PollCard key={index} data={item} loginStatus={loginStatus} profileID={profileID} />
+                                    <PollCard key={index} data={item} loginStatus={loginStatus} profileID={profileID} t={t}/>
                                 ))
                             }
-                            <Link to="/polls" className="d-block polls-bg-additional-8 p-2 rounded-2 text-light text-decoration-none ms-auto me-auto mb-3 w-fit">View all</Link>
+                            <Link to="/polls" className="d-block polls-bg-additional-8 p-2 rounded-2 text-light text-decoration-none ms-auto me-auto mb-3 w-fit">{t("homePage.viewAll")}</Link>
                         </div>
                     )
                 }

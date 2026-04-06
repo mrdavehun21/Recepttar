@@ -5,7 +5,7 @@ import EmptyHeart from "../../../../assets/emptyHeart.svg";
 import FilledHeart from "../../../../assets/fullHeart.svg";
 import './Card.css';
 
-function Card({ data, allowFavorites = true }) {
+function Card({ data, allowFavorites = true, t }) {
     const API_BASE = import.meta.env.VITE_API_URL;
 
     const { isFavorite, toggleFavorite } = useFavorites(data.isFavorite);
@@ -81,8 +81,8 @@ function Card({ data, allowFavorites = true }) {
                                     {data.averageRating}
                                 </span>
                             </div>
-                            <div>{data.reviewCount} Review{
-                                (data.reviewCount > 1) ? "s" : ""
+                            <div>{data.reviewCount} {
+                                (data.reviewCount > 1) ? t("homePage.reviewPlural") : t("homePage.reviewSingular")
                             }</div>
                         </div>
                     </div>

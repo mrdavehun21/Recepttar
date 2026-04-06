@@ -8,7 +8,8 @@ function SearchApp({
         setSelectedTags,
         selectedIngredients,
         setSelectedIngredients,
-        setSearch
+        setSearch,
+        t
     }) {
 
     const { TAGS, toggleTag } = useTagSelection(
@@ -33,13 +34,13 @@ function SearchApp({
     return (
         <div className="search-container w-95 rounded-2 m-4">
             <h2 className="m-2 mt-2 mb-4 ms-2 text-decoration-underline text-light fs-3">
-                Search
+                {t("homePage.search")}
             </h2>
 
             <div className="d-flex flex-column flex-lg-row justify-content-between bg-light m-3 p-2 rounded-2 shadow gap-4 gap-lg-0">
                 <div className="d-flex flex-column align-items-center order-1 order-lg-1">
                     <h3 className="mt-0 mb-3 text-decoration-underline color-neutral-100 fs-3">
-                        Tags
+                        {t("homePage.tags")}
                     </h3>
 
                     <div className="OptionButtonContainer">
@@ -52,13 +53,13 @@ function SearchApp({
                                         : colors[index]
                                     }`}
                             >
-                                {tag}
+                                {t(`homePage.tagsList.${tag.replace(/\s/g, "").toLocaleLowerCase()}`)}
                             </button>
                         ))}
                     </div>
                 </div>
 
-                <SearchComponent setSearch={setSearch} />
+                <SearchComponent setSearch={setSearch} t={t} />
 
                 <div
                     className="d-flex flex-column align-items-center order-2 order-lg-3 ms-auto ms-lg-0 me-auto me-lg-0"
@@ -67,6 +68,7 @@ function SearchApp({
                     <Ingredient
                         selectedIngredients={selectedIngredients}
                         setSelectedIngredients={setSelectedIngredients}
+                        t={t}
                     />
                 </div>
             </div>
