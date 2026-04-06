@@ -41,7 +41,7 @@ export default function NavbarComponent() {
         <nav className="w-100 main-green d-flex justify-content-between align-items-center pt-2 pb-2 navbar">
             <div className="d-none d-sm-block">
                 <Link to="/home"><img className="h-75px" src={Logo} alt="" /></Link>
-                <Link to="/recipes" className="fs-4 ms-3 font-neutral-100 fw-bold">Recipes</Link>
+                <Link to="/leaderboard" className="fs-4 ms-3 font-neutral-100 fw-bold">Leaderboard</Link>
                 <Link to="/polls" className="fs-4 ms-3 font-neutral-100 fw-bold">Polls</Link>
             </div>
             <div className="d-block d-sm-none">
@@ -52,7 +52,7 @@ export default function NavbarComponent() {
 
                 <Dropdown.Menu className="mt-1">
                     <Dropdown.Item href="/home">Home</Dropdown.Item>
-                    <Dropdown.Item href="/recipes">Recipes</Dropdown.Item>
+                    <Dropdown.Item href="/leaderboard">Leaderboard</Dropdown.Item>
                     <Dropdown.Item href="/polls">Polls</Dropdown.Item>
                 </Dropdown.Menu>
             </Dropdown>

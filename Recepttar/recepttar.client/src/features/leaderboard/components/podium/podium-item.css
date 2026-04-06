@@ -1,0 +1,33 @@
+.podium{
+    width: 200px;
+    min-width: 30%;
+    border-start-end-radius: 20px;
+    border-start-start-radius: 20px;
+}
+
+.podium-step-1{
+    background: #fccb82;
+    height: 200px;
+}
+
+.podium-step-2{
+    background: #65b0ff;
+    height: 170px;
+}
+
+.podium-step-3{
+    background: #ffa0e1;
+    height: 140px;
+}
+
+/* Mobile */
+.podium-1 { order: 1; }
+.podium-2 { order: 2; }
+.podium-3 { order: 3; }
+
+/* Desktop */
+@media (min-width: 768px) {
+    .podium-1 { order: 2; }
+    .podium-2 { order: 1; }
+    .podium-3 { order: 3; }
+}
