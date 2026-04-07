@@ -98,6 +98,34 @@ i18n.use(initReactI18next).init({
                     recipes: "recipe",
                 },
 
+                myCollectionPage: {
+                    myFavorites: "My favorites",
+                    myPolls: "My polls",
+                    myRecipes: "My recipes",
+                },
+
+                recipeViewPage: {
+                    totalTime: "Total Time",
+                    timeUnit: {
+                        min: "min",
+                        hour: "hour",
+                    },
+                    servings: "Servings",
+                    author: "Author",
+                    description: "Description",
+                    instructions: "Instructions",
+                    ingredientsListHeader: "Ingredients list",
+                    portions: "Portions",
+
+                    reviews: "Reviews",
+                    editReviewHeader: "Edit Your Review",
+                    cancel: "Cancel",
+                    saveChanges: "Save",
+                    submitReview: "Submit Review",
+                    WriteAReview: "Write a Review",
+                    shareThoughts: "Share your thoughts about this recipe...",
+                },
+
                 pollCard: {
                     editPoll: "Edit",
                     deletePoll: "Delete",
@@ -107,6 +135,7 @@ i18n.use(initReactI18next).init({
 
                 createPollCard: {
                     pollPageHeader: "Create your own!",
+                    pollHeaderShort: "Create new!",
                 },
 
                 createCardForm: {
@@ -139,7 +168,7 @@ i18n.use(initReactI18next).init({
                     logIn: "Bejelentkezés",
                 },
                 userRank: {
-                    rankLevel: "Rang szint",
+                    rankLevel: "Rang",
                     HomeCook: "Kezdő szakács",
                     ChefMaster: "Haladó szakács",
                     FoodLegend: "Főszakács",
@@ -149,8 +178,8 @@ i18n.use(initReactI18next).init({
                 userPage: {
                     fullName: "Teljes név",
                     password: "Jelszó",
-                    email: "Email",
-                    bio: "Bemutatkozás",
+                    email: "E-mail",
+                    bio: "Rólam",
                     language: "Nyelv",
                     uploadImage: "Kép feltöltése",
                     save: "Mentés",
@@ -218,6 +247,35 @@ i18n.use(initReactI18next).init({
                     recipes: "recept",
                 },
 
+                //My-collection page translations
+                myCollectionPage: {
+                    myFavorites: "Kedvenceim",
+                    myPolls: "Szavazásaim",
+                    myRecipes: "Recepteim",
+                },
+
+                recipeViewPage: {
+                    totalTime: "Teljes idő",
+                    timeUnit: {
+                        min: "perc",
+                        hour: "óra",
+                    },
+                    servings: "Adag",
+                    author: "Készítő",
+                    description: "Leírás",
+                    instructions: "Elkészítés",
+                    ingredientsListHeader: "Hozzávalók",
+                    portions: "Adag",
+
+                    reviews: "Vélemények",
+                    editReviewHeader: "Vélemény szerkesztése",
+                    cancel: "Mégse",
+                    saveChanges: "Mentés",
+                    submitReview: "Beküldés",
+                    WriteAReview: "Írj véleményt",
+                    shareThoughts: "Oszd meg véleményed erről a receptről...",
+                },
+
                 //Components translations
                 pollCard: {
                     editPoll: "Szerkesztés",
@@ -228,10 +286,11 @@ i18n.use(initReactI18next).init({
 
                 createPollCard: {
                     pollPageHeader: "Indíts saját szavazást!",
+                    pollHeaderShort: "Új létrehozása!",
                 },
 
                 createCardForm: {
-                    question: "Kérdes",
+                    question: "Kérdés",
                     questionPlaceholder: "Írd ide a kérdésed...",
                     options: "Válaszlehetőségek",
                     optionsPlaceholder: "Válasz",

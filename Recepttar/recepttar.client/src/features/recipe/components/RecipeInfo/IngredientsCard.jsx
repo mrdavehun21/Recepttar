@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const IngredientsCard = ({ ingredients }) => {
+const IngredientsCard = ({ ingredients, t }) => {
     const [portions, setPortions] = useState(1);
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -8,14 +8,14 @@ const IngredientsCard = ({ ingredients }) => {
         <div className="card ingredients">
             <div className="card-body">
                 <div className="d-flex align-items-center gap-3 mb-2">
-                    <h5 className="card-title">Ingredients list</h5>
+                    <h5 className="card-title">{t("recipeViewPage.ingredientsListHeader")}</h5>
                     <div style={{ position: 'relative', display: 'inline-block' }}>
                         <button
                             onClick={() => setDropdownOpen(!dropdownOpen)}
                             style={{
                                 background: 'white', border: '1px solid #ccc', borderRadius: '8px', padding: '6px 12px',
                                 cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'}}>
-                            {portions}x portion<i className="bi bi-chevron-down" />
+                            {portions}x {t("recipeViewPage.portions")}<i className="bi bi-chevron-down" />
                         </button>
                         {dropdownOpen && (
                             <div style={{
@@ -27,7 +27,7 @@ const IngredientsCard = ({ ingredients }) => {
                                         style={{ padding: '8px 16px', cursor: 'pointer', borderRadius: '8px' }}
                                         onMouseEnter={e => e.currentTarget.style.background = '#f0f0f0'}
                                         onMouseLeave={e => e.currentTarget.style.background = 'white'}>
-                                        {p}x portion
+                                        {p}x {t("recipeViewPage.portions")}
                                     </div>
                                 ))}
                             </div>

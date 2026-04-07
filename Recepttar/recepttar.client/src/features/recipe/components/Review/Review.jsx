@@ -6,7 +6,7 @@ import ReviewCard from './ReviewCard';
 import { deleteReviewById, getRecipeById } from '../../api/recipe.api';
 import { Modal } from 'bootstrap';
 
-const Reviews = ({ reviews, recipeId, onReviewAdded }) => {
+const Reviews = ({ reviews, recipeId, onReviewAdded, t }) => {
     const [editingReview, setEditingReview] = useState(null);
     const [reviewToDelete, setReviewToDelete] = useState(null);
     const [deleteError, setDeleteError] = useState(null);
@@ -49,7 +49,7 @@ const Reviews = ({ reviews, recipeId, onReviewAdded }) => {
     return (
         <div className="card mt-3 reviews-bg" style={{ border: 'none' }}>
             <div className="card-body">
-                <h5 className="card-title fw-bold text-decoration-underline">Reviews</h5>
+                <h5 className="card-title fw-bold text-decoration-underline">{t("recipeViewPage.reviews")}</h5>
 
                 {editingReview ? (
                     <EditReview
@@ -59,9 +59,10 @@ const Reviews = ({ reviews, recipeId, onReviewAdded }) => {
                             setEditingReview(null);
                             onReviewAdded();
                         }}
+                        t={t}
                     />
                 ) : canReview ? (
-                    <CreateReview recipeId={recipeId} onReviewAdded={onReviewAdded} />
+                    <CreateReview recipeId={recipeId} onReviewAdded={onReviewAdded} t={t} />
                 ) : null}
 
                 {reviews.map((review, index) => (

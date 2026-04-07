@@ -3,7 +3,7 @@ import { addReviewByRecipeId } from '../../api/recipe.api';
 import { useIsLoggedIn } from '../../../../shared/hooks/useLoginState';
 import "../../../../shared/styles/ColorPalette.css";
 
-const CreateReview = ({ recipeId, onReviewAdded }) => {
+const CreateReview = ({ recipeId, onReviewAdded, t }) => {
     const [stars, setStars] = useState(0);
     const [hoveredStar, setHoveredStar] = useState(0);
     const [comment, setComment] = useState('');
@@ -47,7 +47,7 @@ const CreateReview = ({ recipeId, onReviewAdded }) => {
     return (
         <div className="card mb-3" style={{ border: 'none', borderRadius: '12px' }}>
             <div className="card-body">
-                <div className="fw-bold mb-2">Write a Review</div>
+                <div className="fw-bold mb-2">{t("recipeViewPage.WriteAReview")}</div>
 
                 <div className="d-flex justify-content-center">
                     <div className="mb-2">
@@ -63,7 +63,7 @@ const CreateReview = ({ recipeId, onReviewAdded }) => {
                     </div>
                 </div>
 
-                <textarea className="form-control review-bg mb-2" placeholder="Share your thoughts about this recipe..." value={comment}
+                <textarea className="form-control review-bg mb-2" placeholder={t("recipeViewPage.shareThoughts")} value={comment}
                     onChange={e => setComment(e.target.value.slice(0, MAX_CHARS))}
                     style={{ resize: 'none' }} rows={5} />
 
@@ -73,7 +73,7 @@ const CreateReview = ({ recipeId, onReviewAdded }) => {
                     <div className={`text - end small mb-2 ${remaining <= 20 ? 'text-danger' : 'text-muted'}`}>
                         {remaining} / {MAX_CHARS}
                     </div>
-                    <button className="btn btn-sm btn-danger" onClick={handleSubmit}>Submit Review</button>
+                    <button className="btn btn-sm btn-danger" onClick={handleSubmit}>{t("recipeViewPage.submitReview")}</button>
                 </div>
             </div>
         </div>

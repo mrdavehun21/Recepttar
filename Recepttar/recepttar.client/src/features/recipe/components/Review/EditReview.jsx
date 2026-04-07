@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { updateReviewById } from '../../api/recipe.api';
 
-const EditReview = ({ review, onCancel, onReviewUpdated }) => {
+const EditReview = ({ review, onCancel, onReviewUpdated, t }) => {
     const [stars, setStars] = useState(review.stars);
     const [hoveredStar, setHoveredStar] = useState(0);
     const [comment, setComment] = useState(review.comment);
@@ -24,7 +24,7 @@ const EditReview = ({ review, onCancel, onReviewUpdated }) => {
     return (
         <div className="card mb-3" style={{ border: '1px solid #dee2e6', borderRadius: '12px' }}>
             <div className="card-body">
-                <div className="fw-bold mb-2">Edit Your Review</div>
+                <div className="fw-bold mb-2">{t("recipeViewPage.editReviewHeader")}</div>
                 <div className="d-flex justify-content-center">
                     <div className="mb-2">
                         {[1, 2, 3, 4, 5].map(star => (
@@ -48,8 +48,8 @@ const EditReview = ({ review, onCancel, onReviewUpdated }) => {
                         {remaining} / {MAX_CHARS}
                     </div>
                     <div className="d-flex gap-2">
-                        <button className="btn btn-sm btn-outline-secondary" onClick={onCancel}>Cancel</button>
-                        <button className="btn btn-sm btn-danger" onClick={handleSubmit}>Save Changes</button>
+                        <button className="btn btn-sm btn-outline-secondary" onClick={onCancel}>{t("recipeViewPage.cancel")}</button>
+                        <button className="btn btn-sm btn-danger" onClick={handleSubmit}>{t("recipeViewPage.saveChanges")}</button>
                     </div>
                 </div>
             </div>
