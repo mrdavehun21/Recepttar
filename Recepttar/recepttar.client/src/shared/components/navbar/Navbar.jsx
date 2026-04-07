@@ -83,7 +83,7 @@ export default function NavbarComponent() {
                         <>
                             <Dropdown.Item href="/mycollection#favorites">{t("navbar.myFavorites")}</Dropdown.Item>
                             <Dropdown.Item href="/mycollection#polls">{t("navbar.myPolls")}</Dropdown.Item>
-                            <Dropdown.Item href="/mycollection#recipes">{t("navbar.createRecipe")}</Dropdown.Item>
+                            <Dropdown.Item href="/mycollection#recipes">{t("navbar.myRecipes")}</Dropdown.Item>
                             <Dropdown.Divider />
                             <Dropdown.Item href="/recipe/createrecipe">{t("navbar.createRecipe")}</Dropdown.Item>
                             <Dropdown.Divider />

@@ -5,6 +5,7 @@ import NameSet from '../components/NameSet'
 import EmailStep from '../components/EmailStep';
 import PasswordStep from '../components/PasswordStep';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function RegisterPage() {
     const navigate = useNavigate();
@@ -25,6 +26,8 @@ export default function RegisterPage() {
         goBackToEmail
     } = useRegister();
 
+    const { t } = useTranslation();
+
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
             step === 1 ? checkEmailExists() : handleRegister();
@@ -40,7 +43,7 @@ export default function RegisterPage() {
 
                 <div className="col-md-6 d-flex align-items-center justify-content-center bg-light">
                     <div className="register-container p-4 p-lg-5">
-                        <h1 className="h2 fw-bold mb-2 text-dark">Register</h1>
+                        <h1 className="h2 fw-bold mb-2 text-dark">{t("registerPage.register")}</h1>
 
                         {error && (
                             <div className="alert alert-danger fade show">
@@ -50,7 +53,7 @@ export default function RegisterPage() {
 
                         {step === 1 && (
                             <>
-                                <NameSet name={name} setName={setName}  />
+                                <NameSet name={name} setName={setName} t={t} />
                                 <EmailStep
                                     isNameValid={isNameValid}
                                     email={email}
@@ -62,6 +65,7 @@ export default function RegisterPage() {
                                     onLogin={() => navigate('/login') }
                                     onDiscover={() => navigate('/')}
                                     theme="register"
+                                    t={t}
                                 />
                             </>
                         )}
@@ -76,6 +80,7 @@ export default function RegisterPage() {
                                 onBack={goBackToEmail}
                                 onKeyDown={handleKeyDown}
                                 theme="register"
+                                t={t}
                             />
                         )}
 

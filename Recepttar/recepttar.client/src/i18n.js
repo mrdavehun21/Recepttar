@@ -32,7 +32,7 @@ i18n.use(initReactI18next).init({
                     fullName: "Full name",
                     password: "Password",
                     email: "Email",
-                    bio: "Bemutatkozás",
+                    bio: "Bio",
                     language: "Language",
                     uploadImage: "Upload image",
                     save: "Save",
@@ -63,6 +63,29 @@ i18n.use(initReactI18next).init({
 
                     polls: "Polls",
                     viewAll: "View all",
+
+                    signInToVote: "Sign in to vote!",
+                },
+
+                //Login page translations
+                loginPage: {
+                    signIn: "Sign In",
+                    logIn: "Log in",
+                    email: "Email Address",
+                    emailPattern: "Please use the following pattern: info@recepttar.hu",
+                    continue: "Continue",
+                    or: "or",
+                    createAccount: "Create an Account",
+                    discoverRecipes: "Discover recipes",
+
+                    password: "Password",
+                    passwordRequirements: "Password requirements: minimum 8 characters and must include a number",
+                },
+
+                registerPage: {
+                    register: "Register",
+                    fullName: "Full name",
+                    fullNameRequirements: "Please enter at least 3 characters",
                 },
 
                 leaderboardPage: {
@@ -109,7 +132,7 @@ i18n.use(initReactI18next).init({
 
                     myFavorites: "Kedvenceim",
                     myPolls: "Szavazásaim",
-                    myRecipes: "Receptjeim",
+                    myRecipes: "Recepteim",
                     createRecipe: "Recept létrehozása",
                     myProfile: "Profilom",
                     logOut: "Kijelentkezés",
@@ -138,7 +161,7 @@ i18n.use(initReactI18next).init({
                     search: "Keresés",
                     tags: "Címkék",
                     tagsList: {
-                        expensive: "Költséges",
+                        expensive: "Drága",
                         cheap: "Olcsó",
                         vegan: "Vegán",
 
@@ -148,9 +171,9 @@ i18n.use(initReactI18next).init({
 
                         appetizer: "Előétel",
                         maindish: "Főétel",
-                        dessert: "Édesség",
+                        dessert: "Desszert",
                     },
-                    ingredients: "Hozávalók",
+                    ingredients: "Hozzávalók",
                     recipesHeader: "Receptek",
                     showMore: "Mutass többet",
 
@@ -160,6 +183,28 @@ i18n.use(initReactI18next).init({
                     polls: "Szavazások",
 
                     viewAll: "Összes megtekintése",
+                    signInToVote: "Lépj be a szavazáshoz!",
+                },
+
+                //Login page translations
+                loginPage: {
+                    signIn: "Bejelentkezés",
+                    logIn: "Bejelentkezés",
+                    email: "E-mail cím",
+                    emailPattern: "Kérjük használja a következő formátumot:  info@recepttar.hu",
+                    continue: "Tovább",
+                    or: "vagy",
+                    createAccount: "Fiók létrehozása",
+                    discoverRecipes: "Receptek böngészése",
+
+                    password: "Jelszó",
+                    passwordRequirements: "Jelszókövetelmények: legalább 8 karakter, és tartalmaznia kell egy számot",
+                },
+
+                registerPage: {
+                    register: "Regisztráció",
+                    fullName: "Teljes név",
+                    fullNameRequirements: "Legalább 3 karakter szükséges",
                 },
 
                 //Leaderboard page translations

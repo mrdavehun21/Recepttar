@@ -4,6 +4,7 @@ import { useLogin } from '../hooks/useLogin'
 import EmailStep from '../components/EmailStep'
 import PasswordStep from '../components/PasswordStep'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next';
 
 export default function LoginPage() {
     const navigate = useNavigate()
@@ -21,6 +22,8 @@ export default function LoginPage() {
         goBackToEmail
     } = useLogin()
 
+    const { t } = useTranslation();
+
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
             step === 1 ? checkEmail() : handleLogin()
@@ -36,7 +39,7 @@ export default function LoginPage() {
 
                 <div className="col-md-6 d-flex align-items-center justify-content-center bg-light">
                     <div className="login-container p-4 p-lg-2">
-                        <h1 className="h2 fw-bold text-dark">Sign In</h1>
+                        <h1 className="h2 fw-bold text-dark">{t("loginPage.signIn")}</h1>
 
                         <div style={{ minHeight: '60px' }}>
                             {error && (
@@ -57,6 +60,7 @@ export default function LoginPage() {
                                 onSignUp={() => navigate('/register')}
                                 onDiscover={() => navigate('/')}
                                 theme="login"
+                                t={t}
                             />
                         )}
 
@@ -70,6 +74,7 @@ export default function LoginPage() {
                                 onBack={goBackToEmail}
                                 onKeyDown={handleKeyDown}
                                 theme="login"
+                                t={t}
                             />
                         )}
 

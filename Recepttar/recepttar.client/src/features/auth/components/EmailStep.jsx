@@ -11,7 +11,8 @@ export default function EmailStep({
     onSignUp,
     onLogin,
     onDiscover,
-    theme = 'login'
+    theme = 'login',
+    t
 }) {
     useEffect(() => {
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
@@ -20,7 +21,7 @@ export default function EmailStep({
 
     const primaryClass = theme === 'login' ? 'login-btn-primary' : 'register-btn-primary';
     const outlineClass = theme === 'login' ? 'login-btn-outline' : 'register-btn-outline';
-    const accountText = theme === 'login' ? 'Create an Account' : 'Log In';
+    const accountText = theme === 'login' ? t("loginPage.createAccount") : t("loginPage.logIn");
     const accountOnclick = theme === 'login' ? onSignUp : onLogin;
 
     const shouldDisable = theme === 'login'
@@ -30,12 +31,12 @@ export default function EmailStep({
     return (
         <>
             <div className="mb-4 mt-2">
-                <label className="form-label fw-semibold">Email Address
+                <label className="form-label fw-semibold">{t("loginPage.email")}
                     <i
                         className="bi bi-question-circle ms-2"
                         data-bs-toggle="tooltip"
                         data-bs-placement="right"
-                        title="Please use the following pattern: info@recepttar.hu"
+                        title={t("loginPage.emailPattern")}
                     />
                 </label>
                 <input
@@ -54,12 +55,12 @@ export default function EmailStep({
                 onClick={onContinue}
                 disabled={shouldDisable}
             >
-                Continue
+                {t("loginPage.continue")}
             </button>
 
             <div className="d-flex align-items-center my-4">
                 <hr className="flex-grow-1" />
-                <span className="px-3 text-muted">or</span>
+                <span className="px-3 text-muted">{t("loginPage.or")}</span>
                 <hr className="flex-grow-1" />
             </div>
 
@@ -76,7 +77,7 @@ export default function EmailStep({
                 className={`btn ${outlineClass} btn-lg w-100`}
                 onClick={onDiscover}
             >
-                Discover recipes
+                {t("loginPage.discoverRecipes") }
             </button>
         </>
     )

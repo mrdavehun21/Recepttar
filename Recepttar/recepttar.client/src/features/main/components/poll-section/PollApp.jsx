@@ -11,7 +11,7 @@ function PollApp({ loginStatus, profileID, t }) {
             {
                 (!loginStatus) ? (
                     <div className="position-absolute w-100 h-100 backdrop-blur d-flex align-items-center justify-content-center">
-                        <h3 className="color-red">Sign in to vote!</h3>
+                        <h3 className="color-red">{t("homePage.signInToVote")}</h3>
                     </div>
                 ) : (
                     <div className="d-none"></div>
