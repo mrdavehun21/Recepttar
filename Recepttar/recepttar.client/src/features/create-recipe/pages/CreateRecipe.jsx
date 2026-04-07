@@ -53,20 +53,48 @@ function CreateRecipe() {
     return (
         <form className="ms-auto me-auto w-95 mt-3" onSubmit={(e) => {
             e.preventDefault();
-            setErrors([]);
+            setErrors({});
+
+            const formData = new FormData(e.target);
+            const newErrors = {};
+
+            const title = formData.get("Title")?.trim();
+            if (!title) {
+                newErrors.Title = ["Title is required."];
+            }
+
+            const description = formData.get("Description")?.trim();
+            if (!description) {
+                newErrors.Description = ["Description is required."];
+            }
+
+            const timeMinutes = Number(formData.get("TimeMinutes"));
+            if (!timeMinutes || timeMinutes <= 0) {
+                newErrors.TimeMinutes = ["Time must be greater than 0."];
+            }
+
+            const servings = Number(formData.get("Servings"));
+            if (!servings || servings <= 0) {
+                newErrors.Servings = ["Servings must be greater than 0."];
+            }
+
             if (ingredients.length === 0) {
-                setErrors(prev => ({ ...prev, Ingredients: "At least one ingredient is required." }));
-                return;
+                newErrors.Ingredients = "At least one ingredient is required.";
             }
+
             if (steps.length === 0) {
-                setErrors(prev => ({ ...prev, Steps: ["At least one step is required."] }));
+                newErrors.Steps = ["At least one step is required."];
+            }
+
+            if (Object.keys(newErrors).length > 0) {
+                setErrors(newErrors);
                 return;
             }
-            if(recipeId != null){
-                patchRecipe(recipeId, new FormData(e.target), setErrors, navigate);
-            }
-            else{
-                submitRecipe(e, setErrors, profileData.id, navigate)
+
+            if (recipeId != null) {
+                patchRecipe(recipeId, formData, setErrors, navigate);
+            } else {
+                submitRecipe(e, setErrors, profileData.id, navigate);
             }
         }}>
             <h3>
