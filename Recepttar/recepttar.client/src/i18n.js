@@ -80,6 +80,21 @@ i18n.use(initReactI18next).init({
                     deletePoll: "Delete",
                     submitVote: "Submit",
                     alreadyVoted: "Already voted",
+                },
+
+                createPollCard: {
+                    pollPageHeader: "Create your own!",
+                },
+
+                createCardForm: {
+                    question: "Question",
+                    questionPlaceholder: "Enter your question here...",
+                    options: "Options",
+                    optionsPlaceholder: "Option",
+                    addOptions: "Add option",
+                    submit: "Submit",
+                    cancel: "Cancel",
+                    update: "Update",
                 }
             }
         },
@@ -164,6 +179,21 @@ i18n.use(initReactI18next).init({
                     deletePoll: "Törlés",
                     submitVote: "Szavazat leadása",
                     alreadyVoted: "Már szavaztál",
+                },
+
+                createPollCard: {
+                    pollPageHeader: "Indíts saját szavazást!",
+                },
+
+                createCardForm: {
+                    question: "Kérdes",
+                    questionPlaceholder: "Írd ide a kérdésed...",
+                    options: "Válaszlehetőségek",
+                    optionsPlaceholder: "Válasz",
+                    addOptions: "Válasz hozzáadása",
+                    submit: "Beküldés",
+                    cancel: "Mégse",
+                    update: "Frissítés",
                 }
             }
         }

@@ -4,7 +4,7 @@ import { usePollCard } from '../../hooks/usePollVote';
 import { ImageAvailable } from '../../../../shared/hooks/usePictureChecker';
 import './PollCard.css';
 import ErrorBox from '../../../../shared/components/error-box/ErrorBox';
-import CreatePollForm from '../../../poll/components/create-poll-form/CreatePollFrom';
+import CreatePollForm from '../../../poll/components/create-poll-form/CreatePollForm';
 import { createPoll } from '../../../poll/hooks/useCreatePoll';
 
 function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null, returnPollValues, t }) {

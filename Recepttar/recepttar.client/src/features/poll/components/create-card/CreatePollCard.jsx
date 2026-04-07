@@ -1,6 +1,6 @@
 import '../../../main/components/poll-section/PollCard.css';
 
-function CreatePollCard({ openFormTrigger, caption="Create your own!" }) {
+function CreatePollCard({ openFormTrigger, caption }) {
   return (
     <div className="card overflow-hidden shadow m-3 rounded-3 vote-card d-flex justify-content-evenly h-fill-available">
       <h3 className="ms-auto me-auto mt-3 mb-4">{caption}</h3>

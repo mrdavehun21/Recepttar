@@ -5,7 +5,7 @@ import RecipeCard from "../../main/components/recipe-card/Card";
 import PollCard from "../../main/components/poll-section/PollCard";
 import ContainerLayout from "../components/containerLayout";
 import CreatePollCard from "../../poll/components/create-card/CreatePollCard";
-import CreatePollForm from "../../poll/components/create-poll-form/CreatePollFrom";
+import CreatePollForm from "../../poll/components/create-poll-form/CreatePollForm";
 import { createPoll } from '../../poll/hooks/useCreatePoll';
 import { usePolls } from '../../main/hooks/usePoll';
 import ErrorBox from '../../../shared/components/error-box/ErrorBox';
