@@ -4,7 +4,7 @@ export default function NameSet({
 }) {
     return (
         <>
-            <label className="form-label fw-semibold">Display Name
+            <label className="form-label fw-semibold">Full name
                 <i
                     className="bi bi-question-circle ms-2"
                     data-bs-toggle="tooltip"
