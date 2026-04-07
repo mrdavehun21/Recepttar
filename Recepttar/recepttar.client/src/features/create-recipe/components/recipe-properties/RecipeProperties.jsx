@@ -34,11 +34,13 @@ function RecipeProperties({ errors, recipeData }) {
         
         <div>
           <h5 className="form-check-label d-block card-title" htmlFor="PrepMin">Preparation time (min)</h5>
+          <div className={"p-2 bg-danger text-white text-start mt-3 " + (errors?.TimeMinutes == null ? "d-none" : "")}>{errors?.TimeMinutes}&nbsp;</div>
           <input type="number" min={1} max={1440} id="PrepMin" name="TimeMinutes" value={prepTime} onChange={e => setPrepTime(e.target.value)} className="d-block w-100 form-control"></input>
         </div>
 
         <div>
           <h5 className="form-check-label d-block card-title" htmlFor="Servings">Servings</h5>
+          <div className={"p-2 bg-danger text-white text-start mt-3 " + (errors?.Servings == null ? "d-none" : "")}>{errors?.Servings}&nbsp;</div>
           <input className="d-block w-100 form-control" type="number" min={1} max={1440} name="Servings" id="Servings" value={servings} onChange={e => setServings(e.target.value)}></input>
         </div>
 
