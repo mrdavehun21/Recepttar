@@ -3,11 +3,8 @@ import { useState, useEffect } from "react";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 
-function RecipeSteps({ errors, recipeData }){
-    const [steps, setSteps] = useState([
-        { id: 1, text: "" },
-        { id: 2, text: "" }
-      ]);
+function RecipeSteps({ errors, recipeData, steps, setSteps }){
+    const [loaded, setLoaded] = useState(false);
 
     const addStep = () => {
         const newId = steps.length > 0 ? Math.max(...steps.map(step => step.id)) + 1 : 1;
@@ -28,9 +25,10 @@ function RecipeSteps({ errors, recipeData }){
     }
 
     useEffect(() => {
-        if(recipeData != null){
+        if(recipeData != null && !loaded){
             const loadedSteps = recipeData.steps.map((step, index) => ({ id: index + 1, text: step.stepDescription }));
             setSteps(loadedSteps);
+            setLoaded(true);
         }
     }, [recipeData]);
 
@@ -52,7 +50,7 @@ function RecipeSteps({ errors, recipeData }){
                 delayOnTouchStart={false}
                 touchStartThreshold={0}
                 className="list-group w-100 pe-md-5 pe-3 border-0"
-                >
+            >
                 {steps.map((step, index) => (
                     <div className="d-flex gap-2 align-items-center m-2 w-100" key={`Step${index}`}>
                         <span className="drag-handle border border-white border-3 rounded-circle d-md-flex justify-content-center align-items-center fs-5 me-2 d-none" style={{ width: "40px", height: "40px", cursor: "grab" }}>{index + 1}</span>
@@ -61,7 +59,7 @@ function RecipeSteps({ errors, recipeData }){
                         <div className="w-100">
                             <div className={"p-2 bg-danger text-white text-start " + (errors?.[`Steps[${index}].StepDescription`]?.[0] == null ? "d-none" : "")}>{errors?.[`Steps[${index}].StepDescription`]?.[0]}&nbsp;</div>
                             <div key={step.id} className="list-group-item w-100 rounded-3 d-flex align-items-center">
-                            <textarea className="form-control border-0" name={`Steps[${index}].StepDescription`} value={step.text} onChange={(e) => updateStepText(index, e.target.value, e.target)} style={{ resize: "none", fieldSizing: "content" }} rows={5} />
+                                <textarea className="form-control border-0" name={`Steps[${index}].StepDescription`} value={step.text} onChange={(e) => updateStepText(index, e.target.value)} style={{ resize: "none", fieldSizing: "content" }} rows={5} />
                                 <a onClick={() => removeStep(step.id)}><i className="bi bi-trash3 text-danger fs-3 ms-2"></i></a>
                             </div>
                         </div>

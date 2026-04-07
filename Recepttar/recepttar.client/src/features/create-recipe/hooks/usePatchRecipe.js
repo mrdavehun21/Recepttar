@@ -17,8 +17,10 @@ export async function patchRecipe(recipeId, formData, setErrors, navigate) {
 
   formData.set("Difficulty", formData.get("Difficulty").toLocaleLowerCase());
 
-  updateRecipe(recipeId, formData, setErrors);
-  navigate(`/recipe/${recipeId}`);
+    const success = await updateRecipe(recipeId, formData, setErrors);
+    if (success) {
+        navigate(`/recipe/${recipeId}`);
+    }
 }
 
 export async function fetchRecipe(recipeId){

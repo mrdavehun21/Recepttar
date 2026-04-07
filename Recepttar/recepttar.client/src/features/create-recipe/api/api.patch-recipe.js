@@ -20,6 +20,7 @@ export async function updateRecipe(recipeId, recipeForm, setErrorMessage){
             },
         });
         setErrorMessage(null);
+        return true;
     }
     catch(error){
         const message = error?.response?.data?.errors;
@@ -36,5 +37,6 @@ export async function updateRecipe(recipeId, recipeForm, setErrorMessage){
         }
 
         setErrorMessage(message);
+        return false;
     }
 }
