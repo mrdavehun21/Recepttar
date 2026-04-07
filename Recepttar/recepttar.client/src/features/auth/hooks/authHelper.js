@@ -7,9 +7,7 @@ export const validateEmailInput = (email) => EMAIL_REGEX.test(email.trim());
 export const validatePasswordInput = (password) => PASSWORD_REGEX.test(password.trim());
 
 export const getApiErrorMessage = (err) => {
-    return err.response?.data?.message ||
-        err.response?.data?.error ||
-        'An error occurred';
+    return err.response?.data;
 };
 
 export const validateName = (name, setError) => {
