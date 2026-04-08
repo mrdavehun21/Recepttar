@@ -27,6 +27,23 @@ i18n.use(initReactI18next).init({
                     ChefMaster: "Chef Master",
                     FoodLegend: "Food Legend",
                 },
+                measurementUnits: {
+                    unit: "Unit",
+                    piece: "Piece",
+                    gram: "Gram",
+                    decagram: "Decagram",
+                    kilogram: "Kilogram",
+                    deciliter: "Deciliter",
+                    liter: "Liter",
+                    pinch: "Pinch",
+                    clove: "Clove",
+                },
+                recipeDifficulty: {
+                    difficulty: "Difficulty",
+                    easy: "Easy",
+                    medium: "Medium",
+                    hard: "Hard",
+                },
 
                 userPage: {
                     fullName: "Full name",
@@ -126,6 +143,30 @@ i18n.use(initReactI18next).init({
                     shareThoughts: "Share your thoughts about this recipe...",
                 },
 
+                createEditRecipePage: {
+                    createNewRecipeHeader: "Create a new recipe",
+                    editRecipeHeader: "Edit recipe",
+                    title: "Title",
+                    noImageSelected: "No image selected",
+                    chooseFile: "Choose file",
+                    noFileChosen: "No file chosen",
+                    descriptionPlaceholder: "A short description about this recipe...",
+                    createRecipe: "Create recipe",
+                    updateRecipe: "Update recipe",
+
+                    recipeDifficulty: "Recipe difficulty",
+                    prepTime: "Preparation time (min)",
+                    servings: "Servings",
+                    price: "Price",
+
+                    selectedIngredients: "Selected ingredients",
+
+                    dishType: "Dish type",
+                    type: "Type",
+                    recipeStepTooltip: "Click and drag the left side of the steps to reorder them",
+                    addStep: "Add step",
+                },
+
                 pollCard: {
                     editPoll: "Edit",
                     deletePoll: "Delete",
@@ -172,6 +213,23 @@ i18n.use(initReactI18next).init({
                     HomeCook: "Kezdő szakács",
                     ChefMaster: "Haladó szakács",
                     FoodLegend: "Főszakács",
+                },
+                measurementUnits: {
+                    unit: "Egység",
+                    piece: "db",
+                    gram: "g",
+                    decagram: "dkg",
+                    kilogram: "kg",
+                    deciliter: "dl",
+                    liter: "l",
+                    pinch: "Csipet",
+                    clove: "Gerezd",
+                },
+                recipeDifficulty: {
+                    difficulty: "Nehézség",
+                    easy: "Könnyű",
+                    medium: "Átlagos",
+                    hard: "Nehéz",
                 },
 
                 //User profile page translations
@@ -274,6 +332,30 @@ i18n.use(initReactI18next).init({
                     submitReview: "Beküldés",
                     WriteAReview: "Írj véleményt",
                     shareThoughts: "Oszd meg véleményed erről a receptről...",
+                },
+
+                createEditRecipePage: {
+                    createNewRecipeHeader: "Új recept létrehozása",
+                    editRecipeHeader: "Recept szerkesztése",
+                    title: "Cím",
+                    noImageSelected: "Nincs kép kiválasztva",
+                    chooseFile: "Fájl kiválasztása",
+                    noFileChosen: "Nincs fájl kiválasztva",
+                    descriptionPlaceholder: "Rövid leírás a receptről...",
+                    createRecipe: "Recept létrehozása",
+                    updateRecipe: "Recept mentése",
+
+                    recipeDifficulty: "Nehézségi szint",
+                    prepTime: "Elkészítési idő (perc)",
+                    servings: "Adag",
+                    price: "Ár",
+                    dishType: "Étel típusa",
+
+                    selectedIngredients: "Kiválasztott hozzávalók",
+
+                    type: "Típus",
+                    recipeStepTooltip: "Kattints és húzd a lépések bal oldalát az átrendezéshez",
+                    addStep: "Lépés hozzáadása",
                 },
 
                 //Components translations

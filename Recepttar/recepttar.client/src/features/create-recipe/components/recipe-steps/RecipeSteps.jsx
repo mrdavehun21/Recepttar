@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 
-function RecipeSteps({ errors, recipeData, steps, setSteps }){
+function RecipeSteps({ errors, recipeData, steps, setSteps, t }){
     const [loaded, setLoaded] = useState(false);
 
     const addStep = () => {
@@ -35,8 +35,8 @@ function RecipeSteps({ errors, recipeData, steps, setSteps }){
     return (
         <div className="card container m-0 mt-3 p-3 shadow w-min-100 main-dark-green text-light mb-3">
             <div className="d-flex gap-2 align-items-center">
-                <h3 className="text-decoration-underline">Instructions</h3>
-                <OverlayTrigger placement="right" overlay={<Tooltip id="tooltip-top">Click and drag the left side of the steps to reorder them.</Tooltip>}>
+                <h3 className="text-decoration-underline">{t("recipeViewPage.instructions")}</h3>
+                <OverlayTrigger placement="right" overlay={<Tooltip id="tooltip-top">{t("createEditRecipePage.recipeStepTooltip")}</Tooltip>}>
                     <i className="bi bi-question-circle fs-5"></i>
                 </OverlayTrigger>
             </div>
@@ -66,7 +66,7 @@ function RecipeSteps({ errors, recipeData, steps, setSteps }){
                     </div>
                 ))}
             </ReactSortable>
-            <button onClick={(e) => {e.preventDefault(); addStep();}} className="w-75 ms-auto me-auto mt-2 d-flex align-items-center gap-2 justify-content-center rounded-4 fw-bold border-0"><i className="bi bi-plus-circle fs-3 fw-bold text-black"></i>Add step</button>
+            <button onClick={(e) => {e.preventDefault(); addStep();}} className="w-75 ms-auto me-auto mt-2 d-flex align-items-center gap-2 justify-content-center rounded-4 fw-bold border-0"><i className="bi bi-plus-circle fs-3 fw-bold text-black"></i>{t("createEditRecipePage.addStep")}</button>
         </div>
     );
 }
