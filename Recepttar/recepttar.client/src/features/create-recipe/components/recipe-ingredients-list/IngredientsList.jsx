@@ -21,7 +21,7 @@ function IngredientList({ ingredients, setIngredients, errors }) {
                             {ingredient.name || ingredient.ingredientName}
                             <div className="d-flex gap-1">
                                 <input type="hidden" name={`Ingredients[${index}].Id`} value={ingredient.id} />
-                                <input type="number" name={`Ingredients[${index}].Quantity`} id="" className="d-block form-control" style={{width: "80px"}} min={1} max={999} defaultValue={1} />
+                                <input type="number" name={`Ingredients[${index}].Quantity`} id="" className="d-block form-control" style={{width: "80px"}} min={1} max={999} defaultValue={ingredient.quantity} />
                                 <select name={`Ingredients[${index}].MeasurementUnit`} id="" className="form-select" defaultValue={ingredient.measurementUnit || "Unit"}>
                                     <option value="Unit">Unit</option>
                                     {measurementUnits.map((unit) => (
