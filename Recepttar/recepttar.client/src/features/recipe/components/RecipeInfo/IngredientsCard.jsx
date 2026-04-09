@@ -39,7 +39,7 @@ const IngredientsCard = ({ ingredients, t }) => {
                     <div key={index}>
                         <input type="checkbox" className="form-check-input" id={`ingredient${index}`} />
                         <label className="label-style" htmlFor={`ingredient${index}`}>
-                            {ingredient.quantity * portions} {ingredient.measurementUnit} {ingredient.ingredientName}
+                            {ingredient.quantity * portions} {t(`measurementUnits.${ingredient.measurementUnit.toLowerCase()}`)} {ingredient.ingredientName}
                         </label>
                     </div>
                 ))}

@@ -2,6 +2,7 @@
 using Recepttar.Server.BLL.Common;
 using Recepttar.Server.BLL.Constants;
 using Recepttar.Server.BLL.DTOs.Recipe;
+using Recepttar.Server.BLL.Enums;
 using Recepttar.Server.BLL.Interfaces;
 using Recepttar.Server.DAL.Interfaces;
 using Recepttar.Server.DAL.Models;
@@ -31,7 +32,7 @@ namespace Recepttar.Server.BLL.Services
             return _mapper.Map<IEnumerable<RecipeCardDto>>(recipes);
         }
 
-        public async Task<ResultT<RecipeDto>> GetRecipeByIdAsync(int recipeId)
+        public async Task<ResultT<RecipeDto>> GetRecipeByIdAsync(int recipeId, LanguagesEnum? language = LanguagesEnum.en)
         {
             var recipe = await _recipeRepository.GetByIdAsync(recipeId);
             if (recipe == null)
@@ -39,7 +40,7 @@ namespace Recepttar.Server.BLL.Services
                 return ResultT<RecipeDto>.Failure(Messages.Recipe.NotFound);
             }
 
-            return ResultT<RecipeDto>.Success(_mapper.Map<RecipeDto>(recipe), null);
+            return ResultT<RecipeDto>.Success(_mapper.Map<RecipeDto>(recipe, opt => opt.Items["lang"] = language), null);
         }
 
         public async Task<ResultT<byte[]>> GetRecipeImageAsync(int recipeId)

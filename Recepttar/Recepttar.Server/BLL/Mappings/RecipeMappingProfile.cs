@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Recepttar.Server.BLL.Constants;
 using Recepttar.Server.BLL.DTOs.Recipe;
+using Recepttar.Server.BLL.Enums;
 using Recepttar.Server.DAL.Models;
 
 namespace Recepttar.Server.BLL.Mappings
@@ -26,7 +27,11 @@ namespace Recepttar.Server.BLL.Mappings
 
             CreateMap<RecipeIngredient, IngredientDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.IngredientId))
-                .ForMember(dest => dest.IngredientName, opt => opt.MapFrom(src => src.Ingredient.Name));
+                .ForMember(dest => dest.IngredientName, opt => opt.MapFrom((src, dest, _, ctx) =>
+                    ctx.Items["lang"] is LanguagesEnum lang && lang == LanguagesEnum.hu
+                        ? src.Ingredient.HuName
+                        : src.Ingredient.Name
+                ));
 
             CreateMap<RecipeStep, StepDto>();
 

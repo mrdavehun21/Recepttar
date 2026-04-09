@@ -4,7 +4,7 @@ const useRecipeInfo = () => {
         if (minutes < 60) return `${minutes} ${t("recipeViewPage.timeUnit.min")}`;
         const hours = Math.floor(minutes / 60);
         const mins = minutes % 60;
-        return mins === 0 ? `${hours} ${t("recipeViewPage.timeUnit.hour")}${hours > 1 ? 's' : ''}` : `${hours} ${t("recipeViewPage.timeUnit.hour")}${hours > 1 ? 's' : ''} ${mins} ${t("recipeViewPage.timeUnit.min")}`;
+        return mins === 0 ? `${hours} ${t("recipeViewPage.timeUnit.hour")}${hours > 1 && localStorage.getItem('i18nextLng') == 'en' ? 's' : ''}` : `${hours} ${t("recipeViewPage.timeUnit.hour")}${hours > 1 ? 's' : ''} ${mins} ${t("recipeViewPage.timeUnit.min")}`;
     };
 
     const getDifficultyColor = (difficulty) => {

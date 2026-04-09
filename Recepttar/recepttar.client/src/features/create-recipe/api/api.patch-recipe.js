@@ -3,7 +3,7 @@ import axios from 'axios';
 export async function getRecipe(recipeId){
     let repsonse = null;
     try {
-        repsonse = await axios.get(`${import.meta.env.VITE_API_URL}/api/recipe/${recipeId}`);
+        repsonse = await axios.get(`${import.meta.env.VITE_API_URL}/api/recipe/${recipeId}?language=${localStorage.getItem("i18nextLng") || "en"}`);
         return repsonse.data;
     } catch (error) {
         console.error(error);

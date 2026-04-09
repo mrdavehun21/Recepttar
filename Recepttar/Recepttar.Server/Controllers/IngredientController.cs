@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Recepttar.Server.BLL.Enums;
 using Recepttar.Server.BLL.Interfaces;
 
 namespace Recepttar.Server.Controllers
@@ -15,9 +16,9 @@ namespace Recepttar.Server.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchTags([FromQuery] string? search)
+        public async Task<IActionResult> SearchTags([FromQuery] string? search, LanguagesEnum? language)
         {
-            var foundTags = await _ingredientService.SearchTagsAsync(search);
+            var foundTags = await _ingredientService.SearchTagsAsync(search, language);
 
             return Ok(foundTags);
         }

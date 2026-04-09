@@ -92,7 +92,7 @@ function Profile() {
                 <textarea name="Bio" className="p-2 w-100 rounded-3 border border-black" type="text" defaultValue={data?.bio} style={{height: "180px"}} disabled={profileId != undefined} />
               </div>
 
-              <div>
+              <div className={profileId === undefined ? "" : "d-none"}>
                 <span className="d-block fs-4 fw-normal m-0 mt-2 w-fit">{t("userPage.language")}</span>
                 <select className="form-select mb-3" name="" id="" value={i18n.language} onChange={(e) => { i18n.changeLanguage(e.target.value); localStorage.setItem('i18nextLng', e.target.value);}}>
                   {
@@ -111,7 +111,7 @@ function Profile() {
                     <div className="d-flex flex-wrap gap-3 justify-content-center w-100 p-2 pt-4">
                       {
                         data?.recipes.map((recipe) => (
-                          <Card key={recipe.recipeId} data={recipe} allowFavorites={false} />
+                          <Card key={recipe.recipeId} data={recipe} allowFavorites={false} t={t} />
                         ))
                       }
                     </div>

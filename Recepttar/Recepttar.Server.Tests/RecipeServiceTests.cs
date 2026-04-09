@@ -61,10 +61,23 @@ namespace Recepttar.Server.Tests
         #region Get by Recipe ID
 
         [Test]
-        public async Task GetRecipeByIdAsync_shouldReturnRecipe_WhenIdIsvalid()
+        public async Task GetRecipeByIdAsync_shouldReturnRecipe_WhenIdIsValid()
         {
             _recipeRepositoryMock.Setup(r => r.GetByIdAsync(1))
                 .ReturnsAsync(new Recipe { Title = "Pizza" });
+
+            _mapperMock
+                .Setup(m => m.Map<RecipeDto>(
+                    It.IsAny<object>(),
+                    It.IsAny<Action<IMappingOperationOptions<object, RecipeDto>>>()))
+                .Returns((object src, Action<IMappingOperationOptions<object, RecipeDto>> opt) =>
+                {
+                    var recipe = src as Recipe;
+                    return new RecipeDto
+                    {
+                        Title = recipe?.Title ?? "Unknown"
+                    };
+                });
 
             var result = await _recipeService.GetRecipeByIdAsync(1);
 
