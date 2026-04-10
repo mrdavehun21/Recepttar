@@ -141,6 +141,7 @@ i18n.use(initReactI18next).init({
                     instructions: "Instructions",
                     ingredientsListHeader: "Ingredients list",
                     portions: "Portions",
+                    foodType: "Type",
 
                     reviews: "Reviews",
                     editReviewHeader: "Edit Your Review",
@@ -340,6 +341,7 @@ i18n.use(initReactI18next).init({
                     instructions: "Elkészítés",
                     ingredientsListHeader: "Hozzávalók",
                     portions: "Adag",
+                    foodType: "Típus",
 
                     reviews: "Vélemények",
                     editReviewHeader: "Vélemény szerkesztése",

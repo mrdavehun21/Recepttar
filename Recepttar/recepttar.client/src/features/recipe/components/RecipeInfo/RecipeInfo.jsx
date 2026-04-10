@@ -117,7 +117,7 @@ const RecipeInfo = ({ recipe, author, reviews, t }) => {
                 <div className="col-6 col-md-3">
                     <div className="card h-100 text-center border-0 shadow-sm rounded-3">
                         <div className="card-body py-3 px-2">
-                            <div className="fw-bold text-decoration-underline mb-1">Type</div>
+                            <div className="fw-bold text-decoration-underline mb-1">{t("recipeViewPage.foodType")}</div>
                             <div className="text-muted" >
                                 <i className={`${getDishTypeIcon(recipe.type)} me-1`} />{t(`homePage.tagsList.${recipe.type.toLowerCase()}`)}
                             </div>
