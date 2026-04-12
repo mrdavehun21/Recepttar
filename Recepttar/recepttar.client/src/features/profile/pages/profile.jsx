@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../../shared/hooks/useAuthContext';
 import { useUpdateUser } from '../hooks/useProfileUpdate';
 import { useProfile } from '../hooks/useProfile';
 import { useTranslation } from 'react-i18next';
+import { Modal } from 'bootstrap';
 import Card from '../../main/components/recipe-card/Card';
 import NotFound from '../../../shared/pages/NotFound';
 import Logo from '../../../assets/Logo.png';
@@ -18,6 +19,20 @@ function Profile() {
   
   const [error, setError] = useState('');
   const [errorVisible, setErrorVisible] = useState(false);
+
+  const modalRef = useRef(null);
+  const bsModalRef = useRef(null);
+
+  useEffect(() => {
+    if (modalRef.current) {
+        bsModalRef.current = new Modal(modalRef.current);
+    }
+  }, []);
+
+  const handleDeleteClick = () => {
+    setDeleteError(null);
+    bsModalRef.current?.show();
+  };
   
   const { data, imageExists } = useProfile(profileId, profileData, isLoggedIn, setError);
 
@@ -34,12 +49,34 @@ function Profile() {
     }
   }, [error]);
 
-  if(errorVisible){
-    return (<NotFound message="The user you are looking for does not exist."/>);
+  if(errorVisible && !error?.isValidatingIssue){
+    return (<NotFound message="The user you are looking for does not exist." />);
+  }
+
+  function handleCloseError(){
+    setError('');
+    setErrorVisible(false);
   }
   
   return (
       <div className="d-flex align-items-center h-100 w-100 justify-content-center">
+        <div className="modal fade" ref={modalRef} tabIndex="-1">
+            <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title">An error occoured</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" onClick={handleCloseError} />
+                    </div>
+                    <div className="modal-body">
+                        <p>{error?.message || error}</p>
+                    </div>
+                    <div className="modal-footer">
+                        <button className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleCloseError}>Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <form className="p-4 ms-auto me-auto mt-4 mb-4 container-bg-beige rounded-2 shadow w-75 w-min-320" onSubmit={async (e) => {
               e.preventDefault();
 
@@ -49,6 +86,11 @@ function Profile() {
 
               if(success){
                 window.location.reload();
+              }
+              else{
+                if(!error?.isValidatingIssue){
+                  bsModalRef.current?.show();
+                }
               }
           }}>
           <div className="w-100 d-flex gap-3 gap-md-5 flex-md-row flex-column justify-content-around">
