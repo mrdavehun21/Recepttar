@@ -1,4 +1,4 @@
-export default function OtherUsersTable({ profiles }) {
+export default function OtherUsersTable({ profiles, nav }) {
     const API_BASE = import.meta.env.VITE_API_URL;
 
     return ( 
@@ -6,7 +6,7 @@ export default function OtherUsersTable({ profiles }) {
             <tbody>
                 {
                     profiles.map((profile, index) => (
-                        <tr key={index} className="border-bottom border-gray">
+                        <tr key={index} className="border-bottom border-gray hover-click" onClick={() => nav(`/profile/${profile.userId}`)}>
                             <td className="py-4">{index + 4}.</td>
                             <td>
                                 <img src={API_BASE + "/" + profile?.profilePicture} alt={profile?.fullName} className="ms-2 rounded-circle" style={{width: "50px", height: "50px"}} />

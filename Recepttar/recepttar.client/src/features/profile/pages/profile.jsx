@@ -149,7 +149,7 @@ function Profile() {
             {
               (profileId !== undefined) ? (
                 <div className="w-100 rounded-3 pb-2 mt-5" style={{backgroundColor: "lightblue"}}>
-                    <p className="ms-auto me-auto mt-2 text-decoration-underline fs-4 w-fit">Recipes by {data?.fullName}</p>
+                    <p className="ms-auto me-auto mt-2 text-decoration-underline fs-4 w-fit">{data?.fullName + t("userPage.recipesBy")}</p>
                     <div className="d-flex flex-wrap gap-3 justify-content-center w-100 p-2 pt-4">
                       {
                         data?.recipes.map((recipe) => (

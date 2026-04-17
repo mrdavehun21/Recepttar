@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getLeaderboardData, getSortOptions } from "../hook/useGetLeaderboard";
 import { useTranslation } from 'react-i18next';
 import OtherUsersTable from "../components/other-users-table/other-users-table";
@@ -7,6 +8,7 @@ import Podium from "../components/podium/podium";
 export default function Leaderboard() {
     const [leaderboardData, setLeaderboardData] = useState([]);
     const [sortOption, setSortOption] = useState([]);
+    const navigate = useNavigate();
 
     const { t } = useTranslation();
 
@@ -48,8 +50,8 @@ export default function Leaderboard() {
                 </select>
 
             </div>
-            <Podium profiles={leaderboardData} t={t}></Podium>
-            <OtherUsersTable profiles={leaderboardData.slice(3)}></OtherUsersTable>
+            <Podium profiles={leaderboardData} t={t} nav={navigate}></Podium>
+            <OtherUsersTable profiles={leaderboardData.slice(3)} nav={navigate}></OtherUsersTable>
         </div>
     );
 }

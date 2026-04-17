@@ -61,6 +61,7 @@ i18n.use(initReactI18next).init({
                     language: "Language",
                     uploadImage: "Upload image",
                     save: "Save",
+                    recipesBy: "'s recipes",
                 },
 
                 homePage: {
@@ -262,6 +263,7 @@ i18n.use(initReactI18next).init({
                     language: "Nyelv",
                     uploadImage: "Kép feltöltése",
                     save: "Mentés",
+                    recipesBy: " Receptjei",
                 },
 
                 //Home page translations
