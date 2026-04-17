@@ -146,10 +146,14 @@ i18n.use(initReactI18next).init({
                     reviews: "Reviews",
                     editReviewHeader: "Edit Your Review",
                     cancel: "Cancel",
+                    deleteButton: "Delete",
                     saveChanges: "Save",
                     submitReview: "Submit Review",
                     WriteAReview: "Write a Review",
                     shareThoughts: "Share your thoughts about this recipe...",
+
+                    deleteRecipeHeader: "Delete Recipe",
+                    deleteRecipeMessage: "Are you sure you want to delete this recipe?",
                 },
 
                 createEditRecipePage: {
@@ -347,9 +351,13 @@ i18n.use(initReactI18next).init({
                     editReviewHeader: "Vélemény szerkesztése",
                     cancel: "Mégse",
                     saveChanges: "Mentés",
+                    deleteButton: "Törlés",
                     submitReview: "Beküldés",
                     WriteAReview: "Írj véleményt",
                     shareThoughts: "Oszd meg véleményed erről a receptről...",
+
+                    deleteRecipeHeader: "Recept törlése",
+                    deleteRecipeMessage: "Biztosan törölni szeretnéd ezt a receptet?",
                 },
 
                 createEditRecipePage: {

@@ -36,6 +36,15 @@ export default function MyCollection() {
         updatePolls(prevPolls => prevPolls.filter(poll => poll.id !== pollId));
     }
 
+    useEffect(() => {
+        const sectionId = window.location.hash.substring(1);
+
+        const sectionElement = document.getElementById(sectionId);
+        if (sectionElement) {
+            sectionElement.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [userRecipes, userPolls]);
+
     const { t } = useTranslation();
 
     return (

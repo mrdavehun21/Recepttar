@@ -185,16 +185,17 @@ const RecipeInfo = ({ recipe, author, reviews, t }) => {
                 <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title">Delete Recipe</h5>
+                            <h5 className="modal-title">{t("recipeViewPage.deleteRecipeHeader")}</h5>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" />
                         </div>
                         <div className="modal-body">
-                            Are you sure you want to delete <strong>{recipe?.title}</strong>?
+                            {/* Are you sure you want to delete <strong>{recipe?.title}</strong>? */}
+                            {t("recipeViewPage.deleteRecipeMessage")} <strong>{recipe?.title}</strong>
                             {deleteError && <div className="text-danger mt-2">{deleteError}</div>}
                         </div>
                         <div className="modal-footer">
-                            <button className="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button className="btn btn-danger" onClick={handleConfirmDelete}>Delete</button>
+                            <button className="btn btn-secondary" data-bs-dismiss="modal">{t("recipeViewPage.cancel")}</button>
+                            <button className="btn btn-danger" onClick={handleConfirmDelete}>{t("recipeViewPage.deleteButton")}</button>
                         </div>
                     </div>
                 </div>
