@@ -186,6 +186,9 @@ i18n.use(initReactI18next).init({
                     deletePoll: "Delete",
                     submitVote: "Submit",
                     alreadyVoted: "Already voted",
+
+                    DeletePollConfirmHeader: "Delete Poll",
+                    DeletePollConfirmMessage: "Are you sure you want to delete this poll?",
                 },
 
                 createPollCard: {
@@ -392,6 +395,9 @@ i18n.use(initReactI18next).init({
                     deletePoll: "Törlés",
                     submitVote: "Szavazat leadása",
                     alreadyVoted: "Már szavaztál",
+
+                    DeletePollConfirmHeader: "Szavazás törlése",
+                    DeletePollConfirmMessage: "Biztosan törölni szeretnéd ezt a szavazást?",
                 },
 
                 createPollCard: {

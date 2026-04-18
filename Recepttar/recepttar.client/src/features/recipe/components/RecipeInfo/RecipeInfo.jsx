@@ -189,7 +189,6 @@ const RecipeInfo = ({ recipe, author, reviews, t }) => {
                             <button type="button" className="btn-close" data-bs-dismiss="modal" />
                         </div>
                         <div className="modal-body">
-                            {/* Are you sure you want to delete <strong>{recipe?.title}</strong>? */}
                             {t("recipeViewPage.deleteRecipeMessage")} <strong>{recipe?.title}</strong>
                             {deleteError && <div className="text-danger mt-2">{deleteError}</div>}
                         </div>

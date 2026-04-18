@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from 'react-router-dom';
 import { usePollCard } from '../../hooks/usePollVote';
 import { ImageAvailable } from '../../../../shared/hooks/usePictureChecker';
@@ -45,6 +45,23 @@ function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null
         setErrorVisible(true);
       }
     }, [error]);
+
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const modalRef = useRef(null);
+    const bsModalRef = useRef(null);
+
+    function handleDeleteClick() {
+        setShowDeleteModal(true);
+    }
+    
+    function confirmDelete() {
+        deletePollMethod(data.id);
+        setShowDeleteModal(false);
+    }
+    
+    function cancelDelete() {
+        setShowDeleteModal(false);
+    }
 
     return (
         <div className="card overflow-hidden shadow m-3 rounded-3 vote-card d-flex felx-column justify-content-between">
@@ -117,7 +134,7 @@ function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null
                             </button>
                             <button
                                 className={"w-50 text-light fw-bold border-0 polls-bg-additional-7 p-2 "}
-                                onClick={() => deletePollMethod(data.id)}
+                                onClick={handleDeleteClick}
                             >
                                 {t("pollCard.deletePoll")}
                             </button>
@@ -137,13 +154,36 @@ function PollCard({ data, loginStatus, profileID = null, deletePollMethod = null
             </div>
 
             {
-            (isFormOpen) ? 
-            (
-                <CreatePollForm isFormOpen={isFormOpen} openForm={openForm} preData={pollValues} errorMessage={setError} >
-                  <ErrorBox visible={errorVisible} errorMessage={error} clearError={setError} closeError={setErrorVisible}/>
-                </CreatePollForm>
-              ) : ( null )
-          }
+                (isFormOpen) ? 
+                (
+                    <CreatePollForm isFormOpen={isFormOpen} openForm={openForm} preData={pollValues} errorMessage={setError} >
+                    <ErrorBox visible={errorVisible} errorMessage={error} clearError={setError} closeError={setErrorVisible}/>
+                    </CreatePollForm>
+                ) : ( null )
+            }
+
+            {
+                showDeleteModal && (
+                    <div className="modal position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center poll-form-background z-index-max">
+                        <div className="modal-dialog modal-dialog-centered">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">{t("pollCard.DeletePollConfirmHeader")}</h5>
+                                    <button type="button" className="btn-close" data-bs-dismiss="modal" />
+                                </div>
+                                <div className="modal-body">
+                                    {t("pollCard.DeletePollConfirmMessage")} <strong></strong>
+                                    {<div className="text-danger mt-2"></div>}
+                                </div>
+                                <div className="modal-footer">
+                                    <button className="btn btn-secondary" data-bs-dismiss="modal" onClick={cancelDelete}>{t("recipeViewPage.cancel")}</button>
+                                    <button className="btn btn-danger" onClick={confirmDelete}>{t("recipeViewPage.deleteButton")}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
         </div>
     );
 }
