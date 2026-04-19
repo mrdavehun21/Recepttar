@@ -155,6 +155,9 @@ i18n.use(initReactI18next).init({
 
                     deleteRecipeHeader: "Delete Recipe",
                     deleteRecipeMessage: "Are you sure you want to delete this recipe?",
+
+                    deleteReviewHeader: "Delete Review",
+                    deleteReviewMessage: "Are you sure you want to delete your review?",
                 },
 
                 createEditRecipePage: {
@@ -363,6 +366,9 @@ i18n.use(initReactI18next).init({
 
                     deleteRecipeHeader: "Recept törlése",
                     deleteRecipeMessage: "Biztosan törölni szeretnéd ezt a receptet?",
+
+                    deleteReviewHeader: "Értékelés törlése",
+                    deleteReviewMessage: "Biztosan törölni szeretnéd a véleményed erről a receptről?",
                 },
 
                 createEditRecipePage: {
