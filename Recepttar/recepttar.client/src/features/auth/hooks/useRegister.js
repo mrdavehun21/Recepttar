@@ -10,6 +10,7 @@ import {
     validateEmail,
     validatePassword
 } from './authHelper';
+import { useAuth } from '../../../shared/hooks/useAuthContext';
 
 export function useRegister() {
     const [step, setStep] = useState(1);
@@ -22,6 +23,8 @@ export function useRegister() {
     const isNameValid = validateNameInput(name);
     const isEmailValid = validateEmailInput(email);
     const isPasswordValid = validatePasswordInput(password);
+
+    const { refetch } = useAuth();
 
     useEffect(() => {
         if (!error) return;
@@ -62,6 +65,7 @@ export function useRegister() {
         try {
             await registerApi(name, email, password);
             await loginApi(email, password);
+            await refetch();
             navigate('/', { replace: true });
         } catch (err) {
             setError(getApiErrorMessage(err) || 'Registration failed');

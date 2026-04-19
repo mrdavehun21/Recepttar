@@ -63,19 +63,20 @@ export default function NavbarComponent() {
             </div>
             <Dropdown align="end" className="bg-light shadow me-3 rounded-2 dropdown">
                 <Dropdown.Toggle id="profile-dropdown" className="d-flex align-items-center gap-1 bg-light border-0 text-black">
-                    {isLoggedIn && imageExists ? (
-                        <>
-                            <img src={`${API_BASE}/${profileData.profilePicture}`} className="profile-dimensions rounded-circle" />
-                            <span className="fw-semibold d-none d-sm-block">
-                                {profileData.fullName}
-                            </span>
-                        </>
-                    ) : (
-                        <>
+                    <>
+                        {isLoggedIn && imageExists ? (
+                            <img
+                                src={`${API_BASE}/${profileData.profilePicture}`}
+                                className="profile-dimensions rounded-circle"
+                            />
+                        ) : (
                             <i className="bi bi-person-circle fs-2"></i>
-                            <span className="fw-semibold d-none d-sm-block">{t("navbar.profile")}</span>
-                        </>
-                    )}
+                        )}
+
+                        <span className="fw-semibold d-none d-sm-block">
+                            {isLoggedIn ? profileData.fullName : t("navbar.profile")}
+                        </span>
+                    </>
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu className="mt-1">
