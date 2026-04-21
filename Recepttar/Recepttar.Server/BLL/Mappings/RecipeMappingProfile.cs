@@ -28,10 +28,17 @@ namespace Recepttar.Server.BLL.Mappings
             CreateMap<RecipeIngredient, IngredientDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.IngredientId))
                 .ForMember(dest => dest.IngredientName, opt => opt.MapFrom((src, dest, _, ctx) =>
-                    ctx.Items["lang"] is LanguagesEnum lang && lang == LanguagesEnum.hu
-                        ? src.Ingredient.HuName
-                        : src.Ingredient.Name
-                ));
+                {
+                    if (ctx.TryGetItems(out var items) &&
+                        items.TryGetValue("lang", out var value) &&
+                        value is LanguagesEnum lang &&
+                        lang == LanguagesEnum.hu)
+                    {
+                        return src.Ingredient.HuName;
+                    }
+
+                    return src.Ingredient.Name;
+                }));
 
             CreateMap<RecipeStep, StepDto>();
 
