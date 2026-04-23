@@ -87,6 +87,7 @@ export async function submitLogoutRequest() {
 export async function searchIngredients(search) {
     const params = new URLSearchParams();
     if (search) params.append('search', search);
+    params.append('language', localStorage.getItem('i18nextLng'))
 
     return await axios.get(`${API_BASE}/api/ingredient/search`, { params });
 }

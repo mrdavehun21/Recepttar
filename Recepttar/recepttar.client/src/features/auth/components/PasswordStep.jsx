@@ -9,7 +9,8 @@ export default function PasswordStep({
     onSubmit,
     onBack,
     onKeyDown,
-    theme = 'login'
+    theme = 'login',
+    t
 }) {
     useEffect(() => {
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
@@ -17,7 +18,7 @@ export default function PasswordStep({
     }, []);
 
     const primaryClass = theme === 'login' ? 'login-btn-primary' : 'register-btn-primary';
-    const accountText = theme === 'login' ? 'Log In' : 'Create an Account';
+    const accountText = theme === 'login' ? t("loginPage.logIn") : t("loginPage.createAccount");
     
     return (
         <>
@@ -33,12 +34,12 @@ export default function PasswordStep({
             </div>
 
             <div className="mb-4">
-                <label className="form-label fw-semibold">Password
+                <label className="form-label fw-semibold">{t("loginPage.password")}
                     <i
                         className="bi bi-question-circle ms-2"
                         data-bs-toggle="tooltip"
                         data-bs-placement="right"
-                        title="Password requirements: minimum 8 characters and must include a number"
+                        title={t("loginPage.passwordRequirements")}
                     />
                 </label>
                 <input

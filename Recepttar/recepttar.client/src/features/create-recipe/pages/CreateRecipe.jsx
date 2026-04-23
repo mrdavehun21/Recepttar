@@ -8,7 +8,7 @@ import RecipeBasic from '../components/recipe-basic-info/RecipeBasic';
 import Ingredients from '../../../shared/components/ingredients-filter/IngredientFilter';
 import RecipeSteps from '../components/recipe-steps/RecipeSteps';
 import IngredientList from '../components/recipe-ingredients-list/IngredientsList';
-import ErrorPage from '../../../shared/pages/NotFound';
+import { useTranslation } from 'react-i18next';
 
 function CreateRecipe() {
     const { recipeId } = useParams();
@@ -49,6 +49,8 @@ function CreateRecipe() {
         }
         fetchData();
     }, [recipeId])
+
+    const { t } = useTranslation();
 
     return (
         <form className="ms-auto me-auto w-95 mt-3" onSubmit={(e) => {
@@ -98,28 +100,28 @@ function CreateRecipe() {
             }
         }}>
             <h3>
-                {recipeData ? "Edit recipe" : "Create a new recipe"}
+                {recipeData ? t("createEditRecipePage.editRecipeHeader") : t("createEditRecipePage.createNewRecipeHeader")}
             </h3>
             <div className="row g-3">
                 <div className="col-12 col-md-8">
-                    <RecipeBasic errors={errors} recipeData={recipeData} />
+                    <RecipeBasic errors={errors} recipeData={recipeData} t={t} />
                     <div className="card shadow mt-3 p-3 me-auto ms-auto container d-md-none">
                         <div className={"p-2 bg-danger text-white text-start " + (errors?.Ingredients == null ? "d-none" : "")}>{errors?.Ingredients}&nbsp;</div>
-                        <Ingredients selectedIngredients={selectedIngredients} setSelectedIngredients={setSelectedIngredients} />
+                        <Ingredients selectedIngredients={selectedIngredients} setSelectedIngredients={setSelectedIngredients} t={t} />
                     </div>
-                    <IngredientList ingredients={ingredients} setIngredients={setIngredients} errors={errors} />
+                    <IngredientList ingredients={ingredients} setIngredients={setIngredients} errors={errors} t={t} />
                 </div>
                 <div className="col-12 col-md-4">
-                    <RecipeProperties errors={errors} recipeData={recipeData} />
+                    <RecipeProperties errors={errors} recipeData={recipeData} t={t} />
                     <div className="card shadow mt-3 p-3 me-auto ms-auto container d-none d-md-block">
                         <div className={"p-2 bg-danger text-white text-start " + (errors?.Ingredients == null ? "d-none" : "")}>{errors?.Ingredients}&nbsp;</div>
-                        <Ingredients selectedIngredients={selectedIngredients} setSelectedIngredients={setSelectedIngredients} />
+                        <Ingredients selectedIngredients={selectedIngredients} setSelectedIngredients={setSelectedIngredients} t={t} />
                     </div>
                 </div>
             </div>
             <div className="row p-0 g-3">
                 <div className="col-12">
-                    <RecipeSteps errors={errors} recipeData={recipeData} steps={steps} setSteps={setSteps} />
+                    <RecipeSteps errors={errors} recipeData={recipeData} steps={steps} setSteps={setSteps} t={t} />
                 </div>
             </div>
         </form>

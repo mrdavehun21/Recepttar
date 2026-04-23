@@ -6,7 +6,7 @@ import ReviewCard from './ReviewCard';
 import { deleteReviewById, getRecipeById } from '../../api/recipe.api';
 import { Modal } from 'bootstrap';
 
-const Reviews = ({ reviews, recipeId, onReviewAdded }) => {
+const Reviews = ({ reviews, recipeId, onReviewAdded, t }) => {
     const [editingReview, setEditingReview] = useState(null);
     const [reviewToDelete, setReviewToDelete] = useState(null);
     const [deleteError, setDeleteError] = useState(null);
@@ -49,7 +49,7 @@ const Reviews = ({ reviews, recipeId, onReviewAdded }) => {
     return (
         <div className="card mt-3 reviews-bg" style={{ border: 'none' }}>
             <div className="card-body">
-                <h5 className="card-title fw-bold text-decoration-underline">Reviews</h5>
+                <h5 className="card-title fw-bold text-decoration-underline">{t("recipeViewPage.reviews")}</h5>
 
                 {editingReview ? (
                     <EditReview
@@ -59,9 +59,10 @@ const Reviews = ({ reviews, recipeId, onReviewAdded }) => {
                             setEditingReview(null);
                             onReviewAdded();
                         }}
+                        t={t}
                     />
                 ) : canReview ? (
-                    <CreateReview recipeId={recipeId} onReviewAdded={onReviewAdded} />
+                    <CreateReview recipeId={recipeId} onReviewAdded={onReviewAdded} t={t} />
                 ) : null}
 
                 {reviews.map((review, index) => (
@@ -78,16 +79,16 @@ const Reviews = ({ reviews, recipeId, onReviewAdded }) => {
                 <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title">Delete Review</h5>
+                            <h5 className="modal-title">{t("recipeViewPage.deleteReviewHeader")}</h5>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" />
                         </div>
                         <div className="modal-body">
-                            Are you sure you want to delete your review?
+                            {t("recipeViewPage.deleteReviewMessage")}
                             {deleteError && <div className="text-danger mt-2">{deleteError}</div>}
                         </div>
                         <div className="modal-footer">
-                            <button className="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button className="btn btn-danger" onClick={handleConfirmDelete}>Delete</button>
+                            <button className="btn btn-secondary" data-bs-dismiss="modal">{t("recipeViewPage.cancel")}</button>
+                            <button className="btn btn-danger" onClick={handleConfirmDelete}>{t("recipeViewPage.deleteButton")}</button>
                         </div>
                     </div>
                 </div>

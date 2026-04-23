@@ -28,11 +28,26 @@ namespace Recepttar.Server.Tests
         {
             var ingredients = new List<Ingredient> { new Ingredient { Name = "Tomato" } };
 
-            _referenceDataRepositoryMock.Setup(r => r.SearchAsync("Tomato")).ReturnsAsync(ingredients);
-            _mapperMock.Setup(m => m.Map<IEnumerable<IngredientSearchDto>>(ingredients))
-                .Returns(new List<IngredientSearchDto> { new IngredientSearchDto { Name = "Tomato" } });
+            _referenceDataRepositoryMock
+                .Setup(r => r.SearchAsync("Tomato", LanguagesEnum.en))
+                .ReturnsAsync(ingredients);
 
-            var result = await _referenceDataService.SearchTagsAsync("Tomato");
+            _mapperMock
+                .Setup(m => m.Map<IEnumerable<IngredientSearchDto>>(
+                    It.IsAny<object>(),
+                    It.IsAny<Action<IMappingOperationOptions<object, IEnumerable<IngredientSearchDto>>>>()
+                ))
+                .Returns((object src, Action<IMappingOperationOptions<object, IEnumerable<IngredientSearchDto>>> opt) =>
+                {
+                    var ingredientsList = src as IEnumerable<Ingredient>;
+
+                    return new List<IngredientSearchDto>
+                    {
+                        new IngredientSearchDto { Name = "Tomato" }
+                    };
+                });
+
+            var result = await _referenceDataService.SearchTagsAsync("Tomato", LanguagesEnum.en);
 
             Assert.That(result.Count(), Is.EqualTo(1));
             Assert.That(result, Has.One.Matches<IngredientSearchDto>(i => i.Name == "Tomato"));

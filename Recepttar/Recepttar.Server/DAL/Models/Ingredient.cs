@@ -10,6 +10,9 @@ namespace Recepttar.Server.DAL.Models
         [Required, MaxLength(255)]
         public string Name { get; set; } = string.Empty;
 
+        [Required, MaxLength(255)]
+        public string HuName { get; set; } = string.Empty;
+
         // Navigation
         public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
     }

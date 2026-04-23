@@ -10,13 +10,13 @@ export function useUpdateUser(form) {
         const email = data.Email;
         if(email != ''){
             const isValidEmail = validateEmailInput(email);
-            if(!isValidEmail) { setError('Please enter a valid email'); return; }
+            if(!isValidEmail) { setError({ message: "Please enter a valid email", isValidatingIssue: true }); return; }
         }
 
         const password = data.Password;
         if(password != ''){
             const isValidPassword = validatePasswordInput(password);
-            if(!isValidPassword) { setError('Please enter a valid password'); return; }
+            if(!isValidPassword) { setError({ message: 'Please enter a valid password', isValidatingIssue: true }); return; }
         }
 
         return await UpdateUserAPI(form, setError);

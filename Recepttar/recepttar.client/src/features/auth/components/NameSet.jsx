@@ -1,15 +1,16 @@
 export default function NameSet({
     name,
-    setName
+    setName,
+    t
 }) {
     return (
         <>
-            <label className="form-label fw-semibold">Full name
+            <label className="form-label fw-semibold">{t("registerPage.fullName")}
                 <i
                     className="bi bi-question-circle ms-2"
                     data-bs-toggle="tooltip"
                     data-bs-placement="right"
-                    title="Please enter at least 3 characters"
+                    title={t("registerPage.fullNameRequirements")}
                 />
             </label>
             <input

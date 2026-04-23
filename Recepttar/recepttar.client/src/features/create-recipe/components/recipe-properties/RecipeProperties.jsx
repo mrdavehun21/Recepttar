@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-function RecipeProperties({ errors, recipeData }) {
+function RecipeProperties({ errors, recipeData, t }) {
   const [isExpensive, setIsExpensive] = useState("Cheap");
   const [difficulty, setDifficulty] = useState("Difficulty");
   const [type, setType] = useState("Type");
@@ -22,56 +22,56 @@ function RecipeProperties({ errors, recipeData }) {
     return (
       <div className="container p-3 bg-disabled d-flex flex-column gap-3 card shadow">
         <div className="w-100">
-          <h5 className="form-check-label d-block card-title" htmlFor="RecipeName">Recipe difficulty</h5>
+          <h5 className="form-check-label d-block card-title" htmlFor="RecipeName">{t("createEditRecipePage.recipeDifficulty")}</h5>
           <div className={"p-2 bg-danger text-white text-start mt-3 " + (errors?.Difficulty == null ? "d-none" : "")}>{errors?.Difficulty}&nbsp;</div>
           <select className="w-100 form-select" name="Difficulty" value={difficulty} onChange={e => setDifficulty(e.target.value)}>
-            <option key={"Difficulty"} value="Difficulty">Difficulty</option>
-            <option key={"Easy"} value="Easy">Easy</option>
-            <option key={"Medium"} value="Medium">Medium</option>
-            <option key={"Hard"} value="Hard">Hard</option>
+            <option key={"Difficulty"} value="Difficulty">{t("recipeDifficulty.difficulty")}</option>
+            <option key={"Easy"} value="Easy">{t("recipeDifficulty.easy")}</option>
+            <option key={"Medium"} value="Medium">{t("recipeDifficulty.medium")}</option>
+            <option key={"Hard"} value="Hard">{t("recipeDifficulty.hard")}</option>
           </select>
         </div>
         
         <div>
-          <h5 className="form-check-label d-block card-title" htmlFor="PrepMin">Preparation time (min)</h5>
+          <h5 className="form-check-label d-block card-title" htmlFor="PrepMin">{t("createEditRecipePage.prepTime")}</h5>
           <div className={"p-2 bg-danger text-white text-start mt-3 " + (errors?.TimeMinutes == null ? "d-none" : "")}>{errors?.TimeMinutes}&nbsp;</div>
           <input type="number" min={1} max={1440} id="PrepMin" name="TimeMinutes" value={prepTime} onChange={e => setPrepTime(e.target.value)} className="d-block w-100 form-control"></input>
         </div>
 
         <div>
-          <h5 className="form-check-label d-block card-title" htmlFor="Servings">Servings</h5>
+          <h5 className="form-check-label d-block card-title" htmlFor="Servings">{t("createEditRecipePage.servings")}</h5>
           <div className={"p-2 bg-danger text-white text-start mt-3 " + (errors?.Servings == null ? "d-none" : "")}>{errors?.Servings}&nbsp;</div>
           <input className="d-block w-100 form-control" type="number" min={1} max={1440} name="Servings" id="Servings" value={servings} onChange={e => setServings(e.target.value)}></input>
         </div>
 
         <div>
-          <h5 className="card-title">Price</h5>
+          <h5 className="card-title">{t("createEditRecipePage.price")}</h5>
           <div className="form-check form-check-inline">
             <input className="form-check-input" type="radio" name="IsExpensive" id="inlineRadio1" value="Cheap" checked={isExpensive === "Cheap"} onChange={(e) => setIsExpensive(e.target.value)} />
-            <label className="form-check-label" htmlFor="inlineRadio1">Cheap</label>
+            <label className="form-check-label" htmlFor="inlineRadio1">{t("homePage.tagsList.cheap")}</label>
           </div>
           <div className="form-check form-check-inline">
             <input className="form-check-input" type="radio" name="IsExpensive" id="inlineRadio2" value="Expensive" checked={isExpensive === "Expensive"} onChange={(e) => setIsExpensive(e.target.value)} />
-            <label className="form-check-label" htmlFor="inlineRadio2">Expensive</label>
+            <label className="form-check-label" htmlFor="inlineRadio2">{t("homePage.tagsList.expensive")}</label>
           </div>
         </div>
 
         <div>
-          <h5 className="card-title">Vegan</h5>
+          <h5 className="card-title">{t("homePage.tagsList.vegan")}</h5>
           <div className="form-check form-switch">
             <input className="form-check-input" name="IsVegan" type="checkbox" checked={isVegan} onChange={e => setIsVegan(e.target.checked)} id="checkNativeSwitch" switch="false" />
-            <label className="form-check-label" htmlFor="checkNativeSwitch">Vegan</label>
+            <label className="form-check-label" htmlFor="checkNativeSwitch">{t("homePage.tagsList.vegan")}</label>
           </div>
         </div>
 
         <div>
-          <h5 className="card-title">Dish type</h5>
+          <h5 className="card-title">{t("createEditRecipePage.dishType")}</h5>
           <div className={"p-2 bg-danger text-white text-start mt-3 " + (errors?.Type == null ? "d-none" : "")}>{errors?.Type}&nbsp;</div>
           <select className="w-100 form-select" name="Type" value={type} onChange={e => setType(e.target.value)}>
-            <option value="Type">Type</option>
-            <option value="Appetizer">Appetizer</option>
-            <option value="MainDish">Main dish</option>
-            <option value="Dessert">Dessert</option>
+            <option value="Type">{t("createEditRecipePage.type")}</option>
+            <option value="Appetizer">{t("homePage.tagsList.appetizer")}</option>
+            <option value="MainDish">{t("homePage.tagsList.maindish")}</option>
+            <option value="Dessert">{t("homePage.tagsList.dessert")}</option>
           </select>
         </div>
       </div>

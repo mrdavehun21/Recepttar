@@ -5,9 +5,10 @@ import RecipeCard from "../../main/components/recipe-card/Card";
 import PollCard from "../../main/components/poll-section/PollCard";
 import ContainerLayout from "../components/containerLayout";
 import CreatePollCard from "../../poll/components/create-card/CreatePollCard";
-import CreatePollForm from "../../poll/components/create-poll-form/CreatePollFrom";
+import CreatePollForm from "../../poll/components/create-poll-form/CreatePollForm";
 import { createPoll } from '../../poll/hooks/useCreatePoll';
 import { usePolls } from '../../main/hooks/usePoll';
+import { useTranslation } from 'react-i18next';
 import ErrorBox from '../../../shared/components/error-box/ErrorBox';
 
 export default function MyCollection() {
@@ -35,35 +36,46 @@ export default function MyCollection() {
         updatePolls(prevPolls => prevPolls.filter(poll => poll.id !== pollId));
     }
 
+    useEffect(() => {
+        const sectionId = window.location.hash.substring(1);
+
+        const sectionElement = document.getElementById(sectionId);
+        if (sectionElement) {
+            sectionElement.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [userRecipes, userPolls]);
+
+    const { t } = useTranslation();
+
     return (
         <div className="w-100">
             <div className="m-4 p-2 main-green rounded-2" id="favorites">
-                <h2 className="text-white fw-bold">My favorites</h2>
+                <h2 className="text-white fw-bold">{t("myCollectionPage.myFavorites")}</h2>
             </div>
             <ContainerLayout>
                 {
                     favoriteRecipes.map(recipe => (
-                        <RecipeCard key={recipe.recipeId} data={recipe} allowFavorites={true} />
+                        <RecipeCard key={recipe.recipeId} data={recipe} allowFavorites={true} t={t} />
                     ))
                 }
             </ContainerLayout>
 
             <div className="w-100">
                 <div className="m-4 p-2 main-green rounded-2" id="polls">
-                    <h2 className="text-white fw-bold">My polls</h2>
+                    <h2 className="text-white fw-bold">{t("myCollectionPage.myPolls")}</h2>
                 </div>
                 <ContainerLayout>
-                    <CreatePollCard openFormTrigger={openForm} caption={"Create new!"} />
+                    <CreatePollCard openFormTrigger={openForm} caption={t("createPollCard.pollHeaderShort")} />
                     {
                         pollCards.map(poll => (
-                            <PollCard key={poll.id} data={poll} profileID={profileData} deletePollMethod={deletePollCard} />
+                            <PollCard key={poll.id} data={poll} profileID={profileData} deletePollMethod={deletePollCard} t={t} />
                         ))
                     }
 
                     {
                         (isFormOpen) ? 
                         (
-                            <CreatePollForm isFormOpen={isFormOpen} openForm={openForm} preData={pollValues} errorMessage={setError} >
+                            <CreatePollForm isFormOpen={isFormOpen} openForm={openForm} preData={pollValues} errorMessage={setError} t={t} >
                                 <ErrorBox visible={errorVisible} errorMessage={error} clearError={setError} closeError={setErrorVisible}/>
                             </CreatePollForm>
                         ) : ( null )
@@ -72,12 +84,12 @@ export default function MyCollection() {
             </div>
             
             <div className="m-4 p-2 main-green rounded-2" id="recipes">
-                <h2 className="text-white fw-bold">My recipes</h2>
+                <h2 className="text-white fw-bold">{t("myCollectionPage.myRecipes")}</h2>
             </div>
             <ContainerLayout>
                 {
                     userRecipes.map(recipe => (
-                        <RecipeCard key={recipe.recipeId} data={recipe} allowFavorites={false} />
+                        <RecipeCard key={recipe.recipeId} data={recipe} allowFavorites={false} t={t} />
                     ))
                 }
             </ContainerLayout>

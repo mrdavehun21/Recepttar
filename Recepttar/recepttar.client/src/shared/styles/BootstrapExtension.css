@@ -41,3 +41,7 @@ html, body, #root {
 .ingredient-highlight:hover{
     background-color: #D9C3A5 !important;
 }
+
+.hover-click:hover {
+    cursor: pointer;
+}

@@ -8,7 +8,7 @@ import { Modal } from 'bootstrap';
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
-const RecipeInfo = ({ recipe, author, reviews }) => {
+const RecipeInfo = ({ recipe, author, reviews, t }) => {
     const avg = reviews?.length ? (reviews.reduce((s, r) => s + r.stars, 0) / reviews.length).toFixed(1) : null;
     const { isLoggedIn, profileData } = useIsLoggedIn();
     const { formatTime, getDifficultyColor, getDifficultyIcon, getDishTypeIcon, renderStars } = useRecipeInfo();
@@ -72,7 +72,7 @@ const RecipeInfo = ({ recipe, author, reviews }) => {
             {avg && (
                 <div className="d-flex flex-column align-items-center mb-3">
                     <div className="d-flex gap-1">{renderStars(avg)}</div>
-                    <div className="text-muted mt-1">{avg} &nbsp;-&nbsp; {reviews.length} Reviews</div>
+                    <div className="text-muted mt-1">{avg} &nbsp;-&nbsp; {reviews.length} {t("homePage.reviewPlural")}</div>
                 </div>
             )}
 
@@ -84,16 +84,16 @@ const RecipeInfo = ({ recipe, author, reviews }) => {
             <div className="d-flex justify-content-center gap-2 flex-wrap mb-4">
                 {recipe.isVegan && (
                     <span className="badge rounded-pill bg-success px-3 py-2">
-                        <i className="bi bi-leaf-fill me-1" />Vegan
+                        <i className="bi bi-leaf-fill me-1" />{t("homePage.tagsList.vegan")}
                     </span>
                 )}
                 <span className={`badge rounded-pill px-3 py-2 ${recipe.isExpensive ? 'bg-warning text-dark' : 'bg-success'}`}>
                     <i className={`bi ${recipe.isExpensive ? 'bi-coin' : 'bi-cash'} me-1`} />
-                    {recipe.isExpensive ? 'Expensive' : 'Cheap'}
+                    {recipe.isExpensive ? t("homePage.tagsList.expensive") : t("homePage.tagsList.cheap")}
                 </span>
                 <span className={`badge rounded-pill bg-${getDifficultyColor(recipe.difficulty)} px-3 py-2`}>
                     <i className={`${getDifficultyIcon(recipe.difficulty)} me-1`} />
-                    {recipe.difficulty}
+                    {t(`homePage.tagsList.${recipe.difficulty.toLowerCase()}`)}
                 </span>
             </div>
 
@@ -101,15 +101,15 @@ const RecipeInfo = ({ recipe, author, reviews }) => {
                 <div className="col-6 col-md-3">
                     <div className="card h-100 text-center border-0 shadow-sm rounded-3">
                         <div className="card-body py-3 px-2">
-                            <div className="fw-bold text-decoration-underline mb-1">Total Time</div>
-                            <div className="text-muted">{formatTime(recipe.timeMinutes)}</div>
+                            <div className="fw-bold text-decoration-underline mb-1">{t("recipeViewPage.totalTime")}</div>
+                            <div className="text-muted">{formatTime(recipe.timeMinutes, t)}</div>
                         </div>
                     </div>
                 </div>
                 <div className="col-6 col-md-3">
                     <div className="card h-100 text-center border-0 shadow-sm rounded-3">
                         <div className="card-body py-3 px-2">
-                            <div className="fw-bold text-decoration-underline mb-1">Servings</div>
+                            <div className="fw-bold text-decoration-underline mb-1">{t("recipeViewPage.servings")}</div>
                             <div className="text-muted">{recipe.servings}</div>
                         </div>
                     </div>
@@ -117,9 +117,9 @@ const RecipeInfo = ({ recipe, author, reviews }) => {
                 <div className="col-6 col-md-3">
                     <div className="card h-100 text-center border-0 shadow-sm rounded-3">
                         <div className="card-body py-3 px-2">
-                            <div className="fw-bold text-decoration-underline mb-1">Type</div>
+                            <div className="fw-bold text-decoration-underline mb-1">{t("recipeViewPage.foodType")}</div>
                             <div className="text-muted" >
-                                <i className={`${getDishTypeIcon(recipe.type)} me-1`} />{recipe.type}
+                                <i className={`${getDishTypeIcon(recipe.type)} me-1`} />{t(`homePage.tagsList.${recipe.type.toLowerCase()}`)}
                             </div>
                         </div>
                     </div>
@@ -127,7 +127,7 @@ const RecipeInfo = ({ recipe, author, reviews }) => {
                 <div className="col-6 col-md-3">
                     <div className="card h-100 text-center border-0 shadow-sm rounded-3">
                         <div className="card-body py-3 px-2">
-                            <div className="fw-bold text-decoration-underline mb-2">Author</div>
+                            <div className="fw-bold text-decoration-underline mb-2">{t("recipeViewPage.author")}</div>
                             <Link to={`/profile/${author?.id}`} className="d-flex flex-column align-items-center justify-content-center gap-2 text-decoration-none text-dark">
                                 {author?.profilePicture ? (
                                     <img src={`${API_BASE}/${author.profilePicture}`} alt={author?.fullName} className="rounded-circle flex-shrink-0"
@@ -145,7 +145,7 @@ const RecipeInfo = ({ recipe, author, reviews }) => {
                                     }}>{author?.fullName}</div>
                                     <div className="text-muted mt-1 text-decoration-underline" style={{
                                         overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'
-                                    }}>{author?.rank}</div>
+                                    }}>{t(`userRank.${author?.rank}`)}</div>
                                 </div>
                             </Link>
                         </div>
@@ -155,14 +155,14 @@ const RecipeInfo = ({ recipe, author, reviews }) => {
 
             <div className="card border-0 shadow-sm rounded-4 mb-4">
                 <div className="card-body p-4">
-                    <h5 className="fw-bold text-decoration-underline mb-3">Description</h5>
+                    <h5 className="fw-bold text-decoration-underline mb-3">{t("recipeViewPage.description")}</h5>
                     <p className="text-muted mb-0">{recipe.description}</p>
                 </div>
             </div>
 
             <div className="card border-0 rounded-4 mb-4 main-green">
                 <div className="card-body p-4">
-                    <h5 className="fw-bold text-decoration-underline text-white mb-4">Instructions</h5>
+                    <h5 className="fw-bold text-decoration-underline text-white mb-4">{t("recipeViewPage.instructions")}</h5>
                     <div className="d-flex flex-column gap-3">
                         {recipe.steps?.map((step) => (
                             <div key={step.stepNumber} className="d-flex align-items-start gap-3">
@@ -185,16 +185,16 @@ const RecipeInfo = ({ recipe, author, reviews }) => {
                 <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title">Delete Recipe</h5>
+                            <h5 className="modal-title">{t("recipeViewPage.deleteRecipeHeader")}</h5>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" />
                         </div>
                         <div className="modal-body">
-                            Are you sure you want to delete <strong>{recipe?.title}</strong>?
+                            {t("recipeViewPage.deleteRecipeMessage")} <strong>{recipe?.title}</strong>
                             {deleteError && <div className="text-danger mt-2">{deleteError}</div>}
                         </div>
                         <div className="modal-footer">
-                            <button className="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button className="btn btn-danger" onClick={handleConfirmDelete}>Delete</button>
+                            <button className="btn btn-secondary" data-bs-dismiss="modal">{t("recipeViewPage.cancel")}</button>
+                            <button className="btn btn-danger" onClick={handleConfirmDelete}>{t("recipeViewPage.deleteButton")}</button>
                         </div>
                     </div>
                 </div>

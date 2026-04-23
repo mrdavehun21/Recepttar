@@ -3,6 +3,7 @@ using Recepttar.Server.BLL.DTOs.Recipe;
 using Recepttar.Server.BLL.DTOs.Review;
 using Recepttar.Server.BLL.Interfaces;
 using Recepttar.Server.BLL.Constants;
+using Recepttar.Server.BLL.Enums;
 
 namespace Recepttar.Server.Controllers
 {
@@ -87,9 +88,9 @@ namespace Recepttar.Server.Controllers
         }
 
         [HttpGet("{recipeId}")]
-        public async Task<IActionResult> GetRecipe(int recipeId)
+        public async Task<IActionResult> GetRecipe(int recipeId, LanguagesEnum? language)
         {
-            var recipeByIdResult = await _recipeService.GetRecipeByIdAsync(recipeId);
+            var recipeByIdResult = await _recipeService.GetRecipeByIdAsync(recipeId, language);
 
             if (recipeByIdResult.Data == null)
             {

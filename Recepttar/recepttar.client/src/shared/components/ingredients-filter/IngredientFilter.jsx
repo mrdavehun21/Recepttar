@@ -2,7 +2,7 @@ import { useState } from "react";
 import { getIngredientsOnSearch } from "../../hooks/useIngredientSearch";
 import "../ingredients-filter/IngredientFilter.css";
 
-function IngredientFilter({ selectedIngredients, setSelectedIngredients }) {
+function IngredientFilter({ selectedIngredients, setSelectedIngredients, t }) {
     const [ingredientSearch, setIngredientSearch] = useState("");
     const [results, setResults] = useState([]);
 
@@ -27,7 +27,7 @@ function IngredientFilter({ selectedIngredients, setSelectedIngredients }) {
     return (
         <div className="w-95 d-flex flex-column align-items-center">
             <h4 className="mt-0 mb-3 text-decoration-underline color-neutral-100 fs-3">
-                Ingredients
+                {t("homePage.ingredients")}
             </h4>
 
             <div className="rounded-5 d-flex border border-dark overflow-hidden">

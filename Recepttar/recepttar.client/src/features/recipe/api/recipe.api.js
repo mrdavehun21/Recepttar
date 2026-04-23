@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_BASE = import.meta.env.VITE_API_URL;
 
 export function getRecipeById(recipeId) {
-    return axios.get(`${API_BASE}/api/recipe/${recipeId}`);
+    return axios.get(`${API_BASE}/api/recipe/${recipeId}?language=${localStorage.getItem("i18nextLng") || "en"}`);
 }
 export function getUserById(userId) {
     return axios.get(`${API_BASE}/api/user/profile/${userId}`);

@@ -1,5 +1,6 @@
 import { useRecipes } from '../hooks/useRecipes';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import Recipes from '../components/recipe-list/RecipeListComponent.jsx';
 import PollApp from '../components/poll-section/PollApp.jsx';
 import SearchBottom from '../components/search-parent-component/SearchParentComponent.jsx';
@@ -12,6 +13,8 @@ function Home({ isLoggedIn, profileID }) {
     const [selectedTags, setSelectedTags] = useState([]);
     const [search, setSearch] = useState("");
     const [selectedIngredients, setSelectedIngredients] = useState([]);
+
+    const { t } = useTranslation();
 
     useEffect(() => {
         const hasFilters = selectedTags.length > 0 || selectedIngredients.length > 0 || search.trim() !== "";
@@ -33,14 +36,15 @@ function Home({ isLoggedIn, profileID }) {
                         selectedIngredients={selectedIngredients}
                         setSelectedIngredients={setSelectedIngredients}
                         setSearch={setSearch}
+                        t={t}
                     />
 
                     {!error.errorCode && (
-                        <Recipes recipes={recipes} loginStatus={isLoggedIn} />
+                        <Recipes recipes={recipes} loginStatus={isLoggedIn} t={t} />
                     )}
                 </div>
 
-                <PollApp loginStatus={isLoggedIn} profileID={profileID}/>
+                <PollApp loginStatus={isLoggedIn} profileID={profileID} t={t}/>
             </div>
         </>
     );

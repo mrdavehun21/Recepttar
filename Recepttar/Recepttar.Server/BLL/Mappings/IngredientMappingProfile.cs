@@ -8,7 +8,12 @@ namespace Recepttar.Server.BLL.Mappings
     {
         public IngredientMappingProfile()
         {
-            CreateMap<Ingredient, IngredientSearchDto>();
+            CreateMap<Ingredient, IngredientSearchDto>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom((src, dest, _, context) =>
+                    context.Items["lang"]?.ToString() == "hu"
+                        ? src.HuName
+                        : src.Name
+                ));
         }
     }
 }
